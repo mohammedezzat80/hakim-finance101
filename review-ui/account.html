@@ -1,0 +1,200 @@
+<!doctype html>
+<html lang="en" dir="ltr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>HAKIM · Account</title>
+<style>
+:root{
+ --bg:#0D0F16;--panel:#1B1F2C;--panel2:#232837;--line:#262B3A;--railbg:#0A0C12;
+ --gold:#e8b95a;--gold2:#72D5C8;--teal:#72D5C8;--mint:#72D5C8;--mint2:#60B3A8;--red:#E05252;--amber:#b6bccb;
+ --inc:#72D5C8;--exp:#D98A93;--trf:#9BA3C9;--alert:#E05252;
+ --txt:#FFFFFF;--lbl:#8A90A6;--muted:#5A6072;
+ --mono:'JetBrains Mono',ui-monospace,'SF Mono',Menlo,monospace;--sans:-apple-system,system-ui,"SF Pro Display","Segoe UI",Roboto,sans-serif;
+ --sp:24px;--rad:14px;}
+*{box-sizing:border-box}
+html,body{margin:0;min-height:100%;background:var(--bg);color:var(--txt);font-family:var(--sans);font-size:15px}
+a{color:inherit;text-decoration:none}
+.rail{position:fixed;left:0;top:0;bottom:0;width:222px;z-index:40;background:var(--railbg);border-right:1px solid var(--line);display:flex;flex-direction:column;padding:18px 12px 12px;overflow-y:auto}
+.rail::-webkit-scrollbar{width:0}
+.brand{padding:2px 8px 16px}.brand .wm{font-family:var(--mono);font-size:15px;letter-spacing:2px;font-weight:800;color:var(--txt)}
+.brand .wm .sp{color:var(--gold)}
+.brand .sub{display:block;font-family:var(--mono);font-size:9px;letter-spacing:3px;color:var(--muted);margin-top:3px}
+.nav{display:flex;align-items:center;gap:11px;padding:10px 12px;border-radius:9px;color:var(--lbl);font-weight:600;font-size:14.5px;cursor:pointer}
+.nav i{font-style:normal;width:18px;text-align:center;opacity:.85}.nav:hover{background:#1a1d23;color:var(--txt)}
+.nav.active{background:rgba(114,213,200,.12);color:var(--gold2)}
+.nav .qbadge{margin-left:auto;background:var(--mint);color:#0D0F16;border-radius:9px;padding:1px 7px;font-size:11px;font-weight:800;font-family:var(--mono)}
+.rsec{font-family:var(--mono);font-size:9px;letter-spacing:2px;text-transform:uppercase;color:#4b5260;margin:18px 10px 8px;display:flex}
+.rsec .rt{margin-left:auto;color:var(--amber)}
+.acc{display:flex;align-items:center;padding:7px 12px;border-radius:8px;cursor:pointer;font-size:13px}
+.acc:hover{background:#1a1d23}.acc.on{background:rgba(114,213,200,.1)}.acc .an{flex:1;color:var(--lbl);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;padding-right:8px}
+.acc.on .an{color:var(--txt)}
+.acc .av{font-family:var(--mono);font-weight:600;color:var(--txt)}.acc.crd .av{color:var(--amber)}
+.soon{display:flex;align-items:center;gap:11px;padding:8px 12px;color:#4b5260;font-size:13.5px}.soon i{font-style:normal;width:18px;text-align:center}
+.soon small{margin-left:auto;font-size:9px;letter-spacing:1px;text-transform:uppercase;color:#4b5260;font-family:var(--mono)}
+.spacer{flex:1;min-height:12px}
+.railstat{font-family:var(--mono);font-size:11px;color:var(--muted);border-top:1px solid var(--line);padding-top:12px;margin-top:8px;display:flex;flex-direction:column;gap:8px}
+.railstat .live{display:inline-flex;align-items:center;gap:7px;color:var(--teal)}
+.railstat .live .d{width:7px;height:7px;border-radius:50%;background:var(--teal);box-shadow:0 0 7px var(--teal);animation:pul 2s infinite}
+@keyframes pul{0%,100%{opacity:1}50%{opacity:.3}}
+.app{max-width:1600px;padding:22px 28px 64px;margin-left:max(222px,calc((100% - 1600px)/2));margin-right:auto}
+@media(max-width:480px){.app{padding:14px 10px 48px}.accwrap{grid-template-columns:1fr}.topbar{flex-wrap:wrap;gap:8px}}
+@media(max-width:900px){.rail{width:56px;padding:14px 6px}.brand .wm{font-size:0}.brand .wm::before{content:"✦";font-size:18px;color:var(--gold)}.brand .sub,.nav span:not(.qbadge),.soon span,.rsec,.acc,.railstat{display:none}.nav,.soon{justify-content:center}.app{margin-left:56px}}
+.cur{font-size:.6em;color:var(--muted);margin-right:3px;font-weight:600}.dec{font-size:.6em;color:var(--muted)}
+.topbar{display:flex;align-items:center;gap:14px;margin-bottom:var(--sp)}
+.topbar h1{font-size:22px;font-weight:700;margin:0;letter-spacing:-.3px}
+.topbar .subtitle{font-size:12px;color:var(--muted);margin-top:3px;font-family:var(--mono)}
+.topbar .grow{flex:1}
+select{background:var(--panel);color:var(--txt);border:1px solid var(--line);border-radius:10px;padding:8px 12px;font-size:13px;font-family:var(--mono);cursor:pointer}
+.card{background:linear-gradient(180deg,#1B1F2C,#151823);border:1px solid var(--line);border-radius:var(--rad);padding:18px 20px}
+.inc{color:var(--inc)}.exp{color:var(--exp)}
+.accwrap{display:grid;grid-template-columns:8fr 4fr;gap:var(--sp);align-items:start}
+.accwrap>*{min-width:0}
+@media(max-width:1120px){.accwrap{grid-template-columns:1fr}}
+.hero .n{font-family:var(--mono);font-size:34px;font-weight:800;letter-spacing:-1.5px;line-height:1;margin-top:6px}
+.hero .note{color:var(--muted);font-size:12px;margin-top:8px;font-family:var(--mono)}
+.stats{display:flex;gap:32px;flex-wrap:wrap;margin-top:14px}
+.stats .n{font-family:var(--mono);font-size:17px;font-weight:800;letter-spacing:-.5px}
+.stats .s{font-size:10px;color:var(--muted);font-family:var(--mono);margin-top:4px;text-transform:uppercase;letter-spacing:1px}
+.chartwrap{position:relative;margin-top:18px}
+.axl{fill:var(--muted);font-family:var(--mono);font-size:10px}
+.ttip{position:absolute;background:#fff;color:#0D0F16;border-radius:8px;padding:7px 10px;font-family:var(--mono);font-size:11px;pointer-events:none;opacity:0;transition:opacity .1s;box-shadow:0 6px 18px rgba(0,0,0,.5);white-space:nowrap;z-index:5}
+.ttip b{color:#0D0F16}
+.rt2{font-size:13px;font-weight:700;margin-bottom:2px}.rtsub{font-size:11px;color:var(--muted);font-family:var(--mono);margin-bottom:12px}
+.trow{display:flex;align-items:center;gap:11px;padding:9px 4px;border-radius:9px;cursor:pointer;border-left:3px solid transparent}
+.trow:hover{background:var(--panel2)}.trow+.trow{border-top:1px solid var(--line)}
+.trow .disc{width:30px;height:30px;border-radius:9px;display:grid;place-items:center;font-size:14px;flex-shrink:0;background:var(--panel2)}
+.trow .mid{flex:1;min-width:0}.trow .nm{font-size:13px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.trow .meta{font-family:var(--mono);font-size:10px;color:var(--muted);margin-top:2px}
+.trow .amt{font-family:var(--mono);font-weight:800;font-size:13px;white-space:nowrap}
+.muted{color:var(--muted)}.notice{color:var(--muted);font-size:13px;padding:20px 4px;font-family:var(--mono);text-align:center}
+/* global ⌘K search palette */
+.pal{position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:100;display:none;align-items:flex-start;justify-content:center;padding-top:12vh}
+.pal.show{display:flex}
+.palbox{width:min(620px,92vw);background:#151823;border:1px solid var(--line);border-radius:14px;overflow:hidden;box-shadow:0 24px 60px rgba(0,0,0,.6)}
+.palbox input{width:100%;background:transparent;border:none;border-bottom:1px solid var(--line);color:var(--txt);font-size:16px;padding:16px 18px;outline:none;font-family:var(--sans)}
+.pallist{max-height:52vh;overflow-y:auto}
+.palrow{display:flex;align-items:center;gap:12px;padding:11px 18px;cursor:pointer}
+.palrow.on,.palrow:hover{background:var(--panel2)}
+.palrow .pi{width:26px;text-align:center;font-size:15px}
+.palrow .pl{flex:1;min-width:0}.palrow .pl .t{font-size:14px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.palrow .pl .s{font-family:var(--mono);font-size:11px;color:var(--muted)}
+.palrow .pt{font-family:var(--mono);font-size:9px;text-transform:uppercase;color:var(--muted);letter-spacing:1px}
+.palhint{padding:10px 18px;font-family:var(--mono);font-size:11px;color:var(--muted);border-top:1px solid var(--line)}
+</style>
+</head>
+<body>
+<aside class="rail" id="hakim-rail"></aside>
+<div class="app">
+  <div class="topbar">
+    <div><h1>Account</h1><div class="subtitle">balance over time · reconstructed from the ledger</div></div>
+    <div class="grow"></div>
+    <select id="acctsel" onchange="load(this.value)"></select>
+  </div>
+  <div class="accwrap">
+    <div class="card">
+      <div class="hero"><div class="rt2" id="accname">—</div><div class="n" id="curbal">—</div>
+        <div class="stats" id="stats"></div></div>
+      <div id="chart"><div class="notice">Loading…</div></div>
+    </div>
+    <div class="card">
+      <div class="rt2">Recent activity</div><div class="rtsub">latest on this account</div>
+      <div id="recent"></div>
+    </div>
+  </div>
+</div>
+<script>
+const esc=s=>(s||'').replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const money0=n=>Number(n||0).toLocaleString('en-US',{maximumFractionDigits:0});
+function m(n){n=Number(n||0);const neg=n<0;n=Math.abs(n);const i=Math.floor(n).toLocaleString('en-US');const d=(n-Math.floor(n)).toFixed(2).slice(1);return `<span class="cur">SAR</span>${neg?'−':''}${i}<span class="dec">${d}</span>`;}
+const kindGlyph={deposit:'💰',withdrawal:'🧾',transfer:'🔄'};
+const kindCls=t=>t==='deposit'?'inc':t==='withdrawal'?'exp':'trf';
+let DATA=null;
+
+function chartSVG(series){
+  if(series.length<2)return `<div class="notice">Not enough history yet to chart this account.</div>`;
+  const W=760,H=280,L=64,R=16,T=16,B=34;
+  const xs=series.map((_,i)=>i),ys=series.map(p=>p.balance);
+  const mn=Math.min(...ys),mx=Math.max(...ys),span=(mx-mn)||1;
+  const px=i=>L+(W-L-R)*(i/(series.length-1));
+  const py=v=>T+(H-T-B)*(1-(v-mn)/span);
+  const pts=series.map((p,i)=>`${px(i).toFixed(1)},${py(p.balance).toFixed(1)}`).join(' ');
+  // y gridlines/labels (4)
+  let grid='',ylab='';
+  for(let k=0;k<=4;k++){const v=mn+span*k/4,yy=py(v);
+    grid+=`<line x1="${L}" x2="${W-R}" y1="${yy.toFixed(1)}" y2="${yy.toFixed(1)}" stroke="var(--line)" stroke-width="1" opacity=".6"/>`;
+    ylab+=`<text class="axl" x="${L-8}" y="${(yy+3).toFixed(1)}" text-anchor="end">${money0(v)}</text>`;}
+  // x labels (~5 unique months)
+  let xlab='',seen=new Set();
+  series.forEach((p,i)=>{const mo=p.date.slice(0,7);if(!seen.has(mo)){seen.add(mo);const d=new Date(p.date+'T00:00:00');
+    xlab+=`<text class="axl" x="${px(i).toFixed(1)}" y="${H-12}" text-anchor="middle">${d.toLocaleDateString('en-GB',{month:'short'})}</text>`;}});
+  const last=series[series.length-1];
+  return `<div class="chartwrap" id="cw"><svg viewBox="0 0 ${W} ${H}" width="100%" height="280" id="asvg">
+    <defs><linearGradient id="g" x1="0" x2="0" y1="0" y2="1"><stop offset="0" stop-color="var(--teal)" stop-opacity=".22"/><stop offset="1" stop-color="var(--teal)" stop-opacity="0"/></linearGradient></defs>
+    ${grid}<polygon points="${L},${H-B} ${pts} ${W-R},${H-B}" fill="url(#g)"/>
+    <polyline points="${pts}" fill="none" stroke="var(--teal)" stroke-width="2" stroke-linejoin="round"/>
+    <circle cx="${px(series.length-1).toFixed(1)}" cy="${py(last.balance).toFixed(1)}" r="3.5" fill="var(--teal)"/>
+    ${ylab}${xlab}
+    <line id="chx" x1="0" x2="0" y1="${T}" y2="${H-B}" stroke="var(--teal)" stroke-width="1" opacity="0"/>
+    <circle id="chd" r="4" fill="var(--teal)" opacity="0"/></svg><div class="ttip" id="ttip"></div></div>`;
+}
+function setupChart(series){
+  const cw=document.getElementById('cw');if(!cw)return;const svg=document.getElementById('asvg'),tip=document.getElementById('ttip'),chx=document.getElementById('chx'),chd=document.getElementById('chd');
+  const W=760,L=64,R=16,T=16,B=34,H=280;const mn=Math.min(...series.map(p=>p.balance)),mx=Math.max(...series.map(p=>p.balance)),span=(mx-mn)||1;
+  const px=i=>L+(W-L-R)*(i/(series.length-1)),py=v=>T+(H-T-B)*(1-(v-mn)/span);
+  svg.addEventListener('mousemove',e=>{const r=svg.getBoundingClientRect();const sx=(e.clientX-r.left)/r.width*W;
+    let i=Math.round((sx-L)/((W-L-R)/(series.length-1)));i=Math.max(0,Math.min(series.length-1,i));const p=series[i];
+    const X=px(i),Y=py(p.balance);chx.setAttribute('x1',X);chx.setAttribute('x2',X);chx.setAttribute('opacity','.5');
+    chd.setAttribute('cx',X);chd.setAttribute('cy',Y);chd.setAttribute('opacity','1');
+    tip.style.opacity=1;tip.innerHTML=`<b>${new Date(p.date+'T00:00:00').toLocaleDateString('en-GB',{day:'numeric',month:'short',year:'numeric'})}</b><div>SAR ${money0(p.balance)}</div>`;
+    const rel=X/W*r.width;tip.style.left=Math.min(r.width-tip.offsetWidth-4,Math.max(0,rel-tip.offsetWidth/2))+'px';tip.style.top=(py(p.balance)/H*r.height-40)+'px';});
+  svg.addEventListener('mouseleave',()=>{tip.style.opacity=0;chx.setAttribute('opacity','0');chd.setAttribute('opacity','0');});
+}
+async function load(acct){
+  DATA=await(await fetch('/api/account_series?account='+encodeURIComponent(acct||''))).json();
+  const sel=document.getElementById('acctsel');
+  sel.innerHTML=DATA.accounts.map(a=>`<option ${a===DATA.account?'selected':''}>${esc(a)}</option>`).join('');
+  document.getElementById('accname').textContent=DATA.account;
+  const neg=DATA.current<0;
+  document.getElementById('curbal').innerHTML=`<span class="${neg?'exp':''}">${neg?'−':''}${m(Math.abs(DATA.current))}</span>`;
+  const change=Math.round((DATA.current-DATA.opening)*100)/100;
+  document.getElementById('stats').innerHTML=
+    `<div><div class="n">${DATA.count}</div><div class="s">transactions</div></div>
+     <div><div class="n ${change>=0?'inc':'exp'}">${change>=0?'+':'−'}${money0(Math.abs(change))}</div><div class="s">net change</div></div>
+     <div><div class="n">${money0(DATA.opening)}</div><div class="s">opening</div></div>`;
+  document.getElementById('chart').innerHTML=chartSVG(DATA.series);
+  setupChart(DATA.series);
+  document.getElementById('recent').innerHTML=DATA.recent.length?DATA.recent.map(t=>{
+    const cl=kindCls(t.type);
+    return `<div class="trow" style="border-left-color:var(--${cl})" onclick="location.href='/?txn=${t.id}'">
+      <div class="disc">${kindGlyph[t.type]||'💳'}</div>
+      <div class="mid"><div class="nm" dir="auto">${esc(t.name)}</div><div class="meta">${esc(t.date)}${t.category&&t.category!=='To review'?' · '+esc(t.category):''}</div></div>
+      <div class="amt ${cl}">${t.signed>=0?'+':'−'}${m(Math.abs(t.signed))}</div></div>`;}).join(''):`<div class="notice">No transactions yet.</div>`;
+}
+async function loadRail(){try{const r=await(await fetch('/api/rail')).json();
+  document.getElementById('railcash').innerHTML=r.cash.map(c=>`<div class="acc ${c.name===(DATA&&DATA.account)?'on':''}" onclick="load('${esc(c.name).replace(/'/g,"\\'")}')"><span class="an">${esc(c.name)}</span><span class="av">${money0(c.bal)}</span></div>`).join('');
+  document.getElementById('railcards').innerHTML=r.cards.map(c=>`<div class="acc crd" onclick="load('${esc(c.name).replace(/'/g,"\\'")}')"><span class="an">${esc(c.bank||'')} •${esc(c.last4||'')}</span><span class="av">${money0(Math.abs(c.bal))}</span></div>`).join('');
+  document.getElementById('cardtot').textContent='SAR '+money0(r.cards.reduce((a,c)=>a+Math.abs(c.bal),0));}catch(e){}}
+async function pollStatus(){try{const s=await(await fetch('/api/status')).json();
+  const l=document.getElementById('rlive');l.className='live '+(s.sms_state==='live'?'':(s.sms_state==='amber'?'amber':'off'));l.querySelector('.t').textContent=s.sms_label||'SMS ?';
+  const b=document.getElementById('rbackup');if(s.backup_ok){b.textContent='backup ✓';}else{b.textContent='⚠ BACKUP FAILED';b.style.color='var(--red)';}}catch(e){}setTimeout(pollStatus,60000);}
+function clock(){const el=document.getElementById('rclock');if(el)el.textContent=new Date().toTimeString().slice(0,8);setTimeout(clock,1000);}
+const u=new URL(location);
+load(u.searchParams.get('account')||'').then(loadRail);pollStatus();clock();
+
+/* ---- global ⌘K search palette ---- */
+let PAL={items:[],idx:0,t:null};
+function openPal(){const p=document.getElementById('pal');if(!p)return;p.classList.add('show');const i=document.getElementById('palq');i.value='';document.getElementById('pallist').innerHTML='';PAL={items:[],idx:0,t:null};setTimeout(()=>i.focus(),30);}
+function closePal(){const p=document.getElementById('pal');if(p)p.classList.remove('show');}
+function palSearch(){clearTimeout(PAL.t);const q=document.getElementById('palq').value;PAL.t=setTimeout(async()=>{if(!q.trim()){document.getElementById('pallist').innerHTML='';PAL.items=[];return;}try{const d=await(await fetch('/api/search?q='+encodeURIComponent(q))).json();PAL.items=d.results||[];PAL.idx=0;palRender();}catch(e){}},160);}
+function palRender(){document.getElementById('pallist').innerHTML=PAL.items.map((r,i)=>`<div class="palrow ${i===PAL.idx?'on':''}" onmouseenter="PAL.idx=${i}" onclick="palGo(${i})"><span class="pi">${r.icon||'•'}</span><span class="pl"><div class="t">${esc(r.label)}</div><div class="s">${esc(r.sub||'')}</div></span><span class="pt">${esc(r.type)}</span></div>`).join('')||'<div class="palhint">No matches.</div>';}
+function palGo(i){const r=PAL.items[i];if(r)location.href=r.target;}
+function palKey(e){if(e.key==='Escape')closePal();else if(e.key==='ArrowDown'){e.preventDefault();PAL.idx=Math.min(PAL.items.length-1,PAL.idx+1);palRender();}else if(e.key==='ArrowUp'){e.preventDefault();PAL.idx=Math.max(0,PAL.idx-1);palRender();}else if(e.key==='Enter'){e.preventDefault();palGo(PAL.idx);}}
+document.addEventListener('keydown',e=>{if((e.metaKey||e.ctrlKey)&&(e.key==='k'||e.key==='K')){e.preventDefault();openPal();}});
+</script>
+<div class="pal" id="pal" onclick="if(event.target.id==='pal')closePal()">
+  <div class="palbox"><input id="palq" placeholder="Search transactions, categories, accounts, pages…" oninput="palSearch()" onkeydown="palKey(event)">
+    <div class="pallist" id="pallist"></div>
+    <div class="palhint">↑↓ navigate · ↵ open · esc close · ⌘K anywhere</div></div></div>
+<script src="/rail.js"></script>
+</body>
+</html>

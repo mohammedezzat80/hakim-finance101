@@ -1,0 +1,163 @@
+<!doctype html>
+<html lang="en" dir="ltr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>HAKIM · Goals</title>
+<script src="/face.js"></script>
+<link rel="stylesheet" href="/face.css">
+<style>
+:root{
+ --bg:#0D0F16;--panel:#1B1F2C;--panel2:#232837;--line:#262B3A;--railbg:#0A0C12;
+ --gold:#e8b95a;--gold2:#72D5C8;--teal:#72D5C8;--mint:#72D5C8;--red:#E05252;--amber:#b6bccb;
+ --inc:#72D5C8;--exp:#D98A93;
+ --txt:#FFFFFF;--lbl:#8A90A6;--muted:#5A6072;
+ --mono:'JetBrains Mono',ui-monospace,'SF Mono',Menlo,monospace;--sans:-apple-system,system-ui,"SF Pro Display","Segoe UI",Roboto,sans-serif;
+ --sp:24px;--rad:14px;}
+*{box-sizing:border-box}
+html,body{margin:0;min-height:100%;background:var(--bg);color:var(--txt);font-family:var(--sans);font-size:15px}
+a{color:inherit;text-decoration:none}
+.rail{position:fixed;left:0;top:0;bottom:0;width:222px;z-index:40;background:var(--railbg);border-right:1px solid var(--line);display:flex;flex-direction:column;padding:18px 12px 12px;overflow-y:auto}
+.rail::-webkit-scrollbar{width:0}
+.brand{padding:2px 8px 16px;cursor:pointer}.brand .wm{font-family:var(--mono);font-size:15px;letter-spacing:2px;font-weight:800}
+.brand .wm .sp{color:var(--gold)}.brand .sub{display:block;font-family:var(--mono);font-size:9px;letter-spacing:3px;color:var(--muted);margin-top:3px}
+.nav{display:flex;align-items:center;gap:11px;padding:10px 12px;border-radius:9px;color:var(--lbl);font-weight:600;font-size:14.5px;cursor:pointer}
+.nav i{font-style:normal;width:18px;text-align:center;opacity:.85}.nav:hover{background:#1a1d23;color:var(--txt)}
+.nav.active{background:rgba(114,213,200,.12);color:var(--gold2)}
+.nav .qbadge{margin-left:auto;background:var(--mint);color:#0D0F16;border-radius:9px;padding:1px 7px;font-size:11px;font-weight:800;font-family:var(--mono)}
+.rsec{font-family:var(--mono);font-size:9px;letter-spacing:2px;text-transform:uppercase;color:#4b5260;margin:18px 10px 8px;display:flex}
+.rsec .rt{margin-left:auto;color:var(--amber)}
+.acc{display:flex;align-items:center;padding:7px 12px;border-radius:8px;cursor:pointer;font-size:13px}
+.acc:hover{background:#1a1d23}.acc .an{flex:1;color:var(--lbl);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;padding-right:8px}
+.acc .av{font-family:var(--mono);font-weight:600}.acc.crd .av{color:var(--amber)}
+.soon{display:flex;align-items:center;gap:11px;padding:8px 12px;color:#4b5260;font-size:13.5px}.soon i{font-style:normal;width:18px;text-align:center}
+.soon small{margin-left:auto;font-size:9px;letter-spacing:1px;text-transform:uppercase;color:#4b5260;font-family:var(--mono)}
+.spacer{flex:1;min-height:12px}
+.railstat{font-family:var(--mono);font-size:11px;color:var(--muted);border-top:1px solid var(--line);padding-top:12px;margin-top:8px;display:flex;flex-direction:column;gap:8px}
+.railstat .live{display:inline-flex;align-items:center;gap:7px;color:var(--teal)}
+.railstat .live .d{width:7px;height:7px;border-radius:50%;background:var(--teal);box-shadow:0 0 7px var(--teal);animation:pul 2s infinite}
+.railstat .live.off{color:var(--muted)}.railstat .live.off .d{background:var(--muted);box-shadow:none;animation:none}
+.railstat .live.amber{color:var(--amber)}.railstat .live.amber .d{background:var(--amber)}
+.railstat .bad{color:var(--red)}
+@keyframes pul{0%,100%{opacity:1}50%{opacity:.3}}
+.app{max-width:1100px;padding:22px 28px 64px;margin-left:max(222px,calc((100% - 1100px)/2));margin-right:auto}
+@media(max-width:900px){.rail{width:56px;padding:14px 6px}.brand .wm{font-size:0}.brand .wm::before{content:"✦";font-size:18px;color:var(--gold)}.brand .sub,.nav span:not(.qbadge),.soon span,.rsec,.acc,.railstat{display:none}.nav,.soon{justify-content:center}.app{margin-left:56px}}
+.cur{font-size:.62em;color:var(--muted);margin-right:3px;font-weight:600}.dec{font-size:.62em;color:var(--muted)}
+.topbar{display:flex;align-items:center;gap:14px;margin-bottom:var(--sp);flex-wrap:wrap}
+.topbar h1{font-size:22px;font-weight:700;margin:0}.topbar .subtitle{font-size:12px;color:var(--muted);margin-top:3px;font-family:var(--mono)}
+.grow{flex:1}
+.btn{background:var(--panel);color:var(--txt);border:1px solid var(--line);border-radius:10px;padding:9px 15px;font-size:13px;font-family:var(--mono);cursor:pointer}
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:var(--sp)}
+@media(max-width:820px){.grid{grid-template-columns:1fr}}
+.goal{background:linear-gradient(180deg,#1B1F2C,#151823);border:1px solid var(--line);border-radius:var(--rad);padding:18px 20px}
+.goal .gh{display:flex;align-items:center;gap:12px}
+.goal .gi{width:40px;height:40px;border-radius:11px;display:grid;place-items:center;font-size:19px;flex-shrink:0}
+.goal .gn{font-size:15px;font-weight:700}.goal .gm{font-size:11px;color:var(--muted);font-family:var(--mono);margin-top:2px}
+.goal .gx{margin-left:auto;color:var(--muted);cursor:pointer}.goal .gx:hover{color:var(--exp)}
+.goal .bar{height:12px;border-radius:7px;background:var(--panel2);overflow:hidden;margin:16px 0 8px}
+.goal .bar i{display:block;height:100%;border-radius:7px;transition:width .5s}
+.goal .grow2{display:flex;justify-content:space-between;font-family:var(--mono);font-size:12.5px}
+.goal .grow2 .pct{font-weight:800}
+.goal .gsub{font-family:var(--mono);font-size:11px;color:var(--muted);margin-top:8px}
+.notice{color:var(--muted);font-size:13px;padding:24px 4px;font-family:var(--mono)}
+/* modal */
+.ov{position:fixed;inset:0;background:rgba(0,0,0,.55);z-index:120;display:none;align-items:flex-start;justify-content:center;padding-top:9vh}
+.ov.show{display:flex}
+.box{width:min(520px,94vw);background:#151823;border:1px solid var(--line);border-radius:14px;padding:20px 22px}
+.mhd{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px}.mhd .x{cursor:pointer;color:var(--muted);font-size:18px}
+.field{margin-bottom:14px}.field label{display:block;font-size:10px;letter-spacing:1px;text-transform:uppercase;color:var(--lbl);font-weight:700;margin-bottom:7px}
+.field input,.field select{width:100%;background:var(--panel2);color:var(--txt);border:1px solid var(--line);border-radius:9px;padding:10px 12px;font-size:13px;font-family:var(--mono)}
+.seg{display:flex;gap:8px}.seg button{flex:1;background:var(--panel2);border:1px solid var(--line);color:var(--lbl);border-radius:9px;padding:9px;font-size:12px;font-family:var(--mono);cursor:pointer}
+.seg button.on{background:rgba(114,213,200,.16);color:var(--mint);border-color:transparent}
+.save{width:100%;background:var(--gold);color:#0D0F16;border:none;border-radius:10px;padding:11px;font-weight:800;cursor:pointer}
+.blocked{font-family:var(--mono);font-size:11px;color:var(--muted);margin-top:16px;border-top:1px solid var(--line);padding-top:12px}
+</style>
+</head>
+<body>
+<aside class="rail" id="hakim-rail"></aside>
+<div class="app">
+  <div class="topbar"><div><h1>Goals</h1><div class="subtitle">save toward something · pay down a card — progress from your real balances</div></div>
+    <div class="grow"></div><button class="btn" onclick="openAdd()">＋ New goal</button></div>
+  <div class="grid" id="goals"><div class="notice">Loading…</div></div>
+  <div class="blocked">Progress is measured honestly against your live account balances vs a baseline captured when you set the goal. “SAR X/mo to hit it” is plain arithmetic — remaining ÷ months left — not coaching. Set a deadline by date, or by an Islamic-calendar season (Ramadan · Eid · school start); season goals roll their date forward to the next occurrence automatically.</div>
+</div>
+<div class="ov" id="add" onclick="if(event.target.id==='add')closeAdd()">
+  <div class="box">
+    <div class="mhd"><b>New goal</b><span class="x" onclick="closeAdd()">✕</span></div>
+    <div class="field"><label>Goal kind</label><div class="seg"><button id="ksave" class="on" onclick="setKind('save')"><svg class="ic" viewBox="0 0 24 24"><ellipse cx="9" cy="7" rx="5" ry="2.5"/><path d="M4 7v5c0 1.4 2.2 2.5 5 2.5s5-1.1 5-2.5V7"/><path d="M14 12.5c.6.3 1.6.5 2.5.5 2.8 0 5-1.1 5-2.5S19.3 8 16.5 8"/></svg> Save toward X</button><button id="kdebt" onclick="setKind('debt')"><svg class="ic" viewBox="0 0 24 24"><rect x="3" y="6" width="18" height="12" rx="2"/><path d="M3 10h18M7 15h3"/></svg> Pay down card Y</button></div></div>
+    <div class="field"><label>Name</label><input id="gname" placeholder="e.g. Emergency fund / Pay off SABB 6510"></div>
+    <div class="field"><label id="acclbl">Account to track</label><select id="gacct"></select></div>
+    <div class="field"><label id="tgtlbl">Target amount (SAR)</label><input id="gtarget" type="number" placeholder="0"></div>
+    <div class="field"><label>Deadline (optional)</label>
+      <div class="seg" style="margin-bottom:9px"><button type="button" id="dmnone" class="on" onclick="setDmode('none')">None</button><button type="button" id="dmdate" onclick="setDmode('date')"><svg class="ic" viewBox="0 0 24 24"><path d="M4 5h16v16H4z"/><path d="M4 9h16M8 3v4M16 3v4"/></svg> By date</button><button type="button" id="dmseason" onclick="setDmode('season')"><svg class="ic" viewBox="0 0 24 24"><path d="M20 14a8 8 0 1 1-9-11 6.5 6.5 0 0 0 9 11z"/></svg> By season</button></div>
+      <input id="gdeadline" type="date" style="display:none">
+      <div id="seasonchips" style="display:none;flex-wrap:wrap;gap:8px"></div>
+    </div>
+    <button class="save" onclick="addGoal()">Create goal</button>
+  </div>
+</div>
+<script>
+const esc=s=>(s||'').replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const money0=n=>Number(n||0).toLocaleString('en-US',{maximumFractionDigits:0});
+const H={'Content-Type':'application/json'};
+let ACCTS=[],KIND='save',SEASONS=[],DMODE='none',SEASONKEY='';
+async function load(){const [d,s]=await Promise.all([fetch('/api/goals').then(r=>r.json()),fetch('/api/seasons').then(r=>r.json()).catch(()=>({seasons:[]}))]);ACCTS=d.accounts||[];SEASONS=s.seasons||[];render(d.goals||[]);}
+function setDmode(m){DMODE=m;SEASONKEY='';
+  ['none','date','season'].forEach(x=>document.getElementById('dm'+x).classList.toggle('on',x===m));
+  document.getElementById('gdeadline').style.display=m==='date'?'':'none';
+  const sc=document.getElementById('seasonchips');sc.style.display=m==='season'?'flex':'none';
+  if(m==='season')sc.innerHTML=SEASONS.map(s=>`<button type="button" class="btn" id="sc-${s.key}" onclick="pickSeason('${s.key}')" style="font-size:12px">${s.icon} ${esc(s.label)}<br><span style="color:var(--muted);font-size:10px">${s.date||'—'}</span></button>`).join('');}
+function pickSeason(k){SEASONKEY=k;SEASONS.forEach(s=>{const el=document.getElementById('sc-'+s.key);if(el)el.style.background=s.key===k?'rgba(114,213,200,.16)':'';});}
+function render(goals){
+  const box=document.getElementById('goals');
+  if(!goals.length){box.innerHTML='<div class="notice" style="grid-column:1/-1">No goals yet. Hit <b>＋ New goal</b> — save toward a target, or pay down a card. Progress reads from your live balances.</div>';return;}
+  box.innerHTML=goals.map(g=>{
+    const debt=g.kind==='debt',col=debt?'var(--amber)':'var(--mint)',ic=debt?window.ic('card'):window.ic('coins');
+    const done=g.pct>=100;
+    const seasonChip=g.season_label?`<span style="background:rgba(232,185,90,.16);color:var(--gold);border-radius:7px;padding:2px 8px;font-size:10px;font-family:var(--mono);margin-left:6px">${g.season_icon} ${esc(g.season_label)}${g.deadline?' · '+g.deadline:''}</span>`:'';
+    const when=g.season_label?'':(g.deadline?' · by '+g.deadline:'');
+    // milestone ticks at 25/50/75 on the bar
+    const ticks=[25,50,75].map(m=>`<span style="position:absolute;left:${m}%;top:0;bottom:0;width:1px;background:${g.pct>=m?'#0D0F16':'#3a4155'};opacity:.8"></span>`).join('');
+    const pace=(!done&&g.per_month)?`<div class="gsub" style="color:${col}">SAR ${money0(g.per_month)}/mo to hit it${g.months_left?' · '+g.months_left+' month'+(g.months_left===1?'':'s')+' left':''}</div>`:'';
+    return `<div class="goal">
+      <div class="gh"><div class="gi" style="background:${col}22;color:${col}">${ic}</div>
+        <div><div class="gn">${esc(g.name)}${seasonChip}</div><div class="gm">${debt?'pay down':'save toward'} · ${esc(g.account_name||'—')}${when}</div></div>
+        <span class="gx" onclick="delGoal('${g.id}')">✕</span></div>
+      <div class="bar" style="position:relative"><i style="width:${Math.max(2,g.pct)}%;background:${done?'var(--mint)':col}"></i>${ticks}</div>
+      <div class="grow2"><span class="pct" style="color:${done?'var(--mint)':col}">${g.pct}%${done?' ✓':''}</span>
+        <span>${debt?'owe':'have'} <b>SAR ${money0(g.current)}</b> ${debt?'· target SAR '+money0(g.target):'of SAR '+money0(g.target)}</span></div>
+      <div class="gsub">${done?'reached 🎉':(debt?'SAR '+money0(g.remaining)+' left to clear':'SAR '+money0(g.remaining)+' to go')}</div>
+      ${pace}
+    </div>`;
+  }).join('');
+}
+function openAdd(){document.getElementById('add').classList.add('show');setKind('save');setDmode('none');fillAccts();}
+function closeAdd(){document.getElementById('add').classList.remove('show');}
+function setKind(k){KIND=k;document.getElementById('ksave').classList.toggle('on',k==='save');document.getElementById('kdebt').classList.toggle('on',k==='debt');
+  document.getElementById('acclbl').textContent=k==='debt'?'Card / liability to pay down':'Account holding the savings';
+  document.getElementById('tgtlbl').textContent=k==='debt'?'Target balance (usually 0)':'Target amount (SAR)';
+  document.getElementById('gtarget').value=k==='debt'?'0':'';fillAccts();}
+function fillAccts(){const opts=ACCTS.filter(a=>KIND==='debt'?(a.role==='ccAsset'||a.type==='liability'):(a.role!=='ccAsset'&&a.type==='asset'));
+  document.getElementById('gacct').innerHTML=opts.map(a=>`<option value="${a.id}">${esc(a.name)} — SAR ${money0(KIND==='debt'?-a.sar:a.sar)}</option>`).join('');}
+async function addGoal(){const name=document.getElementById('gname').value.trim();if(!name){alert('name required');return;}
+  const body={name,kind:KIND,account_id:document.getElementById('gacct').value,target:document.getElementById('gtarget').value,
+    deadline:DMODE==='date'?document.getElementById('gdeadline').value:'',season:DMODE==='season'?SEASONKEY:''};
+  const r=await(await fetch('/api/goal/add',{method:'POST',headers:H,body:JSON.stringify(body)})).json();
+  if(!r.ok){alert(r.error||'failed');return;}closeAdd();document.getElementById('gname').value='';load();}
+async function delGoal(id){if(!confirm('Delete this goal? (Your money and accounts are untouched.)'))return;await fetch('/api/goal/delete',{method:'POST',headers:H,body:JSON.stringify({id})});load();}
+// shared rail
+async function loadRail(){try{const r=await(await fetch('/api/rail')).json();
+  document.getElementById('railcash').innerHTML=r.cash.map(c=>`<div class="acc" onclick="location.href='/?account='+encodeURIComponent('${esc(c.name)}')"><span class="an">${esc(c.name)}</span><span class="av">${money0(c.bal)}</span></div>`).join('');
+  document.getElementById('railcards').innerHTML=r.cards.map(c=>`<div class="acc crd"><span class="an">${esc(c.bank||'')} •${esc(c.last4||'')}</span><span class="av">${money0(Math.abs(c.bal))}</span></div>`).join('');
+  document.getElementById('cardtot').textContent='SAR '+money0(r.cards.reduce((a,c)=>a+Math.abs(c.bal),0));}catch(e){}}
+async function pollStatus(){try{const s=await(await fetch('/api/status')).json();
+  const l=document.getElementById('rlive');l.className='live '+(s.sms_state==='live'?'':(s.sms_state==='amber'?'amber':'off'));l.querySelector('.t').textContent=s.sms_label||'SMS ?';
+  const b=document.getElementById('rbackup');if(s.backup_ok){b.textContent='backup ✓';b.className='';}else{b.textContent='⚠ BACKUP FAILED';b.className='bad';}}catch(e){}setTimeout(pollStatus,60000);}
+async function qCount(){try{const q=await(await fetch('/api/queue')).json();const n=(q.merchants||[]).length+(q.onebyone||[]).length;
+  document.getElementById('rqueue').textContent='QUEUE '+String(n).padStart(2,'0');const rq=document.getElementById('railq');rq.textContent=n;rq.style.display=n?'inline-block':'none';}catch(e){}setTimeout(qCount,120000);}
+function clock(){const el=document.getElementById('rclock');if(el)el.textContent=new Date().toTimeString().slice(0,8);setTimeout(clock,1000);}
+window.hakimReload=load;load();loadRail();pollStatus();qCount();clock();
+</script>
+<script src="/rail.js"></script>
+</body>
+</html>

@@ -1,0 +1,142 @@
+<!doctype html>
+<html lang="en" dir="ltr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>HAKIM · Family</title>
+<script src="/face.js"></script>
+<link rel="stylesheet" href="/face.css">
+<style>
+:root{
+ --bg:#0D0F16;--panel:#1B1F2C;--panel2:#232837;--line:#262B3A;--railbg:#0A0C12;
+ --gold:#e8b95a;--gold2:#72D5C8;--teal:#72D5C8;--mint:#72D5C8;--red:#E05252;--amber:#e8b95a;
+ --inc:#72D5C8;--exp:#D98A93;
+ --txt:#FFFFFF;--lbl:#8A90A6;--muted:#5A6072;
+ --mono:'JetBrains Mono',ui-monospace,'SF Mono',Menlo,monospace;--sans:-apple-system,system-ui,"SF Pro Display","Segoe UI",Roboto,sans-serif;
+ --sp:24px;--rad:14px;}
+*{box-sizing:border-box}
+html,body{margin:0;min-height:100%;background:var(--bg);color:var(--txt);font-family:var(--sans);font-size:15px}
+a{color:inherit;text-decoration:none}
+.rail{position:fixed;left:0;top:0;bottom:0;width:222px;z-index:40;background:var(--railbg);border-right:1px solid var(--line);display:flex;flex-direction:column;padding:18px 12px 12px;overflow-y:auto}
+.rail::-webkit-scrollbar{width:0}
+.brand{padding:2px 8px 16px;cursor:pointer}.brand .wm{font-family:var(--mono);font-size:15px;letter-spacing:2px;font-weight:800}
+.brand .wm .sp{color:var(--gold)}.brand .sub{display:block;font-family:var(--mono);font-size:9px;letter-spacing:3px;color:var(--muted);margin-top:3px}
+.nav{display:flex;align-items:center;gap:11px;padding:10px 12px;border-radius:9px;color:var(--lbl);font-weight:600;font-size:14.5px;cursor:pointer}
+.nav i{font-style:normal;width:18px;text-align:center;opacity:.85}.nav:hover{background:#1a1d23;color:var(--txt)}
+.nav.active{background:rgba(114,213,200,.12);color:var(--gold2)}
+.nav .qbadge{margin-left:auto;background:var(--mint);color:#0D0F16;border-radius:9px;padding:1px 7px;font-size:11px;font-weight:800;font-family:var(--mono)}
+.rsec{font-family:var(--mono);font-size:9px;letter-spacing:2px;text-transform:uppercase;color:#4b5260;margin:18px 10px 8px;display:flex}
+.rsec .rt{margin-left:auto;color:var(--amber)}
+.acc{display:flex;align-items:center;padding:7px 12px;border-radius:8px;cursor:pointer;font-size:13px}
+.acc:hover{background:#1a1d23}.acc .an{flex:1;color:var(--lbl);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;padding-right:8px}
+.acc .av{font-family:var(--mono);font-weight:600}.acc.crd .av{color:var(--amber)}
+.spacer{flex:1;min-height:12px}
+.railstat{font-family:var(--mono);font-size:11px;color:var(--muted);border-top:1px solid var(--line);padding-top:12px;margin-top:8px;display:flex;flex-direction:column;gap:8px}
+.railstat .live{display:inline-flex;align-items:center;gap:7px;color:var(--teal)}
+.railstat .live .d{width:7px;height:7px;border-radius:50%;background:var(--teal);box-shadow:0 0 7px var(--teal);animation:pul 2s infinite}
+.railstat .live.off{color:var(--muted)}.railstat .live.off .d{background:var(--muted);box-shadow:none;animation:none}
+.railstat .live.amber{color:var(--amber)}.railstat .live.amber .d{background:var(--amber)}
+.railstat .bad{color:var(--red)}
+@keyframes pul{0%,100%{opacity:1}50%{opacity:.3}}
+.app{max-width:1080px;padding:22px 28px 64px;margin-left:max(222px,calc((100% - 1080px)/2));margin-right:auto}
+@media(max-width:900px){.rail{width:56px;padding:14px 6px}.brand .wm{font-size:0}.brand .wm::before{content:"✦";font-size:18px;color:var(--gold)}.brand .sub,.nav span:not(.qbadge),.rsec,.acc,.railstat{display:none}.nav{justify-content:center}.app{margin-left:56px}}
+.topbar{display:flex;align-items:baseline;gap:14px;margin-bottom:var(--sp);flex-wrap:wrap}
+.topbar h1{font-size:22px;font-weight:700;margin:0}.topbar .subtitle{font-size:12px;color:var(--muted);margin-top:3px;font-family:var(--mono)}
+.card{background:linear-gradient(180deg,#1B1F2C,#151823);border:1px solid var(--line);border-radius:var(--rad);padding:18px 20px;margin-bottom:var(--sp)}
+.lbl{font-size:10px;letter-spacing:1.4px;text-transform:uppercase;color:var(--lbl);font-weight:700}
+.sec{font-size:13px;font-weight:700}.secsub{font-size:11px;color:var(--muted);font-family:var(--mono);margin-top:2px;margin-bottom:12px}
+.cur{font-size:.62em;color:var(--muted);font-weight:600;margin-right:2px}.dec{font-size:.62em;color:var(--muted)}
+.strip{display:flex;gap:30px;flex-wrap:wrap;align-items:baseline}
+.strip .n{font-family:var(--mono);font-size:20px;font-weight:800;letter-spacing:-.5px}
+.strip .s{font-size:11px;color:var(--muted);font-family:var(--mono);margin-top:4px}
+.pgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(320px,1fr));gap:var(--sp)}
+.pcard{background:linear-gradient(180deg,#1B1F2C,#151823);border:1px solid var(--line);border-radius:var(--rad);padding:16px 18px;cursor:pointer;transition:border-color .15s}
+.pcard:hover{border-color:rgba(114,213,200,.4)}
+.phd{display:flex;align-items:center;gap:11px;margin-bottom:12px}
+.pav{width:38px;height:38px;border-radius:11px;display:flex;align-items:center;justify-content:center;font-weight:800;font-family:var(--mono);color:#0D0F16;flex:none}
+.pnm{font-size:15px;font-weight:700}.pmeta{font-size:11px;color:var(--muted);font-family:var(--mono)}
+.prow{display:flex;justify-content:space-between;align-items:baseline;font-size:13px;padding:5px 0;border-top:1px solid var(--line)}
+.prow:first-of-type{border-top:none}
+.prow .pl{color:var(--lbl)}.prow .pv{font-family:var(--mono);font-weight:800}
+.pv.exp{color:var(--exp)}.pv.inc{color:var(--inc)}
+.spark{margin-top:12px;border-top:1px solid var(--line);padding-top:10px}
+.sparklbl{font-size:10px;color:var(--muted);font-family:var(--mono);margin-bottom:4px;display:flex;justify-content:space-between}
+.emptyface{padding:22px}
+.pocket{font-size:11px;color:var(--muted);font-family:var(--mono);margin-top:2px}
+</style>
+</head>
+<body>
+<aside class="rail" id="hakim-rail"></aside>
+<div class="app">
+  <div class="topbar"><div><h1>Family</h1><div class="subtitle">per-person truth · who spends, who holds, who owes</div></div></div>
+  <div id="body"><div class="secsub">Loading…</div></div>
+</div>
+<script>
+const esc=s=>(s||'').replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const money0=n=>Number(n||0).toLocaleString('en-US',{maximumFractionDigits:0});
+function m(n){n=Number(n||0);const neg=n<0;n=Math.abs(n);const i=Math.floor(n).toLocaleString('en-US');const d=(n-Math.floor(n)).toFixed(2).slice(1);return `<span class="cur">SAR</span>${neg?'−':''}${i}<span class="dec">${d}</span>`;}
+const COL={Hisham:'#72D5C8',Sarah:'#e879a6',Aser:'#a78bfa',Adam:'#5b8def',Family:'#7dd3fc',Maid:'#d0946b',Driver:'#e8b95a'};
+function initials(n){return (n||'?').slice(0,2);}
+function moLabel(ym){return new Date(ym+'-01T00:00:00').toLocaleDateString('en-GB',{month:'short'});}
+function spark(trend,col){
+  const v=trend.map(x=>x.spend);const mx=Math.max(1,...v);const W=260,H=34;
+  if(v.length<2)return '<div class="secsub" style="margin:0">trend builds as months complete</div>';
+  const pts=v.map((s,i)=>`${(i*(W/(v.length-1))).toFixed(1)},${(H-2-(s/mx)*(H-6)).toFixed(1)}`).join(' ');
+  const dots=v.map((s,i)=>`<circle cx="${(i*(W/(v.length-1))).toFixed(1)}" cy="${(H-2-(s/mx)*(H-6)).toFixed(1)}" r="2.4" fill="${col}"/>`).join('');
+  // hover band per month → shared face tooltip (one-owner)
+  const step=W/(v.length-1);const M=x=>window.hkMoney?window.hkMoney(x):('SAR '+money0(x));
+  const hov=trend.map((t,i)=>`<rect x="${(i*step-step/2).toFixed(1)}" y="0" width="${step.toFixed(1)}" height="${H}" fill="transparent" data-tip="${moLabel(t.month)} · ${M(t.spend)} spent"/>`).join('');
+  return `<svg viewBox="0 0 ${W} ${H}" width="100%" height="${H}" preserveAspectRatio="none"><polyline points="${pts}" fill="none" stroke="${col}" stroke-width="1.8"/>${dots}${hov}</svg>`;
+}
+
+async function load(){
+  let d;try{d=await(await fetch('/api/family')).json();}catch(e){document.getElementById('body').innerHTML='<div class="card">Could not load Family.</div>';return;}
+  let h='';
+  // maturity banner for per-person trends (need 3 complete months)
+  h+=window.matBanner(d.maturity,'Per-person trend',{hideWhenMet:true});
+
+  // household summary
+  const totSpend=d.people.reduce((a,p)=>a+p.spend,0);
+  h+=`<div class="card"><div class="lbl">Household · this month</div>
+    <div class="strip" style="margin-top:10px">
+      <div><div class="n exp">−${m(totSpend)}</div><div class="s">people-tagged spending</div></div>
+      <div><div class="n">${money0(d.people.length)}</div><div class="s">people with a footprint</div></div>
+      <div><div class="n">${d.qattah_total>0?'SAR '+money0(d.qattah_total):'—'}</div><div class="s">qattah balances</div></div>
+      <div><div class="n">${d.owed_balance>0?'SAR '+money0(d.owed_balance):'—'}</div><div class="s">owed to the family</div></div>
+    </div></div>`;
+
+  // per-person cards
+  h+=`<div class="pgrid">`;
+  h+=d.people.map(p=>{
+    const col=COL[p.person]||'#8A90A6';
+    const owedLine=p.owed>0?`<div class="prow"><span class="pl">owes the family</span><span class="pv">SAR ${money0(p.owed)}</span></div>`:'';
+    const pockets=p.pockets.length?`<div class="pocket">pockets: ${p.pockets.map(x=>esc(x.name)+' '+money0(x.bal)).join(' · ')}</div>`:'';
+    return `<div class="pcard" onclick="location.href='/?person='+encodeURIComponent('${esc(p.person)}')">
+      <div class="phd"><div class="pav" style="background:${col}">${initials(p.person)}</div>
+        <div><div class="pnm">${esc(p.person)}</div><div class="pmeta">${p.count} txn this month · ${p.all_count} all-time</div></div></div>
+      <div class="prow"><span class="pl">spent this month</span><span class="pv exp">−${m(p.spend)}</span></div>
+      ${p.income>0?`<div class="prow"><span class="pl">income this month</span><span class="pv inc">+${m(p.income)}</span></div>`:''}
+      ${p.pocket_total?`<div class="prow"><span class="pl">pocket balance</span><span class="pv">SAR ${money0(p.pocket_total)}</span></div>`:''}
+      ${owedLine}
+      ${pockets}
+      <div class="spark"><div class="sparklbl"><span>monthly spend</span><span>${p.trend.map(t=>moLabel(t.month)).join(' · ')}</span></div>${spark(p.trend,col)}</div>
+    </div>`;
+  }).join('');
+  h+=`</div>`;
+
+  // qattah / owed honest state
+  if(!(d.qattah_total>0) && !(d.owed_balance>0)){
+    h+=`<div class="card"><div class="sec">Qattah & lending</div><div class="emptyface"><div class="secsub" style="margin:0">No qattah tabs or family loans recorded yet. When you lend or start a qattah, it shows here per person. <a href="/owed" style="color:var(--gold2)">open Owed to me →</a></div></div></div>`;
+  }else{
+    h+=`<div class="card"><div class="sec">Qattah & lending</div><div class="secsub">per-person balances live on the Owed-to-me ledger</div>
+      <div class="strip"><div><div class="n">SAR ${money0(d.qattah_total)}</div><div class="s">in qattah tabs</div></div><div><div class="n">SAR ${money0(d.owed_balance)}</div><div class="s">total owed to family</div></div></div>
+      <div class="secsub" style="margin:12px 0 0"><a href="/owed" style="color:var(--gold2)">open Owed to me →</a></div></div>`;
+  }
+
+  document.getElementById('body').innerHTML=h;
+}
+load();
+</script>
+<script src="/rail.js"></script>
+</body>
+</html>

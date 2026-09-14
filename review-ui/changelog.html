@@ -1,0 +1,59 @@
+<!doctype html>
+<html lang="en" dir="ltr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>HAKIM · What's new</title>
+<style>
+:root{
+ --bg:#0D0F16;--panel:#1B1F2C;--panel2:#232837;--line:#262B3A;--railbg:#0A0C12;
+ --gold:#e8b95a;--gold2:#72D5C8;--mint:#72D5C8;--txt:#FFFFFF;--lbl:#8A90A6;--muted:#5A6072;
+ --mono:'JetBrains Mono',ui-monospace,'SF Mono',Menlo,monospace;--sans:-apple-system,system-ui,"SF Pro Display","Segoe UI",Roboto,sans-serif;
+ --sp:24px;--rad:14px;}
+*{box-sizing:border-box}
+html,body{margin:0;min-height:100%;background:var(--bg);color:var(--txt);font-family:var(--sans);font-size:15px}
+a{color:inherit;text-decoration:none}
+.rail{position:fixed;left:0;top:0;bottom:0;width:222px;z-index:40;background:var(--railbg);border-right:1px solid var(--line);display:flex;flex-direction:column;padding:18px 12px 12px;overflow-y:auto}
+.brand{padding:2px 8px 16px;cursor:pointer}.brand .wm{font-family:var(--mono);font-size:15px;letter-spacing:2px;font-weight:800}.brand .wm .sp{color:var(--gold)}
+.brand .sub{display:block;font-family:var(--mono);font-size:9px;letter-spacing:3px;color:var(--muted);margin-top:3px}
+.nav{display:flex;align-items:center;gap:11px;padding:10px 12px;border-radius:9px;color:var(--lbl);font-weight:600;font-size:14.5px;cursor:pointer}
+.nav i{font-style:normal;width:18px;text-align:center;opacity:.85}.nav:hover{background:#1a1d23;color:var(--txt)}.nav.active{background:rgba(114,213,200,.12);color:var(--gold2)}
+.spacer{flex:1;min-height:12px}.railstat{font-family:var(--mono);font-size:11px;color:var(--muted);border-top:1px solid var(--line);padding-top:12px}
+.app{max-width:760px;padding:22px 28px 64px;margin-left:max(222px,calc((100% - 760px)/2));margin-right:auto}
+@media(max-width:900px){.rail{width:56px;padding:14px 6px}.brand .wm{font-size:0}.brand .wm::before{content:"✦";font-size:18px;color:var(--gold)}.brand .sub,.nav span,.railstat{display:none}.nav{justify-content:center}.app{margin-left:56px}}
+@media(max-width:480px){.app{padding:14px 12px 48px}}
+.topbar{margin-bottom:var(--sp)}.topbar h1{font-size:23px;font-weight:700;margin:0}.topbar .subtitle{font-size:12.5px;color:var(--muted);margin-top:4px;font-family:var(--mono)}
+.entry{border-left:2px solid var(--line);padding:0 0 22px 20px;margin-left:8px;position:relative}
+.entry::before{content:'';position:absolute;left:-6px;top:4px;width:10px;height:10px;border-radius:50%;background:var(--mint);box-shadow:0 0 8px var(--mint)}
+.entry .date{font-family:var(--mono);font-size:11px;color:var(--gold2);letter-spacing:1px}
+.entry h3{font-size:15.5px;margin:4px 0 8px}
+.entry .body{font-size:13.5px;line-height:1.7;color:var(--lbl);white-space:pre-wrap}
+.entry .body b{color:var(--txt)}
+.none{color:var(--muted);font-family:var(--mono);font-size:12px;padding:24px;text-align:center}
+</style>
+</head>
+<body>
+<aside class="rail" id="hakim-rail"></aside>
+<div class="app">
+  <div class="topbar"><h1>📣 What's new</h1><div class="subtitle">HAKIM's build record, newest first · straight from STATE.md · <a href="/guide" style="color:var(--mint)">back to Guide →</a></div></div>
+  <div id="log"><div class="none">Loading…</div></div>
+</div>
+<script>
+const esc=s=>(s||'').replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+function fmt(d){if(!d)return '';try{return new Date(d+'T00:00:00').toLocaleDateString('en-GB',{weekday:'long',day:'numeric',month:'long',year:'numeric'});}catch(e){return d;}}
+// light markdown: **bold**, `code`, strip leading # and list markers
+function md(s){return esc(s).replace(/\*\*(.+?)\*\*/g,'<b>$1</b>').replace(/`(.+?)`/g,'<b>$1</b>').replace(/^\s*[-*]\s+/gm,'• ').replace(/^#+\s*/gm,'');}
+async function load(){
+  let d;try{d=await(await fetch('/api/changelog')).json();}catch(e){document.getElementById('log').innerHTML='<div class="none">Changelog unavailable.</div>';return;}
+  const es=d.entries||[];
+  if(!es.length){document.getElementById('log').innerHTML='<div class="none">No entries yet.</div>';return;}
+  document.getElementById('log').innerHTML=es.map(e=>`<div class="entry">
+    ${e.date?`<div class="date">${fmt(e.date)}</div>`:''}
+    <h3>${md(e.title)}</h3>
+    <div class="body">${md(e.body||'')}</div></div>`).join('');
+}
+load();
+</script>
+<script src="/rail.js"></script>
+</body>
+</html>

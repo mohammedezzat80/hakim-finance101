@@ -1,0 +1,1156 @@
+<!doctype html>
+<html lang="en" dir="ltr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>HAKIM · Accounts</title>
+<script src="/face.js"></script>
+<link rel="stylesheet" href="/face.css">
+<style>
+:root{
+ --bg:#0D0F16;--panel:#1B1F2C;--panel2:#232837;--line:#262B3A;--railbg:#0A0C12;
+ --gold:#e8b95a;--gold2:#72D5C8;--teal:#72D5C8;--mint:#72D5C8;--red:#E05252;--amber:#c9a15f;
+ --inc:#72D5C8;--exp:#D98A93;--trf:#9BA3C9;
+ --txt:#FFFFFF;--lbl:#8A90A6;--muted:#5A6072;
+ --mono:'JetBrains Mono',ui-monospace,'SF Mono',Menlo,monospace;--sans:-apple-system,system-ui,"SF Pro Display","Segoe UI",Roboto,sans-serif;
+ --sp:24px;--rad:14px;}
+*{box-sizing:border-box}
+html,body{margin:0;min-height:100%;background:var(--bg);color:var(--txt);font-family:var(--sans);font-size:15px}
+a{color:inherit;text-decoration:none}
+.rail{position:fixed;left:0;top:0;bottom:0;width:222px;z-index:40;background:var(--railbg);border-right:1px solid var(--line);display:flex;flex-direction:column;padding:18px 12px 12px;overflow-y:auto}
+.rail::-webkit-scrollbar{width:0}
+.brand{padding:2px 8px 16px;cursor:pointer}.brand .wm{font-family:var(--mono);font-size:15px;letter-spacing:2px;font-weight:800}
+.brand .wm .sp{color:var(--gold)}.brand .sub{display:block;font-family:var(--mono);font-size:9px;letter-spacing:3px;color:var(--muted);margin-top:3px}
+.nav{display:flex;align-items:center;gap:11px;padding:10px 12px;border-radius:9px;color:var(--lbl);font-weight:600;font-size:14.5px;cursor:pointer}
+.nav i{font-style:normal;width:18px;text-align:center;opacity:.85}.nav:hover{background:#1a1d23;color:var(--txt)}
+.nav.active{background:rgba(114,213,200,.12);color:var(--gold2)}
+.nav .qbadge{margin-left:auto;background:var(--mint);color:#0D0F16;border-radius:9px;padding:1px 7px;font-size:11px;font-weight:800;font-family:var(--mono)}
+.rsec{font-family:var(--mono);font-size:9px;letter-spacing:2px;text-transform:uppercase;color:#4b5260;margin:18px 10px 8px;display:flex;align-items:center}
+.rsec a{margin-left:auto;color:var(--gold2);font-size:9px}
+.acc{display:flex;align-items:center;padding:7px 12px;border-radius:8px;cursor:pointer;font-size:13px}
+.acc:hover{background:#1a1d23}.acc .an{flex:1;color:var(--lbl);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;padding-right:8px}
+.acc .av{font-family:var(--mono);font-weight:600}.acc.crd .av{color:var(--amber)}
+.soon{display:flex;align-items:center;gap:11px;padding:8px 12px;color:#4b5260;font-size:13.5px}.soon i{font-style:normal;width:18px;text-align:center}
+.soon small{margin-left:auto;font-size:9px;letter-spacing:1px;text-transform:uppercase;color:#4b5260;font-family:var(--mono)}
+.spacer{flex:1;min-height:12px}
+.railstat{font-family:var(--mono);font-size:11px;color:var(--muted);border-top:1px solid var(--line);padding-top:12px;margin-top:8px;display:flex;flex-direction:column;gap:8px}
+.railstat .live{display:inline-flex;align-items:center;gap:7px;color:var(--teal)}
+.railstat .live .d{width:7px;height:7px;border-radius:50%;background:var(--teal);box-shadow:0 0 7px var(--teal);animation:pul 2s infinite}
+.railstat .live.off{color:var(--muted)}.railstat .live.off .d{background:var(--muted);box-shadow:none;animation:none}
+.railstat .live.amber{color:var(--amber)}.railstat .live.amber .d{background:var(--amber)}
+.railstat .bad{color:var(--red)}
+@keyframes pul{0%,100%{opacity:1}50%{opacity:.3}}
+.app{max-width:1600px;padding:22px 28px 64px;margin-left:max(222px,calc((100% - 1600px)/2));margin-right:auto}
+@media(max-width:900px){.rail{width:56px;padding:14px 6px}.brand .wm{font-size:0}.brand .wm::before{content:"✦";font-size:18px;color:var(--gold)}.brand .sub,.nav span:not(.qbadge),.soon span,.rsec,.acc,.railstat{display:none}.nav,.soon{justify-content:center}.app{margin-left:56px}}
+.cur{font-size:.62em;color:var(--muted);margin-right:3px;font-weight:600}.dec{font-size:.62em;color:var(--muted)}
+.topbar{display:flex;align-items:center;gap:14px;margin-bottom:var(--sp);flex-wrap:wrap}
+.topbar h1{font-size:22px;font-weight:700;margin:0}.topbar .subtitle{font-size:12px;color:var(--muted);margin-top:3px;font-family:var(--mono)}
+.grow{flex:1}
+.btn{background:var(--panel);color:var(--txt);border:1px solid var(--line);border-radius:10px;padding:9px 15px;font-size:13px;font-family:var(--mono);cursor:pointer}
+.nmi{padding:9px 12px;border-radius:8px;font-size:13px;cursor:pointer;white-space:nowrap}.nmi:hover{background:rgba(114,213,200,.12)}
+.btn:hover{border-color:#39415a}.btn.pri{background:var(--gold);color:#0D0F16;border:none;font-weight:800}
+.layout{display:grid;grid-template-columns:8fr 4fr;gap:var(--sp);align-items:start}
+.layout>*{min-width:0}
+@media(max-width:1200px){.layout{grid-template-columns:1fr}}
+.card{background:linear-gradient(180deg,#1B1F2C,#151823);border:1px solid var(--line);border-radius:var(--rad);padding:18px 20px}
+.card+.card{margin-top:var(--sp)}
+/* net worth hero */
+/* hero-zone spacing pass (item 2): more air around the net-worth number; below the fold untouched */
+.nwcard{padding:26px 24px 22px}
+.nw{display:flex;gap:38px;align-items:baseline;flex-wrap:wrap}
+.nw .n{font-family:var(--face-display);font-size:42px;font-weight:600;letter-spacing:-.5px;line-height:1}
+.nw .s{font-size:10px;color:var(--muted);font-family:var(--mono);margin-top:6px;text-transform:uppercase;letter-spacing:1px}
+.nw .n.sm{font-size:20px}
+.inc{color:var(--inc)}.exp{color:var(--exp)}.amber{color:var(--amber)}.muted{color:var(--muted)}
+/* group */
+.grp{margin-top:var(--sp)}
+.ghd{display:flex;align-items:baseline;gap:10px;padding:2px 2px 8px}
+.ghd .gn{font-size:13px;font-weight:700}.ghd .gi{font-size:14px}
+.ghd .gc{font-family:var(--mono);font-size:10px;color:var(--muted)}
+.ghd .gt{margin-left:auto;font-family:var(--mono);font-weight:800;font-size:14px}
+.arow{display:flex;align-items:center;gap:12px;padding:12px 10px;border-radius:11px;cursor:pointer;border:1px solid transparent}
+.arow:hover{background:#151823;border-color:var(--line)}
+.arow.open{background:#151823;border-color:#39415a}
+.arow .grab{cursor:grab;color:var(--muted);font-size:13px}
+.arow .av{width:34px;height:34px;border-radius:10px;display:grid;place-items:center;font-size:13px;font-weight:800;font-family:var(--mono);flex-shrink:0}
+.arow .an{flex:1;min-width:0}
+.arow .an b{font-weight:600;font-size:14px;display:flex;align-items:center;gap:8px}
+.arow .an .meta{font-family:var(--mono);font-size:10.5px;color:var(--muted);margin-top:2px}
+.arow .bal{font-family:var(--mono);font-weight:800;font-size:15px;white-space:nowrap}
+.arow .cy{font-family:var(--mono);font-size:10px;color:var(--muted);margin-left:5px}
+.netmark{font-family:var(--mono);font-size:8.5px;text-transform:uppercase;letter-spacing:1px;color:var(--muted);border:1px solid var(--line);border-radius:20px;padding:1px 6px}
+.util{display:flex;align-items:center;gap:8px;margin-top:5px;font-family:var(--mono);font-size:10px}
+.util .ubar{position:relative;width:120px;height:5px;border-radius:3px;background:#2a2f3d;overflow:hidden}
+.util .ubar i{position:absolute;left:0;top:0;bottom:0;border-radius:3px}
+.util .k{color:var(--muted)}
+.badge{font-family:var(--mono);font-size:8.5px;text-transform:uppercase;letter-spacing:1px;color:var(--amber);border:1px solid var(--line);border-radius:20px;padding:1px 6px}
+.grp.dragover{outline:1px dashed var(--mint);border-radius:12px}
+/* detail */
+.detail{border:1px solid var(--line);border-top:none;border-radius:0 0 12px 12px;margin:-2px 2px 6px;padding:16px 18px;background:#12151d}
+.detail .dtop{display:flex;gap:20px;flex-wrap:wrap;margin-bottom:12px}
+.detail .dstat .l{font-size:9px;text-transform:uppercase;letter-spacing:1px;color:var(--muted);font-family:var(--mono)}
+.detail .dstat .v{font-family:var(--mono);font-weight:800;font-size:15px;margin-top:3px}
+.enterbtn{display:block;text-align:center;background:rgba(114,213,200,.12);border:1px solid rgba(114,213,200,.45);color:var(--mint);border-radius:10px;padding:11px;font-weight:700;font-size:13px;margin:12px 0;cursor:pointer;transition:.12s}
+.enterbtn:hover{background:rgba(114,213,200,.2)}
+/* plan card — hero-zone spacing pass (item 2): more air in the schedule header/summary */
+.finbox{border:1px solid var(--line);border-radius:12px;padding:17px 18px;margin:12px 0;background:rgba(255,255,255,.02)}
+.finhd{font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:var(--gold2);margin-bottom:14px;font-family:var(--mono)}
+.fingrid{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:14px}
+.fingrid .fl{font-size:9px;text-transform:uppercase;letter-spacing:1px;color:var(--muted);font-family:var(--mono)}
+.fingrid .fv{font-family:var(--mono);font-weight:800;font-size:16px;margin-top:4px}
+.fbar{height:6px;border-radius:3px;background:var(--panel2);overflow:hidden;margin-bottom:10px}
+.fbar i{display:block;height:100%;background:var(--mint);border-radius:3px}
+.finnext{font-size:12px;font-family:var(--mono);color:var(--lbl);margin-bottom:10px}
+.detail .acts{display:flex;flex-wrap:wrap;gap:7px;margin:6px 0 14px}
+.detail .acts button{background:var(--panel2);border:1px solid var(--line);color:var(--lbl);border-radius:8px;padding:6px 11px;font-size:11.5px;font-family:var(--mono);cursor:pointer}
+.detail .acts button:hover{color:var(--txt)}.detail .acts button.dz:hover{color:var(--exp);border-color:var(--exp)}
+.rtx{display:flex;align-items:center;gap:10px;padding:6px 0;font-size:12.5px}.rtx+.rtx{border-top:1px solid #1c2130}
+.rtx .rn{flex:1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;color:var(--lbl)}
+.rtx .rd{font-family:var(--mono);font-size:10px;color:var(--muted)}
+.rtx .ra{font-family:var(--mono);font-weight:700}
+/* right rail cards */
+.rc{background:linear-gradient(180deg,#1B1F2C,#151823);border:1px solid var(--line);border-radius:var(--rad);padding:16px 18px}
+.rc+.rc{margin-top:var(--sp)}
+.rt{font-size:12px;font-weight:700;margin-bottom:2px}.rtsub{font-size:10px;color:var(--muted);font-family:var(--mono);margin-bottom:12px}
+#holdings .card{margin-bottom:var(--sp)}
+.hrow{display:flex;align-items:center;gap:10px;padding:9px 0;border-top:1px solid var(--line)}
+.hrow.stale{opacity:.6}
+.hrow .hi{font-size:16px;width:22px;text-align:center;flex-shrink:0}
+.hrow .hmid{flex:1;min-width:0}.hrow .hn{font-size:13px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.hrow .hs{font-family:var(--mono);font-size:10.5px;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;margin-top:2px}
+.hrow .hupd{background:var(--panel2);border:1px solid var(--line);color:var(--lbl);border-radius:8px;padding:5px 10px;font-size:11px;font-family:var(--mono);cursor:pointer;flex-shrink:0}
+.hrow .hupd:hover{color:var(--txt);border-color:var(--mint)}
+.split{display:flex;height:14px;border-radius:7px;overflow:hidden;margin:6px 0 10px}
+.split i{height:100%}
+.kv{display:flex;justify-content:space-between;font-size:12.5px;padding:5px 0}.kv+.kv{border-top:1px solid var(--line)}
+.kv .k{color:var(--lbl)}.kv .v{font-family:var(--mono);font-weight:700}
+.notice{color:var(--muted);font-size:13px;padding:14px 4px;font-family:var(--mono)}
+/* modal */
+.ov{position:fixed;inset:0;background:rgba(0,0,0,.55);z-index:120;display:none;align-items:flex-start;justify-content:center;padding-top:8vh}
+.ov.show{display:flex}
+.box{width:min(520px,94vw);max-height:84vh;overflow-y:auto;background:#151823;border:1px solid var(--line);border-radius:14px;padding:20px 22px}
+.mhd{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px}.mhd .x{cursor:pointer;color:var(--muted);font-size:18px}
+.fld{display:block;font-size:10px;letter-spacing:1px;text-transform:uppercase;color:var(--lbl);font-weight:700;margin:12px 0 6px}
+input,select{width:100%;background:var(--panel2);color:var(--txt);border:1px solid var(--line);border-radius:9px;padding:10px 12px;font-size:13px;font-family:var(--mono)}
+.save{width:100%;background:var(--gold);color:#0D0F16;border:none;border-radius:10px;padding:11px;font-weight:800;cursor:pointer;margin-top:16px}
+</style>
+</head>
+<body>
+<aside class="rail" id="hakim-rail"></aside>
+<div class="app">
+  <div class="topbar">
+    <div><h1>Accounts</h1><div class="subtitle">your position — every account, grouped · drag ⠿ to reorder · click to open</div></div>
+    <div class="grow"></div>
+    <button class="btn" onclick="openCount()"><svg class="ic" viewBox="0 0 24 24"><rect x="5" y="3" width="14" height="18" rx="2"/><path d="M8 7h8M8 11h.01M12 11h.01M16 11h.01M8 15h.01M12 15h.01M16 15h.01"/></svg> Count cash</button>
+    <div style="position:relative;display:inline-block">
+      <button class="btn pri" onclick="event.stopPropagation();document.getElementById('newmenu').style.display=document.getElementById('newmenu').style.display==='block'?'none':'block'">+ New ▾</button>
+      <div id="newmenu" style="display:none;position:absolute;right:0;top:110%;z-index:50;background:#1B1F2C;border:1px solid var(--line);border-radius:12px;padding:6px;min-width:230px;box-shadow:0 12px 32px rgba(0,0,0,.5)">
+        <div class="nmi" onclick="nm(openBnplWizard)"><svg class="ic" viewBox="0 0 24 24"><path d="M6 8h12l1 12H5z"/><path d="M9 8a3 3 0 0 1 6 0"/></svg> &nbsp;Tabby / Tamara plan</div>
+        <div class="nmi" onclick="nm(newLoan)"><svg class="ic" viewBox="0 0 24 24"><path d="M3 10l9-6 9 6M5 10v9M19 10v9M9 19v-6M15 19v-6M3 21h18"/></svg> &nbsp;Loan (Tawarruq / personal)</div>
+        <div class="nmi" onclick="nm(newLease)"><svg class="ic" viewBox="0 0 24 24"><path d="M5 13l1.5-4.5A2 2 0 0 1 8.4 7h7.2a2 2 0 0 1 1.9 1.5L19 13M4 13h16v4H4z"/><circle cx="7.5" cy="17" r="1.3"/><circle cx="16.5" cy="17" r="1.3"/></svg> &nbsp;Lease-to-own (car)</div>
+        <div class="nmi" onclick="nm(newInvestment)"><svg class="ic" viewBox="0 0 24 24"><path d="M5 3h9l5 5v13H5z"/><path d="M14 3v5h5M8 13h8M8 17h5"/></svg> &nbsp;Investment (certificate · fund · gold)</div>
+        <div class="nmi" style="border-top:1px solid var(--line);margin-top:4px;padding-top:8px" onclick="nm(openAdd)"><svg class="ic" viewBox="0 0 24 24"><path d="M3 10l9-6 9 6M5 10v9M19 10v9M9 19v-6M15 19v-6M3 21h18"/></svg> &nbsp;Bank · cash · card · other account</div>
+      </div>
+    </div>
+  </div>
+  <div class="card nwcard"><div class="nw" id="nw"></div></div>
+  <div id="loyalty"></div>
+  <div id="cardreg"></div>
+  <div class="layout">
+    <div id="groups"><div class="notice">Loading…</div></div>
+    <div><div id="holdings"></div><div id="rail2"></div></div>
+  </div>
+</div>
+
+<div class="ov" id="addm" onclick="if(event.target.id==='addm')closeAdd()">
+  <div class="box">
+    <div class="mhd"><b id="addtitle">Add account</b><span class="x" onclick="closeAdd()">✕</span></div>
+    <div id="addbody"></div>
+  </div>
+</div>
+
+<div class="ov" id="cardm" onclick="if(event.target.id==='cardm')closeCard()">
+  <div class="box">
+    <div class="mhd"><b id="cardtitle">Add card</b><span class="x" onclick="closeCard()">✕</span></div>
+    <div id="cardbody"></div>
+  </div>
+</div>
+
+<div class="ov" id="countm" onclick="if(event.target.id==='countm')closeCount()">
+  <div class="box" style="width:min(600px,95vw)">
+    <div class="mhd"><b><svg class="ic" viewBox="0 0 24 24"><rect x="5" y="3" width="14" height="18" rx="2"/><path d="M8 7h8M8 11h.01M12 11h.01M16 11h.01M8 15h.01M12 15h.01M16 15h.01"/></svg> Count cash</b><span class="x" onclick="closeCount()">✕</span></div>
+    <div id="countbody"><div class="notice">Loading cash accounts…</div></div>
+  </div>
+</div>
+
+<div class="ov" id="bnplm" onclick="if(event.target.id==='bnplm')document.getElementById('bnplm').classList.remove('show')">
+  <div class="box" style="width:min(540px,95vw)">
+    <div class="mhd"><b><svg class="ic" viewBox="0 0 24 24"><path d="M6 8h12l1 12H5z"/><path d="M9 8a3 3 0 0 1 6 0"/></svg> New Tabby / Tamara plan</b><span class="x" onclick="document.getElementById('bnplm').classList.remove('show')">✕</span></div>
+    <div style="font-size:11px;color:var(--muted);font-family:var(--mono);margin-bottom:12px">One pass — HAKIM divides the total for you, books the purchase, and builds the schedule. Link your already-paid charges after; each reduces the debt.</div>
+    <label class="fld">Provider</label>
+    <div class="seg" id="bw_prov" style="display:flex;gap:8px;margin-bottom:10px">
+      <button type="button" class="on" onclick="bwProv('Tabby')">Tabby</button><button type="button" onclick="bwProv('Tamara')">Tamara</button><button type="button" onclick="bwProv('other')">Other</button></div>
+    <input id="bw_provother" placeholder="provider name" style="display:none;width:100%;margin-bottom:10px">
+    <label class="fld">What did you buy?</label><input id="bw_item" placeholder="e.g. flynas flights" style="width:100%;margin-bottom:10px">
+    <div style="display:flex;gap:10px;margin-bottom:10px">
+      <div style="flex:1"><label class="fld">Total (SAR)</label><input id="bw_total" type="number" inputmode="decimal" oninput="bwPreview()" style="width:100%"></div>
+      <div style="flex:1"><label class="fld">Installments</label><input id="bw_n" type="number" value="4" oninput="bwPreview()" style="width:100%"></div>
+    </div>
+    <div id="bw_preview" style="font-family:var(--mono);font-size:12px;color:var(--gold2);margin-bottom:10px"></div>
+    <div style="display:flex;gap:10px;margin-bottom:10px">
+      <div style="flex:1"><label class="fld">Purchase date</label><input id="bw_date" type="date" style="width:100%"></div>
+      <div style="flex:1"><label class="fld">First installment due</label><input id="bw_first" type="date" style="width:100%"></div>
+    </div>
+    <div style="display:flex;gap:10px;margin-bottom:14px">
+      <div style="flex:1"><label class="fld">Category <span style="color:var(--gold)">— required</span></label>
+        <button type="button" id="bw_catbtn" onclick="pickBwCat()" style="width:100%;text-align:left;padding:9px 10px;border:1px solid var(--line);border-radius:8px;background:transparent;color:var(--muted);cursor:pointer">Choose a category…</button></div>
+      <div style="flex:1"><label class="fld">Person (optional)</label><select id="bw_person" style="width:100%"><option value="">— nobody —</option></select></div>
+    </div>
+    <button class="save" style="width:100%;background:var(--gold);color:#0D0F16;border:none;border-radius:10px;padding:11px;font-weight:800;cursor:pointer" onclick="createBnpl()">Create plan</button>
+    <div id="bw_result" style="margin-top:10px;font-family:var(--mono);font-size:11px"></div>
+  </div>
+</div>
+
+<script>
+const esc=s=>(s||'').replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const money0=n=>Number(n||0).toLocaleString('en-US',{maximumFractionDigits:0});
+function m2(n){n=Number(n||0);const neg=n<0;n=Math.abs(n);const i=Math.floor(n).toLocaleString('en-US');const d=(n-Math.floor(n)).toFixed(2).slice(1);return `<span class="cur">SAR</span>${neg?'−':''}${i}<span class="dec">${d}</span>`;}
+const H={'Content-Type':'application/json'};
+async function post(u,b){return (await(await fetch(u,{method:'POST',headers:H,body:JSON.stringify(b)})).json());}
+const GI={'Payment accounts':window.ic('bank'),'Banks':window.ic('bank'),'Wallets':window.ic('device'),'Cards':window.ic('card'),'Owed to me':window.ic('handshake'),'Other assets':window.ic('home'),'Other liabilities':window.ic('chart'),'Investments':window.ic('chart'),'Gold & metals':window.ic('gold'),'HISSAR':window.ic('chart'),'Company equity':window.ic('factory'),'Financing':window.ic('receipt')};
+const GLABEL={'Banks':'Payment accounts'};
+const DEBTG=['Cards','Other liabilities','Financing'];
+function acctColor(n){n=(n||'').toLowerCase();return n.includes('snb')?'#4c86c0':n.includes('sabb')?'#b04a52':n.includes('stc')?'#a78bfa':(n.includes('barq')||n.includes('d360'))?'#72D5C8':n.includes('villa')||n.includes('home')?'#d0946b':'#6b7280';}
+function initials(n){return (n||'?').replace(/[•·].*/,'').trim().split(/\s+/).slice(0,2).map(w=>w[0]).join('').toUpperCase();}
+const NET={visa:'VISA',mastercard:'MC',mada:'mada'};
+
+let GROUPED=null,ACCTS=[],OPEN=null,BOOT=null;
+async function load(){
+  const [g,a,b]=await Promise.all([
+    fetch('/api/accounts_grouped').then(r=>r.json()),
+    fetch('/api/accounts?closed=1').then(r=>r.json()),
+    fetch('/api/bootstrap').then(r=>r.json()).catch(()=>({}))]);
+  GROUPED=g;ACCTS=a.accounts;BOOT=b;
+  renderNW();renderGroups();renderRail2();loadLoyalty();loadCardRegistry();
+  // deep-link: /accounts?account=NAME expands that account (from any rail click)
+  const want=new URL(location).searchParams.get('account');
+  if(want&&!OPEN){const a2=ACCTS.find(x=>x.name===want);if(a2){toggle(a2.id);}}
+}
+function byId(id){return ACCTS.find(a=>a.id===id)||{};}
+// 🗂 Card expiry registry — last-4 + owner + expiry only, NEVER full numbers. Amber 60d / red 30d,
+// so no card in the family expires unannounced (a card dying = failed autopays / stranded installments).
+const CARDNET={visa:'Visa',mastercard:'MC',mada:'mada',unknown:'—'};
+let CARDREG=[];
+async function loadCardRegistry(){const host=document.getElementById('cardreg');if(!host)return;
+  let d;try{d=await(await fetch('/api/card/registry')).json();}catch(e){return;}
+  CARDREG=d.cards||[];
+  const NET=CARDNET;
+  const rows=CARDREG.map(c=>{
+    const col=c.alert==='red'||c.alert==='expired'?'var(--exp)':(c.alert==='amber'?'var(--gold)':'var(--muted)');
+    const expTxt=c.expiry?`<span style="color:${col}">exp ${c.expiry}${c.days_to_expiry!=null?` · ${c.days_to_expiry}d`:''}${c.alert==='expired'?' EXPIRED':(c.alert?' — replace soon':'')}</span>`
+      :`<span class="setl" style="color:var(--gold2);cursor:pointer" onclick="openCard('${c.last4}')">expiry not set — add →</span>`;
+    return `<div style="display:flex;align-items:center;gap:12px;padding:8px 4px;border-top:1px solid var(--line)">
+      <div style="width:44px;font-family:var(--mono);font-weight:700;font-size:13px">•${esc(c.last4)}</div>
+      <div style="flex:1;min-width:0"><div style="font-size:13px">${esc(c.account||((c.owner||'?')+' '+(NET[c.network]||c.network)+' '+(c.type||'card')))}${c.account?'':'<span style="color:var(--muted);font-size:10px"> · no linked account</span>'}</div>
+        <div style="font-family:var(--mono);font-size:11px;color:var(--muted)">${esc(c.owner||'?')} · ${NET[c.network]||c.network}${c.tier?' · '+esc(c.tier):''} · ${c.type||'?'}</div></div>
+      <div style="font-family:var(--mono);font-size:11px;text-align:right">${expTxt}</div>
+      <button class="btn" style="padding:4px 9px;font-size:11px" onclick="openCard('${c.last4}')" title="Edit">✎</button></div>`;
+  }).join('')||'<div style="font-size:12px;color:var(--muted);padding:8px 4px">No cards yet — add one →</div>';
+  const soon=d.expiring&&d.expiring.length?`<div style="font-size:11px;color:var(--gold);font-family:var(--mono);margin-top:6px">⚠ ${d.expiring.length} card(s) expiring within 60 days</div>`:'';
+  host.innerHTML=`<div class="card" style="margin-bottom:14px"><div style="display:flex;align-items:center;gap:10px;margin-bottom:4px"><div style="font-size:16px">${window.ic('folder')}</div><div style="flex:1"><b>Card registry</b><div style="font-size:11px;color:var(--muted)">last-4 + expiry + owner only · never a full number</div></div><button class="btn" style="padding:5px 11px;font-size:12px" onclick="openCard('')">➕ Add card</button></div>${rows}${soon}</div>`;
+}
+// Add / edit a card — full self-service (owner · network · type · tier · expiry · linked account).
+// Empty l4 = add-new (last-4 editable); existing l4 = edit (last-4 locked). Real card ACCOUNTS
+// auto-link by last-4 and can't be unlinked here; a mada/loyalty card links to its bank manually.
+function openCard(l4){
+  const c=CARDREG.find(x=>x.last4===l4)||{};
+  const isNew=!l4;
+  const acctOpts=['<option value="">— none —</option>'].concat(
+    (ACCTS||[]).map(a=>`<option value="${a.id}" ${String(c.link_account)===String(a.id)?'selected':''}>${esc(a.name)}</option>`)).join('');
+  const netOpts=['unknown','visa','mastercard','mada'].map(n=>`<option value="${n}" ${(c.network||'unknown')===n?'selected':''}>${CARDNET[n]||n}</option>`).join('');
+  const typeOpts=[['credit','Credit card'],['debit','Debit / mada'],['prepaid','Prepaid']].map(([v,t])=>`<option value="${v}" ${c.type===v?'selected':''}>${t}</option>`).join('');
+  const autoLinked=!!c.account&&!c.link_account;   // linked because it IS a real card account
+  document.getElementById('cardtitle').textContent=isNew?'Add card':('Edit card •'+l4);
+  document.getElementById('cardbody').innerHTML=`
+    <label class="fld">Last-4 (never the full number)</label>
+    <input id="cl4" maxlength="4" placeholder="7877" value="${esc(l4||'')}" ${isNew?'':'readonly style="opacity:.6"'}>
+    <label class="fld">Owner</label><input id="cowner" placeholder="Hisham / Sarah / …" value="${esc(c.owner||'')}">
+    <label class="fld">Network (verified — never guessed)</label><select id="cnet">${netOpts}</select>
+    <label class="fld">Type</label><select id="ctype">${typeOpts}</select>
+    <label class="fld">Tier (optional — e.g. Signature, Alfursan)</label><input id="ctier" placeholder="" value="${esc(c.tier||'')}">
+    <label class="fld">Expiry (MM/YY, from the card face)</label><input id="cexp" placeholder="08/28" maxlength="5" value="${esc(c.expiry||'')}">
+    <label class="fld">Linked account ${autoLinked?'<span style="color:var(--muted);font-size:10px">· auto-linked to its card account</span>':''}</label>
+    <select id="clink" ${autoLinked?'disabled style="opacity:.6"':''}>${acctOpts}</select>
+    <button class="save" onclick="saveCard('${esc(l4||'')}')">${isNew?'Add card':'Save changes'}</button>
+    ${isNew?'':`<button class="btn" style="width:100%;margin-top:8px;color:var(--exp);border-color:var(--exp)" onclick="delCard('${esc(l4)}')">Delete card •${esc(l4)}</button>`}`;
+  document.getElementById('cardm').classList.add('show');
+}
+function closeCard(){document.getElementById('cardm').classList.remove('show');}
+async function saveCard(orig){
+  const l4=(document.getElementById('cl4').value||'').trim();
+  if(!l4){alert('Last-4 required');return;}
+  const body={last4:l4,
+    owner:(document.getElementById('cowner').value||'').trim(),
+    network:document.getElementById('cnet').value,
+    type:document.getElementById('ctype').value,
+    tier:(document.getElementById('ctier').value||'').trim(),
+    expiry:(document.getElementById('cexp').value||'').trim()};
+  const link=document.getElementById('clink');
+  if(!link.disabled)body.link_account=link.value||'';
+  const r=await post('/api/card/registry/set',body);
+  if(!r.ok){alert(r.error||'failed');return;}
+  closeCard();await loadCardRegistry();
+}
+async function delCard(l4){
+  const typed=prompt('Delete card •'+l4+' from the registry?\nThis forgets its owner/network/expiry/link — it does NOT delete any real account.\nType the last-4 to confirm:','');
+  if(typed===null)return;
+  if((typed||'').trim()!==l4){alert('Last-4 did not match — not deleted.');return;}
+  const r=await post('/api/card/registry/delete',{last4:l4});
+  if(!r.ok){alert(r.error||'failed');return;}
+  closeCard();
+  if(r.still_account)alert('Removed the metadata, but •'+l4+' is still a real card account — it stays in the registry (blank) until you archive that account.');
+  await loadCardRegistry();
+}
+// ✈ Loyalty miles — a non-monetary asset (NEVER in net worth). Balance is the airline's truth,
+// entered by hand; the system adds honest context (est earned from card spend) + a batch-expiry alert.
+async function loadLoyalty(){const host=document.getElementById('loyalty');if(!host)return;
+  let d;try{d=await(await fetch('/api/loyalty')).json();}catch(e){return;}
+  if(!d.programs||!d.programs.length){host.innerHTML=`<div class="card" style="margin-bottom:14px"><div style="display:flex;align-items:center;gap:10px"><div style="font-size:18px">✈</div><div style="flex:1"><b>Saudia Alfursan miles</b><div style="font-size:12px;color:var(--muted)">track miles you earn from card spend — never money, just miles</div></div><button class="btn pri" onclick="milesUpdate('alfursan')">Start tracking</button></div></div>`;return;}
+  host.innerHTML=d.programs.map(milesCard).join('');
+}
+function milesCard(p){
+  const alertCol=p.alert==='red'?'var(--exp)':(p.alert==='amber'?'var(--gold)':'var(--muted)');
+  const exp=p.next_expiry_date?`<span style="color:${alertCol}">${p.next_expiry_amount?money0(p.next_expiry_amount)+' miles ':''}expire ${p.next_expiry_date}${p.months_to_expiry!=null?' · '+p.months_to_expiry+'mo':''}${p.alert?' — use or lose':''}</span>`:'<span style="color:var(--muted)">expiry not set</span>';
+  const spark=milesSpark(p.history);
+  return `<div class="card" style="margin-bottom:14px">
+    <div style="display:flex;align-items:center;gap:12px;flex-wrap:wrap">
+      <div style="font-size:20px">${window.ic('plane')}</div>
+      <div style="flex:1;min-width:0"><div style="font-weight:700">${esc(p.name)}${p.tier?` · <span style="color:var(--gold2);font-size:12px">${esc(p.tier)}</span>`:''}</div>
+        <div style="font-size:11px;color:var(--muted);font-family:var(--mono)">not money · never in net worth · ${p.as_of?'as of '+p.as_of:'—'}</div></div>
+      <button class="btn" style="padding:5px 10px;font-size:11px" onclick="milesConfig('alfursan')">${window.ic('settings')}</button>
+      <button class="btn pri" style="padding:5px 12px;font-size:11px" onclick="milesUpdate('alfursan')">✎ Update</button></div>
+    <div style="display:flex;gap:26px;align-items:baseline;flex-wrap:wrap;margin-top:12px">
+      <div><div style="font-family:var(--mono);font-size:30px;font-weight:800;letter-spacing:-1px;color:var(--gold2)">${money0(p.balance||0)}</div><div style="font-size:10px;color:var(--muted);text-transform:uppercase;letter-spacing:1px">miles</div></div>
+      <div><div style="font-size:13px;font-family:var(--mono)">${exp}</div><div style="font-size:10px;color:var(--muted);text-transform:uppercase;letter-spacing:1px">next batch expiry</div></div>
+      ${p.est_earned_this_month!=null?`<div><div style="font-size:13px;font-family:var(--mono);color:var(--muted)">≈ +${money0(p.est_earned_this_month)} <span style="font-size:10px">est</span></div><div style="font-size:10px;color:var(--muted);text-transform:uppercase;letter-spacing:1px">earned this month · SAR ${money0(p.spend_this_month)} ÷ ${p.earn_rate||'?'}</div></div>`:''}</div>
+    ${spark}
+    ${p.est_earned_this_month?`<div class="notice" style="font-size:11px;margin-top:10px">Estimate only — never added to your balance. If the Saudia app shows fewer, some miles didn't post → <b>Claim missing Miles</b> in the app.</div>`:''}</div>`;
+}
+function milesSpark(hist){if(!hist||hist.length<2)return'';const W=280,H=44,pad=3;
+  const vals=hist.map(h=>h.balance||0),mn=Math.min(...vals),mx=Math.max(...vals),rng=(mx-mn)||1;
+  const pts=hist.map((h,i)=>{const x=pad+i*(W-2*pad)/(hist.length-1);const y=H-pad-((h.balance||0)-mn)/rng*(H-2*pad);return x.toFixed(1)+','+y.toFixed(1);}).join(' ');
+  return `<svg viewBox="0 0 ${W} ${H}" style="width:100%;height:44px;margin-top:10px"><polyline points="${pts}" fill="none" stroke="var(--gold2)" stroke-width="1.5"/></svg>`;}
+async function milesUpdate(key){
+  const bal=prompt('Miles balance (from the Saudia app — their number, exactly):');if(bal===null||bal==='')return;
+  const exp=prompt('Nearest batch expiry date the app shows (YYYY-MM-DD, blank to skip):','2028-08-13');
+  const amt=prompt('Amount expiring on that date, if the app shows it (blank = just the date):','');
+  const body={key,balance:bal};if(exp!==null){body.next_expiry_date=exp.trim();}if(amt!==null&&amt.trim())body.next_expiry_amount=amt.trim();
+  const r=await post('/api/loyalty/update',body);if(!r.ok){alert('failed');return;}await load();
+}
+async function milesConfig(key){
+  const rate=prompt('Earn rate — 1 mile per how many SAR of card spend?','4');if(rate===null)return;
+  const cards=prompt('Which cards earn miles? Last-4s, comma-separated:','4331,8381');if(cards===null)return;
+  const tier=prompt('Tier note (optional — Alfursan membership never expires):','');
+  await post('/api/loyalty/config',{key,earn_rate:rate,earn_cards:cards.split(',').map(s=>s.trim()).filter(Boolean),tier:tier||''});await load();
+}
+function renderNW(){
+  // THE net worth — read from the canonical server computation (FX-correct, active incl hidden), never
+  // re-summed from per-group raw totals (which drift on foreign balances / hidden liabilities).
+  const N=GROUPED.networth||{};
+  const assets=N.assets??GROUPED.groups.reduce((s,g)=>s+(DEBTG.includes(g.name)?0:g.total),0);
+  const debt=N.debt??GROUPED.groups.reduce((s,g)=>s+(DEBTG.includes(g.name)?Math.abs(g.total):0),0);
+  const nw=N.net??(assets-debt);
+  document.getElementById('nw').innerHTML=
+    `<div><div class="n ${nw<0?'exp':''}">${nw<0?'−':''}SAR ${money0(Math.abs(nw))}</div><div class="s">net worth <span data-tip="networth" style="cursor:help;color:var(--gold2);font-size:11px;opacity:.8">ⓘ</span></div></div>
+     <div><div class="n sm inc">SAR ${money0(assets)}</div><div class="s">assets</div></div>
+     <div><div class="n sm amber">−SAR ${money0(debt)}</div><div class="s">debt · cards + loans</div></div>
+     <div id="nwrestr"></div>`;
+  // restricted-vs-available split (certificates locked until maturity) — honest, from positions
+  fetch('/api/positions').then(r=>r.json()).then(P=>{const el=document.getElementById('nwrestr');if(!el)return;
+    if(P.restricted>0)el.innerHTML=`<div class="n sm" style="color:var(--gold2)">SAR ${money0(P.restricted)}</div><div class="s">of which restricted ${window.ic('lock')}</div>`;
+  }).catch(()=>{});
+  loadHoldings();
+}
+async function loadHoldings(){
+  let P;try{P=await(await fetch('/api/positions')).json();}catch(e){return;}
+  const host=document.getElementById('holdings');if(!host)return;
+  if(!P.count){host.innerHTML='';return;}
+  const kicon={certificate:window.ic('certificate'),fund:window.ic('fund'),etf:window.ic('forecast'),gold:window.ic('gold'),silver:window.ic('gold'),hissar:window.ic('chart'),equity:window.ic('factory')};
+  let h=`<div class="card"><div class="nw" style="margin-bottom:10px"><div><div class="n sm">SAR ${money0(P.total)}</div><div class="s">holdings</div></div>
+    ${P.restricted>0?`<div><div class="n sm" style="color:var(--gold2)">SAR ${money0(P.restricted)}</div><div class="s">restricted ${window.ic('lock')}</div></div><div><div class="n sm inc">SAR ${money0(P.available_of_total)}</div><div class="s">available</div></div>`:''}
+    ${P.stale_count?`<div><div class="n sm amber">${P.stale_count}</div><div class="s">need update</div></div>`:''}</div>`;
+  h+=P.positions.map(p=>`<div class="hrow ${p.stale?'stale':''}">
+      <span class="hi">${kicon[p.kind]||'•'}</span>
+      <div class="hmid"><div class="hn">${esc(p.name)}</div><div class="hs">${p.currency} ${money0(p.value)}${p.restricted?' · '+window.ic('lock')+' until '+(p.restricted_until||'').slice(0,10):''}${p.as_of?' · as-of '+p.as_of.slice(0,10):''}${p.stale?' · <span style="color:var(--amber)">stale '+p.stale_days+'d</span>':''}</div></div>
+      <span style="display:inline-flex;gap:4px">
+        <button class="hupd" onclick="buyAsset('${p.id}')" title="buy more">＋</button>
+        <button class="hupd" onclick="sellAsset('${p.id}')" title="sell (partial ok)">−</button>
+        <button class="hupd" onclick="updatePosition('${p.id}','${esc(p.name).replace(/'/g,"")}',${p.value})">update</button>
+      </span></div>`).join('');
+  h+=`</div>`;host.innerHTML=h;
+}
+async function updatePosition(id,name,cur){
+  const v=prompt(`Current value of ${name} (SAR) — stamps today as-of:`,cur);if(v===null)return;
+  await post('/api/position/update',{id,value:v.trim()});await load();
+}
+function renderGroups(){
+  const order=['Banks','Wallets','Cards','Investments','Gold & metals','HISSAR','Company equity','Owed to me','Other assets','Financing','Other liabilities'];
+  const gmap={};GROUPED.groups.forEach(g=>gmap[g.name]=g);
+  let h='';let hiddenRows=[];
+  order.filter(n=>gmap[n]).forEach(n=>{
+    const g=gmap[n],debtg=DEBTG.includes(n);
+    const live=g.accounts.filter(a=>!a.archived&&!a.hidden);
+    live.forEach(a=>{if(false)0;});
+    g.accounts.filter(a=>a.hidden||a.archived).forEach(a=>hiddenRows.push({...a,group:n}));
+    h+=`<div class="grp" data-group="${esc(n)}" ondragover="gOver(event)" ondragleave="gLeave(event)" ondrop="gDrop(event,'${esc(n).replace(/'/g,"")}')">
+      <div class="ghd"><span class="gi">${GI[n]||'•'}</span><span class="gn">${esc(GLABEL[n]||n)}</span>
+        <span class="gc">${g.count} account${g.count===1?'':'s'}</span>
+        <span class="gt ${debtg?'amber':''}">${debtg?'−':''}SAR ${money0(Math.abs(g.total))}</span></div>`;
+    live.forEach(a=>{h+=accRow(a,n,debtg);});
+    if(!live.length)h+=`<div class="notice" style="padding:8px 10px">No active accounts here.${n.startsWith('Other')?' Add your '+(n==='Other assets'?'home, car, valuables':'loans')+' with + Add account.':''}</div>`;
+    h+=`</div>`;
+  });
+  const completedRows=hiddenRows.filter(a=>byId(a.id).completed);
+  const plainHidden=hiddenRows.filter(a=>!byId(a.id).completed);
+  if(completedRows.length){   // spec §6 — retired plans fold into a dimmed history section
+    h+=`<div class="grp" style="margin-top:32px"><div class="ghd"><span class="gi">${window.ic('check')}</span><span class="gn" style="color:var(--muted)">Completed plans</span><span class="gc">${completedRows.length} paid off</span></div>`;
+    completedRows.forEach(a=>{const acc=byId(a.id);h+=`<div class="arow" style="opacity:.55"><div class="av" style="background:rgba(114,213,200,.12);color:var(--mint)">✓</div>
+      <div class="an"><b>${esc(a.name)}</b><div class="meta">paid off${acc.completed_date?' · '+acc.completed_date:''} · full history kept</div></div>
+      <button class="btn" style="padding:5px 12px;font-size:11px" onclick="reopen('${a.id}')">Reopen</button></div>`;});
+    h+=`</div>`;
+  }
+  if(plainHidden.length){
+    h+=`<div class="grp" style="margin-top:24px"><div class="ghd"><span class="gi">${window.ic('eyeoff')}</span><span class="gn" style="color:var(--muted)">Hidden &amp; closed</span><span class="gc">${plainHidden.length}</span></div>`;
+    plainHidden.forEach(a=>{h+=`<div class="arow" style="opacity:.5"><div class="av" style="background:#2226;color:var(--muted)">${initials(a.name)}</div>
+      <div class="an"><b>${esc(a.name)} ${a.hidden?'<span class="badge">hidden</span>':'<span class="badge">closed</span>'}</b><div class="meta">${esc(a.currency)} ${money0(a.balance)}</div></div>
+      <button class="btn" style="padding:5px 12px;font-size:11px" onclick="${a.hidden?`unhide('${a.id}')`:`reopen('${a.id}')`}">${a.hidden?'Unhide':'Reopen'}</button></div>`;});
+    h+=`</div>`;
+  }
+  document.getElementById('groups').innerHTML=h;
+  if(OPEN)renderDetail(OPEN);
+}
+function accRow(a,group,debtg){
+  const acc=byId(a.id);const col=acctColor(a.name);const neg=a.balance<0;
+  const bcol=debtg?'var(--amber)':(neg?'var(--exp)':'var(--txt)');
+  const net=acc.network&&NET[acc.network]?`<span class="netmark">${NET[acc.network]}</span>`:'';
+  const util=(acc.is_card&&acc.util!=null)?`<div class="util"><div class="ubar"><i style="width:${Math.min(100,acc.util)}%;background:${utilCol(acc.util)}"></i></div><span style="color:${utilCol(acc.util)}">${acc.util}%${acc.util>100?' over':''}</span><span class="k">of ${money0(acc.limit)}</span></div>`:'';
+  return `<div class="arow ${OPEN===a.id?'open':''}" draggable="true" data-id="${a.id}"
+      ondragstart="dStart(event,'${a.id}','${esc(group).replace(/'/g,"")}')" ondragend="dEnd(event)"
+      onclick="toggle('${a.id}')">
+    <span class="grab" onclick="event.stopPropagation()" draggable="false">⠿</span>
+    <div class="av" style="background:${col}22;color:${col}">${initials(a.name)}</div>
+    <div class="an"><b>${esc(a.name)} ${net}</b><div class="meta">${acc.type==='liabilities'||acc.type==='liability'?'liability':acc.is_card?'credit card':(acc.role==='ccAsset'?'card':'asset')}${acc.notes?' · '+esc(acc.notes.slice(0,32)):''}</div>${util}</div>
+    <div class="bal" style="color:${bcol}">${neg?'−':''}SAR ${money0(Math.abs(a.balance))}<span class="cy">${a.currency!=='SAR'?esc(a.currency):''}</span></div>
+  </div>`;
+}
+function toggle(id){OPEN=(OPEN===id)?null:id;renderGroups();if(OPEN){loadDetail(id);document.querySelector(`.arow[data-id="${id}"]`)?.scrollIntoView({block:'nearest',behavior:'smooth'});}}
+let DET={};
+async function loadDetail(id){const a=byId(id);
+  document.getElementById('det-'+id)&&(document.getElementById('det-'+id).innerHTML='<div class="notice">Loading…</div>');
+  try{const[s,st]=await Promise.all([
+    fetch('/api/account_series?account='+encodeURIComponent(a.name)).then(r=>r.json()),
+    fetch('/api/account/stats?id='+id).then(r=>r.json())]);
+    DET[id]={series:s,stats:st};renderDetail(id);}catch(e){}
+}
+function renderDetail(id){
+  const host=document.getElementById('det-'+id);if(!host)return;
+  const a=byId(id),d=DET[id];if(!d){host.innerHTML='<div class="notice">Loading…</div>';return;}
+  const s=d.series,st=d.stats;
+  const cleared=(st.reconciled_count>0)?(a.balance-(st.uncleared||0)):null;
+  let h=`<div class="dtop">
+    <div class="dstat"><div class="l">Balance</div><div class="v ${a.balance<0?'exp':''}">${a.currency} ${money0(a.balance)}</div></div>
+    <div class="dstat"><div class="l">Transactions</div><div class="v">${st.count}</div></div>
+    ${cleared!==null?`<div class="dstat"><div class="l">Available</div><div class="v">${a.currency} ${money0(a.balance)}</div></div><div class="dstat"><div class="l">Cleared (${st.reconciled_count})</div><div class="v inc">${a.currency} ${money0(cleared)}</div></div>`:''}
+    <div class="dstat"><div class="l">Opening</div><div class="v muted">${a.currency} ${money0(s.opening||0)}</div></div>
+    ${a.card_due?`<div class="dstat"><div class="l">Due ${a.card_due.due_date} <span data-tip="paidstatus" style="cursor:help;color:var(--gold2);font-size:10px">ⓘ</span></div><div class="v" style="font-size:15px;color:${a.card_due.days_left<=5?'var(--amber)':'var(--txt)'}">${a.currency} ${money0(a.card_due.due_amount)}</div></div>`:''}
+    ${a.is_cash?`<div class="dstat"><div class="l">Last counted</div><div class="v ${(a.counted_stale!=null&&a.counted_stale>45)?'amber':(a.last_counted?'':'amber')}" style="font-size:13px">${a.last_counted?a.last_counted+(a.counted_stale!=null?' · '+a.counted_stale+'d':''):'never'}</div></div>`:''}
+  </div>`;
+  if(a.card_due&&a.card_due.carries_forward)h+=`<div class="notice" style="font-size:11.5px;margin:2px 0 8px">${window.ic('card')} Minimum mode: SAR ${money0(a.card_due.due_amount)} due ${a.card_due.due_date} — the rest carries forward. (A fact about the contract, not advice.)</div>`;
+  h+=chart(s.series||[]);
+  if(a.group==='Financing')h+=`<div id="fin-${id}" class="finbox"><div class="notice">Loading schedule…</div></div>`;
+  if(a.kind==='certificate')h+=`<div id="cert-${id}" class="finbox"><div class="notice">Loading payouts…</div></div>`;
+  if(a.kind==='fund'||a.kind==='etf')h+=`<div id="fund-${id}" class="finbox"><div class="notice">Loading performance…</div></div>`;
+  h+=`<a class="enterbtn" href="/?account=${encodeURIComponent(a.name)}">All ${st.count} transactions in ${esc(a.name)} →</a>`;
+  h+=`<div class="acts">
+    <button onclick="editAcct('${id}')">${window.ic('edit')} Edit</button>
+    <button onclick="correctBal('${id}')">Correct balance</button>
+    ${a.is_cash?`<button onclick="openCount()"><svg class="ic" viewBox="0 0 24 24"><rect x="5" y="3" width="14" height="18" rx="2"/><path d="M8 7h8M8 11h.01M12 11h.01M16 11h.01M8 15h.01M12 15h.01M16 15h.01"/></svg> Count cash</button>`:''}
+    ${a.is_card?`<button onclick="setNetwork('${id}')">Card network</button>`:''}
+    ${a.is_card?`<button onclick="setLimit('${id}')">Credit limit</button>`:''}
+    ${a.is_card?`<button onclick="cardSettings('${id}')">${window.ic('edit')} Card settings</button>`:''}
+    ${a.is_card&&a.last4?`<button onclick="openCard('${a.last4}')">${window.ic('folder')} Registry</button>`:''}
+    <button onclick="hide('${id}')">Hide</button>
+    <button class="dz" onclick="mergeAcct('${id}')">Merge…</button>
+    <button class="dz" onclick="closeAcct('${id}')">Close</button>
+    <button class="dz" onclick="delAcct('${id}')">Delete</button>
+  </div>`;
+  if((s.recent||[]).length){h+=`<div class="l" style="font-size:9px;text-transform:uppercase;letter-spacing:1px;color:var(--muted);font-family:var(--mono);margin-bottom:4px">Recent activity</div>`+
+    s.recent.map(t=>`<div class="rtx"><span class="rn">${esc(t.name)}</span><span class="rd">${t.date}</span><span class="ra ${t.signed<0?'exp':'inc'}">${t.signed<0?'−':'+'}${money0(Math.abs(t.signed))}</span></div>`).join('');}
+  else h+=`<div class="notice">No transactions yet.</div>`;
+  host.innerHTML=h;
+  if(a.group==='Financing')loadFinancing(id);
+  if(a.kind==='certificate')loadCertificate(id);
+  if(a.kind==='fund'||a.kind==='etf')loadFund(id);
+}
+async function loadFund(id){const host=document.getElementById('fund-'+id);if(!host)return;
+  let d;try{d=await(await fetch('/api/fund/detail?id='+id)).json();}catch(e){return;}
+  if(!d.ok){host.innerHTML='<div class="notice">Set units + purchase price (Edit) to start the price ritual.</div>';return;}
+  const cur=d.currency,dist=d.distributing;
+  const pr=d.price_return,tr=d.total_return;
+  const sign=n=>(n>=0?'+':'')+n+'%';const col=n=>n>=0?'var(--mint)':'var(--amber)';
+  // HEADLINE — your capital
+  let h=`<div class="finhd">${window.ic('fund')} ${dist?'Distributing':'Accumulating'} · ${d.units} units @ avg ${d.avg_price}
+      <button class="btn" style="margin-left:auto;padding:4px 10px;font-size:11px" onclick="fundDiv('${id}')">＋ Dividend</button></div>`;
+  h+=`<div style="background:rgba(114,213,200,.08);border:1px solid rgba(114,213,200,.3);border-radius:12px;padding:14px 16px;margin-bottom:12px">
+      <div style="font-size:11px;color:var(--muted);font-family:var(--mono);text-transform:uppercase;letter-spacing:1px">Your capital</div>
+      <div style="font-size:22px;font-weight:800">${cur} ${money0(d.current_value)}</div>
+      <div style="font-family:var(--mono);font-size:12px"><span style="color:${col(tr)}">${sign(tr)} total return</span> <span style="color:var(--muted)">since purchase</span></div></div>`;
+  // price vs total return
+  h+=`<div class="fingrid" style="margin-bottom:10px">
+      <div><div class="fl">price return</div><div class="fv" style="color:${col(pr)}">${sign(pr)}</div><div style="font-size:9px;color:var(--muted);font-family:var(--mono)">how the price moved</div></div>
+      <div><div class="fl">total return</div><div class="fv" style="color:${col(tr)}">${sign(tr)}</div><div style="font-size:9px;color:var(--muted);font-family:var(--mono)">incl. ${money0(d.dividends_total)} dividends</div></div>
+      <div><div class="fl">cost basis</div><div class="fv">${money0(d.cost_basis)}</div></div></div>`;
+  if(dist&&d.dividends_total>0)h+=`<div class="notice" style="font-size:11px;margin-bottom:10px">Price drops when dividends pay out — <b>total return is your true performance</b>.</div>`;
+  // monthly price ritual — always-visible entry
+  h+=`<div style="display:flex;gap:8px;align-items:end;margin-bottom:12px">
+      <div style="flex:1"><label class="fld">This month's price</label><input id="fpin-${id}" type="number" step="any" placeholder="latest ${d.latest_price}"></div>
+      <button class="save" style="width:auto;padding:10px 16px" onclick="fundPrice('${id}')">Save price</button></div>`;
+  // history table (grows month by month)
+  if(d.history.length){h+=`<div style="font-family:var(--mono);font-size:9px;letter-spacing:2px;text-transform:uppercase;color:var(--muted);margin-bottom:6px">Price history</div>`;
+    h+=fundChart(d.history)+`<table style="width:100%;border-collapse:collapse;font-size:12px"><tr style="color:var(--muted);font-family:var(--mono);font-size:10px;text-align:right"><td style="text-align:left">month</td><td>price</td><td>value</td><td>vs purchase</td><td>vs prev</td></tr>`;
+    d.history.forEach(r=>{h+=`<tr style="border-top:1px solid var(--line);text-align:right">
+      <td style="text-align:left;font-family:var(--mono)">${r.date}</td><td>${r.price}</td><td>${money0(r.value)}</td>
+      <td style="color:${col(r.vs_purchase)}">${sign(r.vs_purchase)}</td>
+      <td style="color:${r.vs_prev==null?'var(--muted)':col(r.vs_prev)}">${r.vs_prev==null?'—':sign(r.vs_prev)}</td></tr>`;});
+    h+=`</table>`;}
+  host.innerHTML=h;
+}
+function fundChart(hist){if(hist.length<2)return'';const W=280,H=60,pad=4;
+  const ps=hist.map(r=>r.price),mn=Math.min(...ps),mx=Math.max(...ps),rng=(mx-mn)||1;
+  const pts=hist.map((r,i)=>{const x=pad+i*(W-2*pad)/(hist.length-1);const y=H-pad-(r.price-mn)/rng*(H-2*pad);return x.toFixed(1)+','+y.toFixed(1);}).join(' ');
+  return `<svg viewBox="0 0 ${W} ${H}" style="width:100%;height:60px;margin-bottom:8px"><polyline points="${pts}" fill="none" stroke="var(--mint)" stroke-width="1.5"/></svg>`;}
+async function fundPrice(id){const el=document.getElementById('fpin-'+id);const v=el&&el.value;if(!v){alert('Enter the price');return;}
+  const r=await post('/api/fund/price',{id,price:v});if(!r.ok){alert(r.error||'failed');return;}await load();}
+async function fundDiv(id){const mode=confirm('Reinvested dividend (bought more units)?\\n\\nOK = reinvested · Cancel = cash to an account')?'reinvest':'cash';
+  const amt=prompt('Dividend amount:');if(!amt)return;
+  const body={id,amount:amt,mode};
+  if(mode==='reinvest'){const pr=prompt('Unit price on the reinvestment date:');if(!pr)return;body.price=pr;}
+  else{const cash=ACCTS.filter(a=>!a.is_card&&a.active&&!a.kind).map(a=>a.id+'='+a.name).join('\\n');
+    const cid=prompt('Cash account id to receive it:\\n'+cash);if(!cid)return;body.cash_account=cid;}
+  const r=await post('/api/fund/dividend',body);if(!r.ok){alert(r.error||'failed');return;}await load();}
+async function loadCertificate(id){const host=document.getElementById('cert-'+id);if(!host)return;
+  let d;try{d=await(await fetch('/api/certificate/detail?id='+id)).json();}catch(e){return;}
+  if(!d.ok){host.innerHTML='<div class="notice">Set the certificate’s rate · payout frequency · maturity (Edit) to see its profit stream.</div>';return;}
+  const MON=['JAN','FEB','MAR','APR','MAY','JUN','JUL','AUG','SEP','OCT','NOV','DEC'];const cur=d.currency;
+  // INCOME FIRST — the living part
+  let head=`<div class="finhd">${window.ic('certificate')} ${d.freq} profit ${d.rate_type==='variable'?'· <span style="color:var(--gold2)">variable '+d.rate+'%</span>':'· '+d.rate+'% fixed'}
+      <button class="btn" style="margin-left:auto;padding:4px 10px;font-size:11px" onclick="certRate('${id}')">✎ Rate</button></div>`;
+  if(d.next_payout)head+=`<div style="background:rgba(114,213,200,.08);border:1px solid rgba(114,213,200,.3);border-radius:12px;padding:14px 16px;margin-bottom:12px">
+      <div style="font-size:11px;color:var(--muted);font-family:var(--mono);text-transform:uppercase;letter-spacing:1px">Next profit</div>
+      <div style="font-size:22px;font-weight:800;color:var(--mint)">${cur} ${money0(d.per_payout)}</div>
+      <div style="font-family:var(--mono);font-size:12px;color:var(--muted)">${d.next_payout.date} · as contracted</div></div>`;
+  head+=`<div class="fingrid" style="margin-bottom:10px">
+      <div><div class="fl">collected so far</div><div class="fv inc">${money0(d.received_to_date)}</div><div style="font-size:9px;color:var(--muted);font-family:var(--mono)">of ${money0(d.total_expected)} to maturity</div></div>
+      <div><div class="fl">payouts</div><div class="fv">${d.received_count} of ${d.payouts_total}</div></div>
+      <div><div class="fl">per ${d.freq.replace('ly','')}</div><div class="fv">${money0(d.per_payout)}</div></div></div>`;
+  const today=new Date().toISOString().slice(0,10);
+  const rows=d.timeline.map(r=>{const[y,mo,da]=r.date.split('-');
+    const pill=r.received?`<span style="background:rgba(114,213,200,.16);color:var(--mint);font-family:var(--mono);font-size:10px;font-weight:800;padding:3px 9px;border-radius:20px">RECEIVED ✓</span>`
+      :r.overdue?`<span style="color:var(--amber);font-family:var(--mono);font-size:10px">expected — not yet received</span>`
+      :`<span style="width:8px;height:8px;border:1.5px solid var(--line);border-radius:50%;display:inline-block"></span>`;
+    return `<div style="display:flex;align-items:center;gap:12px;padding:9px 12px;border:1px solid ${r.overdue?'var(--amber)':'var(--line)'};border-radius:10px;margin-bottom:6px;opacity:${r.received?'.72':'1'}">
+      <div style="text-align:center;width:40px"><div style="font-family:var(--mono);font-size:16px;font-weight:800">${da}</div><div style="font-family:var(--mono);font-size:9px;color:var(--muted)">${MON[(+mo||1)-1]}</div></div>
+      <div style="flex:1"><div style="font-weight:600">+${cur} ${money0(r.received_amount!=null?r.received_amount:r.amount)}</div></div>
+      <div>${pill}</div></div>`;}).join('');
+  // CONTEXT — the locked principal, calm, below
+  const ctx=`<div class="notice" style="margin-top:12px;font-size:12px">${window.ic('lock')} Principal ${cur} ${money0(d.principal)} — <b>locked until ${d.maturity||'maturity'}</b>${d.months_to_maturity!=null?` (${d.months_to_maturity} mo)`:''}. Counts in net worth as restricted; not spendable.</div>`;
+  const mat=d.maturity?`<div style="display:flex;align-items:center;gap:12px;padding:11px 12px;border:1px solid var(--gold);background:rgba(232,185,90,.06);border-radius:10px;margin-top:8px">
+      <div style="font-size:18px">${window.ic('flag')}</div><div><b>${d.maturity}: principal ${money0(d.principal)} released</b><div style="font-family:var(--mono);font-size:11px;color:var(--muted)">renew or collect${d.months_to_maturity!=null&&d.months_to_maturity<=1?' · due soon!':''}</div></div></div>`:'';
+  const hist=(d.rate_history||[]).length?`<div style="font-family:var(--mono);font-size:10px;color:var(--muted);margin-top:8px">rate history: ${d.rate_history.map(h=>h.rate+'% → '+(h.until||'')).join(' · ')} → now ${d.rate}%</div>`:'';
+  host.innerHTML=head+`<div style="font-family:var(--mono);font-size:9px;letter-spacing:2px;text-transform:uppercase;color:var(--muted);margin-bottom:8px">Profit stream</div>`+rows+ctx+mat+hist;
+}
+async function certRate(id){const v=prompt('New annual rate % (variable certificate — past payouts stay, future recompute):');if(!v)return;
+  const from=prompt('Effective from (YYYY-MM-DD):',new Date().toISOString().slice(0,10));if(!from)return;
+  await post('/api/certificate/rate',{id,rate:v,from});await load();}
+async function loadFinancing(id){const host=document.getElementById('fin-'+id);if(!host)return;
+  const a=byId(id);let d;try{d=await(await fetch('/api/schedule?id='+id)).json();}catch(e){return;}
+  if(!d.ok){
+    if(a.kind==='bnpl'){
+      host.innerHTML=`<div class="finhd">BNPL plan</div><div class="notice">No schedule on this account yet.${Math.abs(a.balance)>0.01?`<br><br>It owes <b>SAR ${money0(Math.abs(a.balance))}</b> — set how many installments and it lays them out from the start date:<br><button class="btn pri" style="margin-top:8px" onclick="editBnplSchedule('${id}')">✎ Set installments</button>`:` Create plans with the <b>${window.ic('bag')} New Tabby/Tamara plan</b> button up top.`}</div>`;return;}
+    if(a.kind==='lease'){host.innerHTML=`<div class="finhd">Lease</div><div class="notice">Lease wizard (down · balloon · endings) ships in M2.x. For now the balance tracks the total remaining commitment.</div>`;return;}
+    host.innerHTML=`<div class="finhd">Financing schedule</div><div class="notice">No schedule yet. Set one up to split each payment into principal + financing cost.</div>
+      <button class="btn" onclick="setupLoan('${id}')">＋ Set up loan schedule</button>`;return;}
+  host.innerHTML=bnplTimeline(d,id,d.schedule);
+}
+// Tabby-style schedule timeline — one card per installment, top to bottom, PAID from the integrity
+// law only. Used for BNPL, loans and leases (loans/leases keep Record-payment on the next-due card).
+function bnplTimeline(d,id,s){
+  const MON=['JAN','FEB','MAR','APR','MAY','JUN','JUL','AUG','SEP','OCT','NOV','DEC'];
+  const today=new Date().toISOString().slice(0,10);
+  const insts=d.schedule.installments;
+  const remCount=insts.filter(i=>!i.paid).length;
+  // NEXT = first UNPAID installment whose date is today-or-future; past unpaid ones are overdue.
+  const upcoming=insts.find(i=>!i.paid&&i.date>=today);
+  const nextN=upcoming?upcoming.n:(d.next?d.next.n:null);
+  const isBnpl=s.kind==='bnpl';
+  const mismatch=d.mismatch?`<div class="notice" style="border:1px solid var(--red);background:rgba(224,82,82,.08);color:#f0b3b3;margin-bottom:10px">⚠ ${esc(d.mismatch)}</div>`:'';
+  const totLbl=d.installments_total||s.term;
+  let rows=insts.map(i=>{
+    const [y,mo,da]=(i.date||'').split('-');
+    const paid=!!i.paid, manual=!!i.settled_manual, isNext=i.n===nextN&&!paid, overdue=!paid&&!isNext&&i.date<today&&i.date, balloon=i.balloon;
+    const REAS={'pre-ledger':'pre-ledger','paid-by-other':'paid by other','outside':'paid outside','other':'manual'};
+    // status pill — manual settlements are visibly manual, forever (integrity law, not diluted)
+    let pill;
+    if(manual)pill=`<span style="background:rgba(140,150,175,.18);color:#aab3c9;font-family:var(--mono);font-size:10px;font-weight:800;letter-spacing:.5px;padding:3px 9px;border-radius:20px" title="${esc(i.settle_note||'')}">SETTLED ✓ (manual — ${REAS[i.settle_reason]||'manual'})</span>`;
+    else if(paid)pill=`<span style="background:rgba(114,213,200,.16);color:var(--mint);font-family:var(--mono);font-size:10px;font-weight:800;letter-spacing:1px;padding:3px 9px;border-radius:20px">PAID</span>`;
+    else if(isNext)pill=`<span style="background:var(--gold);color:#0D0F16;font-family:var(--mono);font-size:10px;font-weight:800;letter-spacing:1px;padding:3px 9px;border-radius:20px">NEXT</span>`;
+    else if(overdue)pill=`<span style="color:var(--amber);font-family:var(--mono);font-size:10px">not yet linked</span>`;
+    else pill=`<span style="width:9px;height:9px;border:1.5px solid var(--line);border-radius:50%;display:inline-block"></span>`;
+    const border=isNext?'var(--gold)':(overdue?'var(--amber)':'var(--line)');
+    const bg=isNext?'rgba(232,185,90,.06)':'transparent';
+    const settleBtn=(!paid)?`<button class="btn" style="padding:3px 8px;font-size:10px;margin-top:4px" onclick="settleManual('${id}',${i.n},${i.amount})">Settle manually…</button>`:'';
+    return `<div style="display:flex;align-items:center;gap:14px;padding:12px 14px;border:1px solid ${border};background:${bg};border-radius:12px;margin-bottom:8px;opacity:${paid?'.72':'1'}">
+      <div style="text-align:center;flex-shrink:0;width:44px">
+        <div style="font-family:var(--mono);font-size:19px;font-weight:800;line-height:1">${da||'—'}</div>
+        <div style="font-family:var(--mono);font-size:10px;color:var(--muted);letter-spacing:1px">${MON[(+mo||1)-1]||''}</div></div>
+      <div style="flex:1;min-width:0">
+        <div style="font-weight:700;font-size:15px">${balloon?window.ic('balloon')+' ':''}SAR ${money0(i.amount)}</div>
+        <div style="font-family:var(--mono);font-size:11px;color:var(--muted)">${balloon?'Balloon — final payment':'Payment '+i.n+' of '+totLbl}${overdue?' · was due '+i.date:''}</div></div>
+      <div style="flex-shrink:0;text-align:right">${pill}${settleBtn}</div></div>`;
+  }).join('');
+  const nextHint=d.next&&isBnpl?`<div class="notice" style="font-size:12px;margin-top:2px">Paid it? Open that charge (Calendar or Desk), change it to a <b>transfer</b>, and pick this plan as the destination — like paying a credit card. It records here.</div>`:'';
+  const loanBtns=d.next&&!isBnpl?`<div style="margin-top:8px"><button class="btn pri" onclick="recordPayment('${id}')">Record this payment</button>${s.kind==='loan'?`<button class="btn" onclick="earlySettle('${id}')" style="margin-left:6px">Early settlement…</button>`:''}</div>`:'';
+  const doneNote=!d.next?`<div class="finnext inc" style="margin-top:4px">✓ fully paid — retiring to Completed plans.</div>`:'';
+  // SAMA-grade loan/lease summary + amortization table (declining balance)
+  let loanHead='',sama='';
+  if(d.loan){const L=d.loan;
+    loanHead=`<div class="fingrid" style="margin-bottom:10px">
+      <div><div class="fl">paid so far</div><div class="fv">${money0(L.paid_principal+L.paid_profit)}<div style="font-size:9px;color:var(--muted);font-family:var(--mono)">${money0(L.paid_principal)} principal · ${money0(L.paid_profit)} profit</div></div></div>
+      <div><div class="fl">remaining</div><div class="fv exp">${money0(d.balance)}<div style="font-size:9px;color:var(--muted);font-family:var(--mono)">+ ${money0(L.remaining_profit)} profit if held</div></div></div>
+      <div><div class="fl">next payment</div><div class="fv" style="font-size:14px">${L.next_split?money0(L.next_split.amount):'✓'}<div style="font-size:9px;color:var(--muted);font-family:var(--mono)">${L.next_split?('of which profit '+money0(L.next_split.profit)):'done'}</div></div></div>
+      <div><div class="fl">cost of financing</div><div class="fv exp">${money0(L.total_cost)}<div style="font-size:9px;color:var(--muted);font-family:var(--mono)">${money0(L.principal)} → ${money0(L.total_repayable)}${L.annual_rate?' · '+L.annual_rate+'%':''}</div></div></div></div>
+      ${L.settle_estimate?`<div class="notice" style="font-size:11.5px;margin-bottom:8px">${window.ic('scale')} Settling today ≈ balance ${money0(d.balance)} + next 3 months' profit ${money0(L.settle_next3_profit)} = <b>SAR ${money0(L.settle_estimate)}</b> — estimate (SAMA declining-balance); <b>your bank's figure is final</b>.</div>`:''}`;
+    const samaRows=s.installments.map(i=>{const paid=!!i.paid,cx=(i.n===L.crossover);
+      return `<tr style="${cx?'background:rgba(232,185,90,.08)':''};${paid?'opacity:.6':''}">
+        <td style="padding:4px 6px">${i.n}${i.balloon?' '+window.ic('balloon'):''}</td><td style="padding:4px 6px;font-family:var(--mono);font-size:10px">${i.date}</td>
+        <td style="padding:4px 6px;text-align:right;font-family:var(--mono)">${money0(i.amount)}</td>
+        <td style="padding:4px 6px;text-align:right;font-family:var(--mono);color:var(--exp)">${money0(i.cost)}</td>
+        <td style="padding:4px 6px;text-align:right;font-family:var(--mono);color:var(--inc)">${money0(i.principal)}</td>
+        <td style="padding:4px 6px;text-align:right;font-family:var(--mono);color:var(--muted)">${money0(i.balance_after!=null?i.balance_after:0)}</td>
+        <td style="padding:4px 6px;text-align:center">${paid?'✓':''}${cx?'<span title="from here, most of your payment is principal" style="color:var(--gold)">◆</span>':''}</td></tr>`;}).join('');
+    sama=`<details style="margin-top:12px"><summary style="cursor:pointer;font-size:12px;color:var(--gold2)">▦ Amortization table (SAMA)${L.crossover?` · ◆ crossover at payment ${L.crossover}`:''}</summary>
+      <div style="overflow-x:auto;margin-top:8px"><table style="width:100%;border-collapse:collapse;font-size:12px">
+        <thead><tr style="color:var(--muted);font-size:9px;text-transform:uppercase;letter-spacing:1px"><th style="text-align:left;padding:4px 6px">#</th><th style="text-align:left;padding:4px 6px">date</th><th style="text-align:right;padding:4px 6px">payment</th><th style="text-align:right;padding:4px 6px">profit</th><th style="text-align:right;padding:4px 6px">principal</th><th style="text-align:right;padding:4px 6px">balance</th><th></th></tr></thead>
+        <tbody>${samaRows}</tbody></table></div>
+      <div style="font-family:var(--mono);font-size:10px;color:var(--muted);margin-top:6px">Declining-balance: profit = remaining balance × rate ÷ 12; ◆ = principal overtakes profit. Paid rows are real recorded payments.</div></details>`;}
+  // Lease Walk-Away Map — "if I exit here, what do I owe?" per month, contract-honest
+  let walk='';
+  if(s.kind==='lease'){const ex=s.exit||{};const insts=s.installments;
+    let running=0;const rowsW=[];
+    for(let k=insts.length-1;k>=0;k--){running+=insts[k].amount;rowsW[k]=running;}
+    const mapRows=insts.filter(i=>!i.paid).map(i=>{
+      const committed=rowsW[i.n-1];
+      if(i.balloon){const cv=ex.car_value;
+        return `<tr style="border-top:1px solid var(--line)"><td style="padding:6px 6px;font-family:var(--mono);font-size:10px">${i.date}</td>
+          <td style="padding:6px 6px">${window.ic('balloon')} <b>End of contract</b> — two endings:<br><span style="color:var(--inc)">pay balloon ${money0(i.amount)} → own it${cv?' (worth ~'+money0(cv)+')':''}</span><br>${ex.return_allowed?`<span style="color:var(--gold)">return the car → balloon waived</span>`:'<span style="color:var(--muted)">return option: not in contract data</span>'}</td></tr>`;}
+      return `<tr style="border-top:1px solid var(--line)"><td style="padding:6px 6px;font-family:var(--mono);font-size:10px">${i.date}</td>
+        <td style="padding:6px 6px">stop after payment ${i.n}: committed remaining <b>${money0(committed)}</b> · exit cost ${ex.clause?esc(ex.clause):'<span style="color:var(--amber)">not in contract data — check your contract</span>'} <span style="color:var(--muted);font-size:10px">(per your contract — company's figure is final)</span></td></tr>`;
+    }).join('');
+    walk=`<details style="margin-top:12px"><summary style="cursor:pointer;font-size:12px;color:var(--gold2)">${window.ic('door')} If I exit here — walk-away map</summary>
+      <div class="notice" style="font-size:11px;margin:8px 0">Saudi leases let you <b>return the car instead of paying the balloon at contract end</b>; <b>mid-term exit is governed by your contract, not a legal right</b> — and handback may not discharge all obligations, per the contract's liquidation terms.${ex.handback_fee?` Handback fee: SAR ${money0(ex.handback_fee)}.`:''}</div>
+      <div style="overflow-x:auto"><table style="width:100%;border-collapse:collapse;font-size:12px"><tbody>${mapRows}</tbody></table></div>
+      <button class="btn" style="margin-top:8px" onclick="leaseTerms('${id}')">${window.ic('settings')} Set exit terms</button></details>`;}
+  const RNG='&from=2020-01-01&to=2035-01-01';   // plan payments span months — show them all, not just this month
+  const cURL=s.category?`/?category=${encodeURIComponent(s.category)}&tag=${encodeURIComponent('plan:'+id)}${RNG}`:'';
+  const pURL=s.person?`/?person=${encodeURIComponent(s.person)}${RNG}`:'';
+  const catBadge=s.category?`<a href="${cURL}" title="See this plan's payments in ${esc(s.category)} →" style="background:rgba(114,213,200,.14);color:var(--mint);font-size:11px;padding:2px 8px;border-radius:20px;text-decoration:none;cursor:pointer">${window.ic('tag')} ${esc(s.category)} ↗</a>`:'';
+  const personBadge=s.person?`<a href="${pURL}" title="See ${esc(s.person)}'s spending →" style="background:rgba(140,150,175,.18);color:#aab3c9;font-size:11px;padding:2px 8px;border-radius:20px;text-decoration:none;cursor:pointer">${window.ic('user')} ${esc(s.person)} ↗</a>`:'';
+  return `<div class="finhd" style="display:flex;align-items:center;gap:8px;flex-wrap:wrap">${isBnpl?'Plan':'Financing'} · ${esc(s.item||'')||'schedule'} ${catBadge}${personBadge}<span class="muted" style="font-weight:400">${d.invariant_ok?'· ✓':''}</span>
+    ${isBnpl?`<span style="margin-left:auto;display:flex;gap:6px"><button class="btn" style="padding:4px 10px;font-size:11px" onclick="editBnplMeta('${id}')">${window.ic('tag')} Category · person</button><button class="btn" style="padding:4px 10px;font-size:11px" onclick="editBnplSchedule('${id}')">✎ Edit plan</button></span>`:''}</div>
+    ${loanHead||`<div style="display:flex;gap:16px;font-family:var(--mono);font-size:11px;color:var(--muted);margin:2px 0 12px">
+      <span>total SAR ${money0(s.total_repayable||s.principal)}</span><span>·</span>
+      <span>owed SAR ${money0(d.balance)}</span><span>·</span><span>${remCount} of ${totLbl} left${s.start?' · from '+s.start:''}</span></div>`}
+    ${mismatch}
+    <div style="font-family:var(--mono);font-size:9px;letter-spacing:2px;text-transform:uppercase;color:var(--muted);margin-bottom:8px">Schedule</div>
+    ${rows}
+    ${sama}${walk}
+    ${loanBtns}${nextHint}${doneNote}`;
+}
+async function leaseTerms(id){
+  const clause=prompt('Early-termination clause — what your contract says if you exit mid-term (free text, e.g. "remaining installments due" / "3 months penalty"):','');if(clause===null)return;
+  const ret=confirm('Does the contract allow RETURNING the car instead of paying the balloon at contract end?\n\nOK = yes · Cancel = no/unknown');
+  const fee=prompt('Handback fee at return, if any (SAR — blank for none):','');
+  const cv=prompt('(optional) Current estimated resale value of the car (SAR) — for the end-of-term arbitrage:','');
+  const r=await post('/api/lease/terms',{account_id:id,clause,return_allowed:ret,handback_fee:fee||0,car_value:cv||0});
+  if(!r.ok){alert(r.error||'failed');return;}
+  loadFinancing(id);
+}
+async function editBnplSchedule(id){const a=byId(id);
+  let cur={};try{cur=await(await fetch('/api/schedule?id='+id)).json();}catch(e){}
+  const curN=(cur.ok&&cur.schedule.term)||4;
+  const curStart=(cur.ok&&cur.schedule.start)||new Date().toISOString().slice(0,10);
+  const n=prompt('How many installments in the whole plan? (4, 6, 8…)\nChanging this re-lays the schedule from the start date; already-linked payments stay paid.',curN);if(!n)return;
+  const start=prompt('Plan START date — payment 1 falls here (YYYY-MM-DD):',curStart);if(!start)return;
+  const r=await post('/api/bnpl/reschedule',{account_id:id,installments:n,start});
+  if(!r.ok){alert(r.error||'failed');return;}
+  toast&&toast(`Schedule: ${r.installments} × SAR ${money0(r.per)} from ${r.start}${r.linked_paid?' · '+r.linked_paid+' already paid':''}`,'ok');
+  await load();
+}
+async function declareBnpl(id){const a=byId(id);const bal=Math.abs(a.balance);
+  alert(`This records the installments you STILL OWE on this SAR ${money0(bal)} debt.\nNo money moves — and it never marks anything “paid” from a typed number: a payment only counts once you Link the real charge (which reduces the debt).`);
+  const rem=prompt(`How many installments are STILL LEFT to pay? (they must add up to SAR ${money0(bal)})`);if(!rem)return;
+  const per=prompt('Amount per installment (SAR) — blank to split the balance evenly:',(bal/(+rem||1)).toFixed(2));
+  const nd=prompt('Next installment due date (YYYY-MM-DD):',new Date().toISOString().slice(0,10));if(!nd)return;
+  const totalStr=prompt('(optional) How many in the WHOLE plan, and how many paid before now? e.g. "6,2" — for display only:','');
+  let installments_total=0,paid_before=0;
+  if(totalStr&&totalStr.includes(',')){const[t,pb]=totalStr.split(',');installments_total=parseInt(t)||0;paid_before=parseInt(pb)||0;}
+  const item=prompt('What is it? (e.g. flynas flights)','');
+  const r=await post('/api/bnpl/declare',{account_id:id,remaining:rem,amount:per||undefined,next_due:nd,item,installments_total,paid_before});
+  if(!r.ok){alert(r.error||'failed');return;}
+  alert(`Plan recorded ✓ — no money moved.\n\n${r.remaining_count} installments left = SAR ${money0(r.remaining_total)} (= the balance).\n\nNow Link each payment you've already made (🔗) — each real link reduces the debt and proves it. Nothing counts as paid until then.`);
+  await load();
+}
+async function linkCharge(id){
+  const cd=await(await fetch('/api/bnpl/linkcandidates?account_id='+id)).json();
+  let hits=(cd.candidates||[]);
+  if(!hits.length){const q=prompt('No charges near the installment amount. Search by description instead:');if(!q)return;
+    const sd=await(await fetch('/api/link/search?q='+encodeURIComponent(q))).json();hits=(sd.results||[]).filter(x=>x.amount<0).map(x=>({...x,amount:Math.abs(x.amount)}));}
+  if(!hits.length){alert('No matching charges found.');return;}
+  const pick=prompt(`Pick the charge that paid this installment${cd.target?' (~SAR '+money0(cd.target)+')':''} — enter its number:\n\n`+hits.slice(0,12).map((x,i)=>`${i+1}. ${x.date} · ${x.desc} · SAR ${money0(x.amount)}`).join('\n'));
+  const idx=parseInt(pick)-1;if(isNaN(idx)||!hits[idx])return;
+  const r=await post('/api/bnpl/match',{txn_id:hits[idx].jid,bnpl_account_id:id});
+  if(!r.ok){alert(r.error||'failed');return;}
+  alert(`Charge linked as installment ${r.installment||''} ✓\n\nLiability ${money0(Math.abs(r.liability_before))} → ${money0(Math.abs(r.liability_after))} (discharged ${money0(r.discharged)})\nProof: ${r.proof_ok?'balanced ✓':'⚠ future-dated — will reduce on its date'}${r.retired?'\n\n🎉 Plan fully paid — retired to Completed plans.':''}\n\nThe original charge is preserved — re-pointed to pay down the debt, never counted twice.`);
+  await load();
+}
+let BWPROV='Tabby';
+const PEOPLE=['Hisham','Sarah','Aser','Adam','Family','Maid','Driver'];
+let BW_CAT='';
+async function pickBwCat(){const v=await catPick(BW_CAT);if(v===null)return;BW_CAT=v;
+  const b=document.getElementById('bw_catbtn');b.textContent=v;b.style.color='var(--text)';}
+function openBnplWizard(){document.getElementById('bnplm').classList.add('show');BWPROV='Tabby';
+  document.querySelectorAll('#bw_prov button').forEach((b,i)=>b.style.background=i===0?'rgba(114,213,200,.16)':'');
+  document.getElementById('bw_provother').style.display='none';
+  BW_CAT='';const cb=document.getElementById('bw_catbtn');if(cb){cb.textContent='Choose a category…';cb.style.color='var(--muted)';}
+  const ps=document.getElementById('bw_person');const people=(BOOT&&BOOT.persons)||PEOPLE;
+  if(ps){ps.length=1;people.forEach(p=>ps.add(new Option(p,p)));}
+  const t=new Date().toISOString().slice(0,10);document.getElementById('bw_date').value=t;
+  document.getElementById('bw_first').value=t;document.getElementById('bw_result').innerHTML='';bwPreview();}
+function bwProv(p){BWPROV=p;const btns=document.querySelectorAll('#bw_prov button');
+  btns.forEach(b=>b.style.background=b.textContent.toLowerCase()===p.toLowerCase()||(p==='other'&&b.textContent==='Other')?'rgba(114,213,200,.16)':'');
+  document.getElementById('bw_provother').style.display=p==='other'?'block':'none';}
+function bwPreview(){const t=parseFloat(document.getElementById('bw_total').value),n=parseInt(document.getElementById('bw_n').value);
+  document.getElementById('bw_preview').textContent=(t>0&&n>0)?`= SAR ${money0(t/n)} × ${n} (HAKIM divides it for you)`:'';}
+async function createBnpl(){
+  const provider=BWPROV==='other'?document.getElementById('bw_provother').value.trim():BWPROV;
+  const item=document.getElementById('bw_item').value.trim();
+  const total=document.getElementById('bw_total').value,n=document.getElementById('bw_n').value;
+  if(!item||!(+total>0)||!(+n>0)){alert('Fill provider, item, total and installments.');return;}
+  const category=BW_CAT;
+  if(!category){alert('Category is required — tap “Choose a category…” to pick it from your live list.');return;}
+  const person=document.getElementById('bw_person').value;
+  const body={provider,item,total,installments:n,date:document.getElementById('bw_date').value,
+    first_due:document.getElementById('bw_first').value,category,person};
+  // Tabby/Tamara charge installment 1 at checkout — ask which card so we model that reality
+  if(/tabby|tamara/i.test(provider)){
+    const cards=ACCTS.filter(x=>x.active&&!x.hidden&&(x.is_card||x.group==='Banks'||x.group==='Payment accounts'||x.group==='Wallets'));
+    const c=prompt(provider+' charges installment 1 at checkout. Which card/account paid that first installment? Type the exact name (or leave blank if it did NOT charge at checkout):\n\n'+cards.map(x=>'· '+x.name).join('\n'));
+    if(c&&c.trim()){const fa=cards.find(x=>x.name===c.trim());if(fa){body.first_paid=true;body.pay_from=fa.id;}else{alert('No account named "'+c.trim()+'" — creating without checkout charge.');}}
+    else{body.first_paid=false;}
+  }
+  const r=await post('/api/bnpl/create',body);
+  const el=document.getElementById('bw_result');
+  if(!r.ok){el.className='';el.style.color='var(--exp)';el.textContent=r.error||'failed';return;}
+  el.style.color='var(--mint)';
+  el.innerHTML=`✓ ${esc(r.name)} created — SAR ${money0(r.per)} × ${r.installments} = ${money0(r.total)}.${r.checkout_paid?` Installment 1 charged at checkout ✓ — you owe ${money0(r.owed_now)} now.`:` Debt booked (proof ${r.proof_ok?'✓':'⚠'}).`}<br>Open it and use ${window.ic('link')} Link a payment for any others you've already paid.`;
+  setTimeout(()=>{document.getElementById('bnplm').classList.remove('show');load();},2200);
+}
+function nm(fn){document.getElementById('newmenu').style.display='none';fn();}
+document.addEventListener('click',e=>{const m=document.getElementById('newmenu');if(m&&m.style.display==='block'&&!e.target.closest('#newmenu')&&e.target.textContent!=='+ New ▾')m.style.display='none';});
+async function newLoan(){
+  const name=prompt('Name this loan (e.g. Car finance — SNB / Personal finance):');if(!name)return;
+  const principal=prompt('Financed amount (SAR):');if(!principal)return;
+  const rate=prompt('Annual profit rate % — as contracted (e.g. 6):','6');if(rate===null)return;
+  const term=prompt('Term (months):','36');if(!term)return;
+  const monthly=prompt('Monthly payment (SAR) — leave blank and HAKIM computes it (declining-balance), or type the contract figure:','');
+  const start=prompt('First payment date (YYYY-MM-DD):',new Date().toISOString().slice(0,10));if(!start)return;
+  const acc=await post('/api/account/add',{name,type:'loan',opening:principal});
+  if(!acc.ok){alert(acc.error||'failed to create the account');return;}
+  const r=await post('/api/loan/setup',{account_id:acc.id,principal,annual_rate:rate,term,monthly:monthly||undefined,start});
+  if(!r.ok){alert(r.error||'schedule failed');await load();return;}
+  alert(`Loan created (declining-balance, SAMA) ✓\n\nMonthly: SAR ${money0(r.monthly)}\nTotal repayable: SAR ${money0(r.total_repayable)}\nCost of financing: SAR ${money0(r.total_cost)}`);
+  await load();
+}
+function newInvestment(){openAdd();toast&&toast('Pick a certificate · fund · ETF · gold under Investments & metals','ok');}
+async function setupLoan(id){const a=byId(id);
+  const principal=prompt('Financed amount (SAR):');if(!principal)return;
+  const rate=prompt('Annual profit rate % — as contracted (e.g. 6):','6');if(rate===null)return;
+  const term=prompt('Term (months):','36');if(!term)return;
+  const monthly=prompt('Monthly payment (SAR) — leave blank and HAKIM computes it (declining-balance), or type the contract figure:','');
+  const start=prompt('First payment date (YYYY-MM-DD):',new Date().toISOString().slice(0,10));if(!start)return;
+  const r=await post('/api/loan/setup',{account_id:id,principal,annual_rate:rate,term,monthly:monthly||undefined,start});
+  if(!r.ok){alert(r.error||'failed');return;}
+  alert(`Loan schedule created (declining-balance, SAMA) ✓\n\nMonthly: SAR ${money0(r.monthly)}\nTotal repayable: SAR ${money0(r.total_repayable)}\nCost of financing: SAR ${money0(r.total_cost)}`);
+  loadFinancing(id);
+}
+async function newBnpl(id){
+  const item=prompt('What did you buy? (item)');if(!item)return;
+  const merchant=prompt('Merchant:','');
+  const total=prompt('Total price (SAR):');if(!total)return;
+  const n=prompt('Number of installments:','4');if(!n)return;
+  const first=prompt('First installment due (YYYY-MM-DD):',new Date().toISOString().slice(0,10));if(!first)return;
+  const cat=await catPick('');if(cat===null)return;
+  const r=await post('/api/bnpl/purchase',{account_id:id,item,merchant,total,installments:n,first_due:first,category:cat});
+  if(!r.ok){alert(r.error||'failed');return;}
+  alert(`BNPL purchase booked ✓\n\nFull expense ${r.total} today + debt to provider.\nLiability ${r.liability_before} → ${r.liability_after} (owe +${r.incurred})\nProof: ${r.proof_ok?'balanced ✓':'⚠'}\n\n${r.installments} installments scheduled — record each as the charge arrives.`);
+  await load();
+}
+async function newLease(){
+  const name=prompt('Lease name (e.g. Lexus RX lease):');if(!name)return;
+  const value=prompt('Car value / invoice price (SAR):');if(!value)return;
+  const down=prompt('Down payment (SAR):','0');if(down===null)return;
+  const balloon=prompt('Balloon / final payment (SAR — the one everyone forgets):','0');if(balloon===null)return;
+  const term=prompt('Term — number of monthly installments:','36');if(!term)return;
+  const monthly=prompt('Contract monthly payment (SAR — the real number):');if(!monthly)return;
+  const first=prompt('First installment due (YYYY-MM-DD):',new Date().toISOString().slice(0,10));if(!first)return;
+  const cashAcc=ACCTS.filter(x=>x.active&&!x.hidden&&(x.group==='Payment accounts'||x.group==='Banks'||x.group==='Wallets'));
+  const from=prompt('Pay the down payment from which account? Exact name:\n\n'+cashAcc.map(x=>'· '+x.name).join('\n'));if(!from)return;
+  const fa=cashAcc.find(x=>x.name===from);if(!fa){alert('No account named "'+from+'"');return;}
+  const r=await post('/api/lease/setup',{name,value,down,balloon,term,monthly,first_due:first,from_account:fa.id});
+  if(!r.ok){alert(r.error||'failed');return;}
+  alert(`Lease created ✓\n\nCar (Other assets): SAR ${money0(r.car_value)}\nLiability (commitment): SAR ${money0(r.liability)}\nCash: down −${money0(Math.abs(r.cash_before-r.cash_after))}\nTotal financing cost over term: SAR ${money0(r.financing_cost)}\nBalloon due: ${r.balloon_date}\nProof: ${r.proof_ok?'balanced ✓':'⚠'}\n\nThe balloon is a scheduled line — you'll be reminded 6 and 3 months before.`);
+  await load();
+}
+async function buyAsset(id){const a=byId(id);
+  const cashAcc=ACCTS.filter(x=>x.active&&!x.hidden&&(x.group==='Payment accounts'||x.group==='Banks'||x.group==='Wallets'));
+  const amt=prompt('Amount to buy (SAR value moving from cash into '+a.name+'):');if(!amt)return;
+  const from=prompt('Pay from which account? Exact name:\n\n'+cashAcc.map(x=>'· '+x.name).join('\n'));if(!from)return;
+  const fa=cashAcc.find(x=>x.name===from);if(!fa){alert('No account named "'+from+'"');return;}
+  const r=await post('/api/asset/trade',{account_id:id,cash_account:fa.id,amount:amt,side:'buy'});
+  if(!r.ok){alert(r.error||'failed');return;}toast&&toast('bought · '+a.name+' '+money0(r.asset_after));await load();
+}
+async function sellAsset(id){const a=byId(id);
+  const cashAcc=ACCTS.filter(x=>x.active&&!x.hidden&&(x.group==='Payment accounts'||x.group==='Banks'||x.group==='Wallets'));
+  const amt=prompt('Amount to sell (SAR value moving from '+a.name+' back to cash — partial ok):');if(!amt)return;
+  const to=prompt('Deposit to which account? Exact name:\n\n'+cashAcc.map(x=>'· '+x.name).join('\n'));if(!to)return;
+  const fa=cashAcc.find(x=>x.name===to);if(!fa){alert('No account named "'+to+'"');return;}
+  const r=await post('/api/asset/trade',{account_id:id,cash_account:fa.id,amount:amt,side:'sell'});
+  if(!r.ok){alert(r.error||'failed');return;}toast&&toast('sold · '+a.name+' now '+money0(r.asset_after));await load();
+}
+async function earlySettle(id){const a=byId(id);
+  const cash=ACCTS.filter(x=>x.active&&!x.hidden&&(x.group==='Payment accounts'||x.group==='Banks'||x.group==='Wallets'));
+  const fig=prompt('Bank’s ACTUAL early-settlement figure (SAR) — enter what they quoted, never computed:');if(!fig)return;
+  const from=prompt('Pay from which account? Type the exact name:\n\n'+cash.map(x=>'· '+x.name).join('\n'));if(!from)return;
+  const fa=cash.find(x=>x.name===from);if(!fa){alert('No account named "'+from+'"');return;}
+  const r=await post('/api/loan/settle',{account_id:id,from_account:fa.id,settlement_amount:fig});
+  if(!r.ok){alert(r.error||'failed');return;}
+  alert(`Settled ✓\n\nPaid ${r.settlement} (principal ${r.principal} + cost ${r.cost})\nLiability ${r.liability_before} → ${r.liability_after}\nProof cleared: ${r.proof_ok?'✓':'⚠'}`);
+  await load();
+}
+async function recordPayment(id){
+  const cash=ACCTS.filter(x=>x.active&&!x.hidden&&(x.group==='Payment accounts'||x.group==='Banks'||x.group==='Wallets'));
+  const from=prompt('Pay from which account? Type the exact name:\n\n'+cash.map(x=>'· '+x.name).join('\n'));if(!from)return;
+  const fa=cash.find(x=>x.name===from);if(!fa){alert('No account named "'+from+'"');return;}
+  const r=await post('/api/financing/pay',{account_id:id,from_account:fa.id});
+  if(!r.ok){alert(r.error||'failed');return;}
+  alert(`Payment recorded ✓\n\nPrincipal ${r.principal} + cost ${r.cost}\nLiability ${r.liability_before} → ${r.liability_after}  (−${r.principal_discharged})\nProof: ${r.proof_ok?'balanced ✓':'⚠ check'}`);
+  await load();
+}
+async function settleManual(id,n,amount){
+  const why=prompt('Settle installment '+n+' (SAR '+money0(amount)+') manually — because the real transaction can\'t be linked.\n\nType a reason:\n  1 = predates the ledger (no data for that month)\n  2 = someone else paid it\n  3 = paid outside tracked accounts\n  4 = other');
+  if(!why)return;
+  const map={'1':'pre-ledger','2':'paid-by-other','3':'outside','4':'other'};
+  const reason=map[why.trim()]||'other';
+  const note=prompt('Optional note (what/who/when — for the record):','')||'';
+  const r=await post('/api/schedule/settle-manual',{account_id:id,installment:n,reason,note});
+  if(!r.ok){alert(r.error||'failed');return;}
+  alert(`Settled manually ✓  (${reason})\n\nThis moved NO money from your accounts — it's a non-cash adjustment.\nLiability ${r.liability_before} → ${r.liability_after}  (−${r.reduced})\nProof: ${r.proof_ok?'balanced ✓':'⚠ check'}${r.retired?'\n\nPlan fully settled — retired to Completed.':''}`);
+  await load();
+}
+// The standard live category picker — same searchable list used across the system, read fresh from
+// /api/tree each open so a category created a minute ago appears without reload. No free text.
+function catPick(current){return new Promise(async resolve=>{
+  let tree={};try{tree=(await(await fetch('/api/tree')).json()).tree||{};}catch(e){}
+  const ex=tree.expense||{};
+  const items=[];Object.keys(ex).forEach(par=>{items.push({v:par,l:par,sub:false});(ex[par]||[]).forEach(s=>items.push({v:par+': '+s,l:s,sub:true}));});
+  let ov=document.getElementById('catpickov');
+  if(!ov){ov=document.createElement('div');ov.id='catpickov';ov.className='ov';document.body.appendChild(ov);}
+  ov.innerHTML=`<div class="modal" style="max-width:440px" onclick="event.stopPropagation()">
+    <div class="mhd"><b>Pick a category</b><span class="x" id="cpx">✕</span></div>
+    <input id="cpickf" placeholder="type to filter…" style="width:100%;margin-bottom:8px">
+    <div id="cpicklist" style="max-height:52vh;overflow:auto"></div></div>`;
+  ov.classList.add('show');
+  const list=ov.querySelector('#cpicklist');
+  const done=(v)=>{ov.classList.remove('show');resolve(v);};
+  const build=(f)=>{f=(f||'').toLowerCase();list.innerHTML='';
+    items.filter(it=>(it.sub?'':it.v).toLowerCase().includes(f)||it.v.toLowerCase().includes(f)).forEach(it=>{
+      const d=document.createElement('div');d.textContent=(it.sub?'   ↳ ':'')+it.l;
+      d.style.cssText='padding:8px 10px;border-bottom:1px solid var(--line);cursor:pointer;font-size:14px'+(it.sub?';color:var(--muted);padding-left:22px':';font-weight:600');
+      if(it.v===current)d.style.background='rgba(114,213,200,.12)';
+      d.onclick=()=>done(it.v);list.appendChild(d);});
+    if(!list.children.length)list.innerHTML='<div class="notice">No match</div>';};
+  ov.querySelector('#cpx').onclick=()=>done(null);
+  ov.onclick=(e)=>{if(e.target===ov)done(null);};
+  const inp=ov.querySelector('#cpickf');inp.oninput=()=>build(inp.value);build('');inp.focus();
+});}
+// Standard person picker — chips from the live person list (BOOT.persons / /api/tree)
+function personPick(current){return new Promise(async resolve=>{
+  let people=(BOOT&&BOOT.persons)||PEOPLE;try{const t=await(await fetch('/api/tree')).json();if(t.persons)people=t.persons;}catch(e){}
+  let ov=document.getElementById('personpickov');
+  if(!ov){ov=document.createElement('div');ov.id='personpickov';ov.className='ov';document.body.appendChild(ov);}
+  const done=(v)=>{ov.classList.remove('show');resolve(v);};
+  const chip=(v,lbl)=>`<button class="btn" data-v="${esc(v)}" style="padding:8px 14px;margin:4px;${v===current?'background:rgba(114,213,200,.16);border-color:var(--mint)':''}">${esc(lbl)}</button>`;
+  ov.innerHTML=`<div class="modal" style="max-width:380px" onclick="event.stopPropagation()">
+    <div class="mhd"><b>Whose is this plan?</b><span class="x" id="ppx">✕</span></div>
+    <div style="display:flex;flex-wrap:wrap;gap:2px">${chip('','— nobody —')}${people.map(p=>chip(p,window.ic('user')+' '+p)).join('')}</div></div>`;
+  ov.classList.add('show');
+  ov.querySelectorAll('[data-v]').forEach(b=>b.onclick=()=>done(b.dataset.v));
+  ov.querySelector('#ppx').onclick=()=>done(current||'');ov.onclick=(e)=>{if(e.target===ov)done(current||'');};
+});}
+async function editBnplMeta(id){
+  let d;try{d=await(await fetch('/api/schedule?id='+id)).json();}catch(e){return;}
+  const s=d.schedule||{};
+  const cat=await catPick(s.category||'');
+  if(cat===null)return;
+  const person=await personPick(s.person||'');
+  if(person===null)return;
+  const r=await post('/api/bnpl/meta',{account_id:id,category:cat,person});
+  if(!r.ok){alert(r.error||'failed');return;}
+  alert(`Meaning set ✓\n🧳 ${r.category||'—'}  👤 ${r.person||'nobody'}\nRe-tagged ${r.retagged} existing payment(s) — Categories & By-person now reflect it.`);
+  await load();
+}
+function chart(series){
+  if(!series||series.length<2)return `<div class="notice" style="padding:8px 2px 14px">Balance curve appears once this account has a few dated transactions.</div>`;
+  const W=680,Hh=150,pl=52,pr=12,pt=12,pb=22;const vals=series.map(p=>p.balance);
+  const mn=Math.min(...vals),mx=Math.max(...vals),span=(mx-mn)||1;
+  const X=i=>pl+i*(W-pl-pr)/(series.length-1),Y=v=>pt+(1-(v-mn)/span)*(Hh-pt-pb);
+  const line=series.map((p,i)=>`${X(i).toFixed(1)},${Y(p.balance).toFixed(1)}`).join(' ');
+  const area=`${pl},${Hh-pb} ${line} ${(W-pr)},${Hh-pb}`;
+  const zeroY=(mn<0&&mx>0)?Y(0):null;
+  const ticks=[mx,(mx+mn)/2,mn].map(v=>`<text x="${pl-8}" y="${(Y(v)+3).toFixed(1)}" text-anchor="end" fill="#5A6072" font-size="9" font-family="var(--mono)">${money0(v)}</text><line x1="${pl}" y1="${Y(v).toFixed(1)}" x2="${W-pr}" y2="${Y(v).toFixed(1)}" stroke="#1c2130"/>`).join('');
+  const xl=[0,Math.floor(series.length/2),series.length-1].map(i=>`<text x="${X(i)}" y="${Hh-6}" text-anchor="middle" fill="#5A6072" font-size="9" font-family="var(--mono)">${series[i].date.slice(5)}</text>`).join('');
+  return `<svg width="100%" viewBox="0 0 ${W} ${Hh}" style="margin:2px 0 12px">${ticks}${zeroY!==null?`<line x1="${pl}" y1="${zeroY.toFixed(1)}" x2="${W-pr}" y2="${zeroY.toFixed(1)}" stroke="#3a3030" stroke-dasharray="3 3"/>`:''}
+    <polygon points="${area}" fill="#72D5C8" opacity="0.10"/><polyline points="${line}" fill="none" stroke="#72D5C8" stroke-width="1.8"/>
+    <circle cx="${X(series.length-1)}" cy="${Y(vals[vals.length-1])}" r="3" fill="#72D5C8"/>${xl}</svg>`;
+}
+// inject detail host after the open row
+const _rg=renderGroups;renderGroups=function(){_rg();if(OPEN){const row=document.querySelector(`.arow[data-id="${OPEN}"]`);if(row&&!document.getElementById('det-'+OPEN)){const div=document.createElement('div');div.className='detail';div.id='det-'+OPEN;row.after(div);renderDetail(OPEN);}}};
+
+/* ---- drag reorder ---- */
+let dragId=null,dragGroup=null;
+function dStart(e,id,g){dragId=id;dragGroup=g;e.dataTransfer.effectAllowed='move';}
+function dEnd(e){document.querySelectorAll('.grp').forEach(x=>x.classList.remove('dragover'));}
+function gOver(e){const g=e.currentTarget;if(dragGroup&&g.dataset.group===dragGroup){e.preventDefault();g.classList.add('dragover');}}
+function gLeave(e){e.currentTarget.classList.remove('dragover');}
+async function gDrop(e,group){e.preventDefault();e.currentTarget.classList.remove('dragover');
+  if(!dragId||dragGroup!==group)return;
+  const row=e.target.closest('.arow');const targetId=row?row.dataset.id:null;
+  const arr=ACCTS.slice();const fromI=arr.findIndex(a=>a.id===dragId);const[mv]=arr.splice(fromI,1);
+  let toI=targetId?arr.findIndex(a=>a.id===targetId):arr.length;if(toI<0)toI=arr.length;arr.splice(toI,0,mv);
+  ACCTS=arr;dragId=null;await post('/api/account/reorder',{ids:arr.map(a=>a.id)});await load();
+}
+/* ---- management ---- */
+async function unhide(id){await post('/api/account/hide',{id,hidden:false});await load();}
+async function hide(id){await post('/api/account/hide',{id,hidden:true});OPEN=null;await load();}
+async function reopen(id){await post('/api/account/reopen',{id});await load();}
+async function editAcct(id){const a=byId(id);const name=prompt('Rename:',a.name);if(name===null)return;
+  const notes=prompt('Notes (IBAN etc — never full card numbers):',a.notes||'');
+  const r=await post('/api/account/edit',{id,name,notes});if(!r.ok){alert(r.error||'failed');return;}await load();}
+async function correctBal(id){const a=byId(id);const v=prompt(`True balance of ${a.name}? (now ${money0(a.balance)})`,a.balance);if(v===null)return;
+  const note=prompt('Note (required):','');if(!note)return;
+  await post('/api/balance-correct',{account_id:id,true_balance:Number(v),note});await load();}
+async function setNetwork(id){const a=byId(id);if(!a.last4){alert('This card has no last-4 in its name — rename it to include •XXXX first.');return;}
+  const net=prompt('Network (verified, not guessed): visa / mastercard / mada / unknown',a.network||'unknown');if(!net)return;
+  await post('/api/card/network',{last4:a.last4,network:net.toLowerCase()});await load();}
+function utilCol(u){return u>100?'#E05252':(u>90?'#e0708a':(u>70?'#e8b95a':'#72D5C8'));}
+async function setLimit(id){const a=byId(id);if(!a.last4){alert('This card has no last-4 in its name — rename it to include •XXXX first.');return;}
+  const v=prompt(`Credit limit for ${a.name} (SAR, verified — blank clears it):`,a.limit||'');if(v===null)return;
+  await post('/api/card/limit',{last4:a.last4,limit:v.trim()});await load();}
+async function cardSettings(id){const a=byId(id);if(!a.last4){alert('This card has no last-4 in its name — rename it to include •XXXX first.');return;}
+  let s=(await(await fetch('/api/card/settings?last4='+encodeURIComponent(a.last4))).json()).settings||{mode:'full',pct:5,floor:100,due_rule:'dayN',due_day:5};
+  let ov=document.getElementById('cardsetov');if(!ov){ov=document.createElement('div');ov.id='cardsetov';
+    ov.style.cssText='position:fixed;inset:0;background:rgba(0,0,0,.6);z-index:200;display:flex;align-items:flex-start;justify-content:center;padding-top:8vh';
+    ov.onclick=e=>{if(e.target.id==='cardsetov')ov.remove();};document.body.appendChild(ov);}
+  ov.innerHTML=`<div style="width:min(460px,94vw);background:#151823;border:1px solid var(--line);border-radius:14px;padding:20px 22px">
+    <div style="display:flex;justify-content:space-between;margin-bottom:4px"><b>✎ Card settings · ${esc(a.name)}</b><span style="cursor:pointer;color:var(--muted)" onclick="document.getElementById('cardsetov').remove()">✕</span></div>
+    <div style="font-size:11px;color:var(--muted);font-family:var(--mono);margin-bottom:14px">Your bank's contract — the facts from the app. Never guessed.</div>
+    <label class="fld">Payment mode</label><div class="seg" style="display:flex;gap:8px;margin-bottom:12px">
+      <button type="button" id="cm_full" onclick="cmMode('full')" style="flex:1;background:${s.mode!=='minimum'?'rgba(114,213,200,.16)':'var(--panel2)'};border:1px solid var(--line);color:var(--txt);border-radius:9px;padding:9px;cursor:pointer">Full amount</button>
+      <button type="button" id="cm_min" onclick="cmMode('minimum')" style="flex:1;background:${s.mode==='minimum'?'rgba(114,213,200,.16)':'var(--panel2)'};border:1px solid var(--line);color:var(--txt);border-radius:9px;padding:9px;cursor:pointer">Minimum (%)</button></div>
+    <div id="cm_minfields" style="display:${s.mode==='minimum'?'flex':'none'};gap:10px;margin-bottom:12px">
+      <div style="flex:1"><label class="fld">Percent %</label><input id="cm_pct" type="number" value="${s.pct||5}"></div>
+      <div style="flex:1"><label class="fld">Min floor (SAR)</label><input id="cm_floor" type="number" value="${s.floor||100}"></div></div>
+    <label class="fld">Due date rule</label><div class="seg" style="display:flex;gap:8px;margin-bottom:10px">
+      <button type="button" id="cr_day" onclick="cmRule('dayN')" style="flex:1;background:${s.due_rule!=='monthend'?'rgba(114,213,200,.16)':'var(--panel2)'};border:1px solid var(--line);color:var(--txt);border-radius:9px;padding:9px;cursor:pointer">Day N of next month</button>
+      <button type="button" id="cr_end" onclick="cmRule('monthend')" style="flex:1;background:${s.due_rule==='monthend'?'rgba(114,213,200,.16)':'var(--panel2)'};border:1px solid var(--line);color:var(--txt);border-radius:9px;padding:9px;cursor:pointer">Last day of month</button></div>
+    <div id="cr_dayfield" style="display:${s.due_rule!=='monthend'?'block':'none'};margin-bottom:14px"><label class="fld">Day (1–28)</label><input id="cm_day" type="number" value="${s.due_day||5}" style="width:100%"></div>
+    <button class="btn pri" style="width:100%" onclick="saveCardSettings('${a.last4}')">Save</button></div>`;
+  window._cm={mode:s.mode||'full',rule:s.due_rule||'dayN'};}
+function cmMode(m){window._cm.mode=m;document.getElementById('cm_full').style.background=m==='full'?'rgba(114,213,200,.16)':'var(--panel2)';document.getElementById('cm_min').style.background=m==='minimum'?'rgba(114,213,200,.16)':'var(--panel2)';document.getElementById('cm_minfields').style.display=m==='minimum'?'flex':'none';}
+function cmRule(r){window._cm.rule=r;document.getElementById('cr_day').style.background=r==='dayN'?'rgba(114,213,200,.16)':'var(--panel2)';document.getElementById('cr_end').style.background=r==='monthend'?'rgba(114,213,200,.16)':'var(--panel2)';document.getElementById('cr_dayfield').style.display=r==='dayN'?'block':'none';}
+async function saveCardSettings(last4){const b={last4,mode:window._cm.mode,due_rule:window._cm.rule,
+    pct:document.getElementById('cm_pct')?.value||5,floor:document.getElementById('cm_floor')?.value||0,due_day:document.getElementById('cm_day')?.value||1};
+  await post('/api/card/settings',b);document.getElementById('cardsetov').remove();await load();}
+async function mergeAcct(id){const a=byId(id);const others=ACCTS.filter(x=>x.active&&!x.hidden&&x.id!==id);
+  const to=prompt(`Merge "${a.name}" INTO which account? Type the exact name:\n\n`+others.map(x=>'· '+x.name).join('\n'));if(!to)return;
+  const tgt=others.find(x=>x.name===to);if(!tgt){alert('No account named "'+to+'"');return;}
+  if(!confirm(`Move all of "${a.name}"'s history into "${to}", then delete the empty shell?`))return;
+  const r=await post('/api/account/delete',{id,mode:'move',target_id:tgt.id});alert(r.ok?`Moved ${r.moved} txns ✓`:(r.error||'failed'));OPEN=null;await load();}
+async function closeAcct(id){const a=byId(id);if(!confirm(`Close "${a.name}"? Hides from pickers; history stays searchable.`))return;
+  let body={id};if(Math.abs(a.balance)>0.001){const others=ACCTS.filter(x=>x.active&&!x.hidden&&x.id!==id);
+    const to=prompt(`"${a.name}" holds ${money0(a.balance)}. Transfer remaining to which account?\n\n`+others.map(x=>'· '+x.name).join('\n'));
+    const tgt=others.find(x=>x.name===to);if(!tgt)return;body.final_transfer_to=tgt.id;}
+  const r=await post('/api/account/close',body);if(r.need_transfer){alert('This account has a balance — choose where to move it.');return;}OPEN=null;await load();}
+async function delAcct(id){const a=byId(id);const st=DET[id]?.stats||{count:0};
+  if(st.count===0){if(!confirm(`Delete empty "${a.name}"?`))return;await post('/api/account/delete',{id,mode:'empty'});OPEN=null;await load();return;}
+  if(!confirm(`"${a.name}" has ${st.count} transactions. History is sacred — prefer Merge. Purge account AND its history anyway?`))return;
+  const c=prompt(`Type the account name to confirm permanent deletion:`);if(c!==a.name){if(c!==null)alert('Name did not match');return;}
+  const r=await post('/api/account/delete',{id,mode:'purge',confirm_name:c});alert(r.ok?`Purged ${r.purged} txns ✓`:(r.error||'failed'));OPEN=null;await load();}
+/* ---- cash-count wizard ---- */
+let COUNT=[];
+async function openCount(){document.getElementById('countm').classList.add('show');
+  document.getElementById('countbody').innerHTML='<div class="notice">Loading cash accounts…</div>';
+  try{const d=await(await fetch('/api/cashcount/accounts')).json();COUNT=d.accounts||[];renderCount(d.today);}catch(e){document.getElementById('countbody').innerHTML='<div class="notice">Failed to load.</div>';}}
+function closeCount(){document.getElementById('countm').classList.remove('show');}
+function renderCount(today){
+  if(!COUNT.length){document.getElementById('countbody').innerHTML='<div class="notice">No physical-cash accounts found. Wallets, safes and currency safes (names with wallet/safe/cash) show up here.</div>';return;}
+  const rows=COUNT.map((a,i)=>{
+    const stale=a.stale_days;
+    const badge=a.last_counted?`<span style="font-family:var(--mono);font-size:10px;color:${stale>45?'var(--gold)':'var(--muted)'}">counted ${a.last_counted}${stale>45?' · '+stale+'d ⚠':''}</span>`:`<span style="font-family:var(--mono);font-size:10px;color:var(--gold)">never counted</span>`;
+    return `<div style="display:flex;align-items:center;gap:10px;padding:9px 0;border-bottom:1px solid var(--line)">
+      <div style="flex:1;min-width:0"><div style="font-weight:600;font-size:13px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${esc(a.name)}</div>
+        <div style="font-family:var(--mono);font-size:11px;color:var(--muted)">book ${a.currency} ${money0(a.balance)} · ${badge}</div></div>
+      <input type="number" inputmode="decimal" placeholder="${a.currency}" data-i="${i}" oninput="countDiff(${i})" style="width:120px;background:var(--panel2);color:var(--txt);border:1px solid var(--line);border-radius:9px;padding:9px 10px;font-family:var(--mono);font-size:13px;text-align:right">
+      <div id="cdiff-${i}" style="width:96px;text-align:right;font-family:var(--mono);font-size:11px;color:var(--muted)">—</div>
+    </div>`;}).join('');
+  document.getElementById('countbody').innerHTML=
+    `<div style="font-family:var(--mono);font-size:11px;color:var(--muted);margin-bottom:8px">Enter what you physically counted in each — leave blank to skip. Any difference posts an adjustment stamped “counted ${today}”. Each amount is in that account’s own currency.</div>
+     <div class="field" style="margin-bottom:10px"><label style="font-size:10px;letter-spacing:1px;text-transform:uppercase;color:var(--lbl);font-weight:700">Count date</label><input type="date" id="cdate" value="${today}" style="width:100%;background:var(--panel2);color:var(--txt);border:1px solid var(--line);border-radius:9px;padding:9px 10px;font-family:var(--mono);font-size:13px"></div>
+     ${rows}
+     <button class="save" style="margin-top:16px;width:100%;background:var(--gold);color:#0D0F16;border:none;border-radius:10px;padding:11px;font-weight:800;cursor:pointer" onclick="applyCount()">Apply cash count</button>
+     <div id="cresult" style="margin-top:12px"></div>`;
+}
+function countDiff(i){const inp=document.querySelector(`#countbody input[data-i="${i}"]`);const el=document.getElementById('cdiff-'+i);
+  if(inp.value===''){el.textContent='—';el.style.color='var(--muted)';return;}
+  const diff=Math.round((Number(inp.value)-COUNT[i].balance)*100)/100;
+  el.textContent=(diff===0?'✓ matches':(diff>0?'+':'−')+money0(Math.abs(diff)));
+  el.style.color=diff===0?'var(--mint)':(diff>0?'var(--mint)':'var(--exp)');}
+async function applyCount(){
+  const counts=[];COUNT.forEach((a,i)=>{const v=document.querySelector(`#countbody input[data-i="${i}"]`).value;if(v!=='')counts.push({account_id:a.id,counted:v});});
+  if(!counts.length){alert('Enter at least one counted amount.');return;}
+  const date=document.getElementById('cdate').value;
+  const r=await post('/api/cashcount/apply',{date,counts});
+  const el=document.getElementById('cresult');
+  if(!r.ok){el.innerHTML='<div class="notice">Failed.</div>';return;}
+  const adj=r.results.filter(x=>x.txn);
+  el.innerHTML=`<div style="font-family:var(--mono);font-size:11px;border-top:1px solid var(--line);padding-top:10px">`+
+    r.results.map(x=>`<div style="display:flex;justify-content:space-between;padding:2px 0;color:${x.proof_ok?'var(--mint)':'var(--red)'}">
+      <span>${esc(x.name)}</span><span>${x.diff===0?'✓ matched':(x.proof_ok?'✓ ':'⚠ ')+x.currency+' '+money0(x.book)+'→'+money0(x.after)}</span></div>`).join('')+
+    `<div style="color:var(--muted);margin-top:6px">${adj.length} adjustment${adj.length===1?'':'s'} posted · ${r.results.length-adj.length} already matched</div></div>`;
+  setTimeout(()=>{closeCount();load();},2200);
+}
+/* ---- add account ---- */
+function openAdd(){document.getElementById('addm').classList.add('show');renderAdd();}
+function closeAdd(){document.getElementById('addm').classList.remove('show');}
+function renderAdd(){
+  const curs=(BOOT&&BOOT.currencies)?Object.keys(BOOT.currencies):['SAR','USD','EGP','AED'];
+  document.getElementById('addbody').innerHTML=`
+    <label class="fld">Name</label><input id="an" placeholder="e.g. Hisham AlRajhi main">
+    <label class="fld">Type</label><select id="at" onchange="addCardToggle()">
+      <optgroup label="Everyday">
+        <option value="bank">Bank</option><option value="cash">Cash / safe</option><option value="digital">Digital wallet</option>
+        <option value="card">Credit card</option><option value="receivable">Receivable</option></optgroup>
+      <optgroup label="Investments &amp; metals">
+        <option value="certificate">Certificate (شهادة)</option><option value="fund">Fund (صندوق)</option>
+        <option value="etf">ETF</option><option value="gold">Gold</option><option value="silver">Silver</option>
+        <option value="hissar">HISSAR (Farm / Position)</option><option value="equity">Company equity</option></optgroup>
+      <optgroup label="Financing (liabilities)">
+        <option value="loan">Loan (Tawarruq)</option><option value="bnpl">BNPL (Tabby / Tamara)</option>
+        <option value="lease">Lease-to-own</option></optgroup>
+      <optgroup label="Other">
+        <option value="other_asset">Other asset (home · car · valuables)</option><option value="other_liability">Other liability</option></optgroup></select>
+    <div id="posf" style="display:none">
+      <label class="fld">Value as-of date</label><input id="pasof" type="date" value="${new Date().toISOString().slice(0,10)}">
+      <label class="fld">Restricted until (certificates — optional maturity)</label><input id="pmat" type="date"></div>
+    <div id="certf" style="display:none;border-top:1px solid var(--line);margin-top:10px;padding-top:10px">
+      <div style="font-family:var(--mono);font-size:10px;letter-spacing:1px;text-transform:uppercase;color:var(--muted);margin-bottom:6px">${window.ic('certificate')} Certificate terms — principal locked, profit is the living part</div>
+      <label class="fld">Annual profit rate %</label><input id="crate" type="number" step="0.01" placeholder="19">
+      <label class="fld">Rate type</label><select id="crtype" onchange="document.getElementById('cratenote').style.display=this.value==='variable'?'block':'none'">
+        <option value="fixed">Fixed — same rate to maturity</option><option value="variable">Variable / dynamic — rate can change (history kept)</option></select>
+      <div id="cratenote" style="display:none;font-size:11px;color:var(--muted);margin:4px 0">Future payouts recompute from the current rate; past payouts stay as received.</div>
+      <label class="fld">Payout frequency</label><select id="cfreq"><option value="monthly">Monthly</option><option value="quarterly">Quarterly</option><option value="half-year">Half-year</option><option value="yearly">Yearly</option></select>
+      <label class="fld">Term</label><select id="cterm" onchange="certTerm()"><option value="12">1 year</option><option value="36">3 years</option><option value="60">5 years</option><option value="">Custom (set maturity above)</option></select>
+      <label class="fld">Early-redemption penalty note (optional)</label><input id="cpen" placeholder="e.g. lose last 3 months' profit if broken early"></div>
+    <div id="fundf" style="display:none;border-top:1px solid var(--line);margin-top:10px;padding-top:10px">
+      <div style="font-family:var(--mono);font-size:10px;letter-spacing:1px;text-transform:uppercase;color:var(--muted);margin-bottom:6px">${window.ic('fund')} Fund / ETF — you enter the price you see each month</div>
+      <label class="fld">Units held</label><input id="funits" type="number" step="any" placeholder="120">
+      <label class="fld">Purchase price per unit</label><input id="fpp" type="number" step="any" placeholder="41.50" oninput="fundCost()">
+      <div id="fcost" style="font-size:11px;color:var(--muted);margin:4px 0"></div>
+      <label class="fld">Type</label><select id="ftype" onchange="document.getElementById('ftnote').textContent=this.value==='distributing'?'Distributing — pays dividends to your account as cash; the price drops by the payout, so price alone understates your gain (we track total return).':'Accumulating — dividends reinvest inside the fund; growth shows purely in the rising price, so the price tells nearly the whole story.'">
+        <option value="accumulating">Accumulating — reinvests dividends internally</option><option value="distributing">Distributing — pays dividends as cash</option></select>
+      <div id="ftnote" style="font-size:11px;color:var(--muted);margin:4px 0">Accumulating — dividends reinvest inside the fund; growth shows purely in the rising price, so the price tells nearly the whole story.</div></div>
+    <div id="cardf" style="display:none"><label class="fld">Last-4 (never the full number)</label><input id="al4" maxlength="4" placeholder="4331">
+      <label class="fld">Network (verified)</label><select id="anet"><option value="unknown">— unknown —</option><option value="visa">Visa</option><option value="mastercard">Mastercard</option><option value="mada">mada</option></select></div>
+    <label class="fld">Currency</label><select id="acur">${curs.map(c=>`<option ${c==='SAR'?'selected':''}>${c}</option>`).join('')}</select>
+    <div id="obwrap"><label class="fld">Opening balance</label><input id="ao" type="number" value="0"></div>
+    <label class="fld">Opening date</label><input id="ad" type="date" value="${new Date().toISOString().slice(0,10)}">
+    <label class="fld">Notes (IBAN — never card numbers)</label><input id="anote" placeholder="IBAN …">
+    <button class="save" onclick="addSave()">Create account</button>`;
+}
+const POSKINDS=['certificate','fund','etf','gold','silver','hissar','equity'];
+function addCardToggle(){const t=document.getElementById('at').value;
+  document.getElementById('cardf').style.display=t==='card'?'block':'none';
+  document.getElementById('posf').style.display=POSKINDS.includes(t)?'block':'none';
+  document.getElementById('certf').style.display=t==='certificate'?'block':'none';
+  const isFund=(t==='fund'||t==='etf');
+  document.getElementById('fundf').style.display=isFund?'block':'none';
+  document.getElementById('obwrap').style.display=isFund?'none':'block';
+  if(t==='certificate')certTerm();
+  if(isFund)fundCost();}
+function fundCost(){const u=parseFloat(document.getElementById('funits').value)||0,pp=parseFloat(document.getElementById('fpp').value)||0;
+  document.getElementById('fcost').textContent=(u&&pp)?('Cost basis: '+money0(u*pp)+' '+document.getElementById('acur').value+' (units × price) — this becomes month one of the price history'):'';}
+function certTerm(){const m=document.getElementById('cterm').value;if(!m)return;
+  const asof=document.getElementById('pasof').value||new Date().toISOString().slice(0,10);
+  const d=new Date(asof+'T00:00:00');d.setMonth(d.getMonth()+parseInt(m,10));
+  document.getElementById('pmat').value=d.toISOString().slice(0,10);}
+async function addSave(){let name=document.getElementById('an').value.trim();if(!name){alert('Name required');return;}
+  const type=document.getElementById('at').value,l4=(document.getElementById('al4')||{}).value||'';
+  if(type==='card'&&l4&&!name.includes('•'))name=name+' •'+l4;
+  const body={name,type,currency:document.getElementById('acur').value,opening:document.getElementById('ao').value,opening_date:document.getElementById('ad').value,notes:document.getElementById('anote').value};
+  if(POSKINDS.includes(type)){body.as_of=document.getElementById('pasof').value;const m=document.getElementById('pmat').value;if(m){body.restricted_until=m;body.maturity=m;}}
+  if(type==='fund'||type==='etf'){const u=document.getElementById('funits').value,pp=document.getElementById('fpp').value;
+    if(u)body.units=u;if(pp)body.purchase_price=pp;body.fund_type=document.getElementById('ftype').value;
+    if(u&&pp)body.opening=(parseFloat(u)*parseFloat(pp)).toFixed(2);}
+  if(type==='certificate'){const rt=document.getElementById('crate').value;if(rt)body.rate=rt;
+    body.rate_type=document.getElementById('crtype').value;body.payout_freq=document.getElementById('cfreq').value;
+    const pen=document.getElementById('cpen').value;if(pen)body.notes=(body.notes?body.notes+' · ':'')+'Early-redemption: '+pen;}
+  const r=await post('/api/account/add',body);
+  if(!r.ok){alert(r.error||'failed');return;}
+  if(type==='card'&&l4)await post('/api/card/network',{last4:l4,network:(document.getElementById('anet')||{}).value||'unknown'});
+  closeAdd();await load();
+}
+/* ---- right rail ---- */
+function renderRail2(){
+  const counts=[];GROUPED.groups.forEach(g=>counts.push([GLABEL[g.name]||g.name,g.count]));
+  const N=GROUPED.networth||{};                 // canonical — same assets/debt as the hero & Dashboard
+  const assets=N.assets??GROUPED.groups.reduce((s,g)=>s+(DEBTG.includes(g.name)?0:g.total),0);
+  const debt=N.debt??GROUPED.groups.reduce((s,g)=>s+(DEBTG.includes(g.name)?Math.abs(g.total):0),0);
+  const tot=assets+debt||1;
+  let h=`<div class="rc"><div class="rt">Cash vs debt</div><div class="rtsub">what you own vs what you owe</div>
+    <div class="split"><i style="width:${assets/tot*100}%;background:var(--inc)"></i><i style="width:${debt/tot*100}%;background:var(--amber)"></i></div>
+    <div class="kv"><span class="k">Assets</span><span class="v inc">SAR ${money0(assets)}</span></div>
+    <div class="kv"><span class="k">Debt (cards + loans)</span><span class="v amber">SAR ${money0(debt)}</span></div></div>`;
+  h+=`<div class="rc"><div class="rt">Accounts by group</div><div class="rtsub">what you're tracking</div>`+
+    counts.map(([n,c])=>`<div class="kv"><span class="k">${esc(n)}</span><span class="v">${c}</span></div>`).join('')+`</div>`;
+  const cards=ACCTS.filter(a=>a.is_card&&a.active&&!a.hidden);
+  if(cards.length){const big=cards.slice().sort((a,b)=>Math.abs(b.balance)-Math.abs(a.balance))[0];
+    h+=`<div class="rc"><div class="rt">Card debt</div><div class="rtsub">largest first</div>
+      <div class="kv"><span class="k">${esc(big.name)}</span><span class="v amber">SAR ${money0(Math.abs(big.balance))}</span></div>
+      <div class="kv"><span class="k">all ${cards.length} cards</span><span class="v amber">SAR ${money0(cards.reduce((s,c)=>s+Math.abs(c.balance),0))}</span></div></div>`;}
+  document.getElementById('rail2').innerHTML=h;
+}
+window.hakimReload=load;load();
+</script>
+<script src="/rail.js"></script>
+</body>
+</html>

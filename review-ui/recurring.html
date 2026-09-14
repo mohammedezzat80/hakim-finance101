@@ -1,0 +1,384 @@
+<!doctype html>
+<html lang="en" dir="ltr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>HAKIM · Recurring</title>
+<script src="/face.js"></script>
+<link rel="stylesheet" href="/face.css">
+<style>
+:root{
+ --bg:#0D0F16;--panel:#1B1F2C;--panel2:#232837;--line:#262B3A;--railbg:#0A0C12;
+ --gold:#e8b95a;--gold2:#72D5C8;--teal:#72D5C8;--mint:#72D5C8;--mint2:#60B3A8;--red:#E05252;--amber:#b6bccb;
+ --inc:#72D5C8;--exp:#D98A93;--trf:#9BA3C9;--alert:#E05252;--set:#d8a24a;
+ --txt:#FFFFFF;--lbl:#8A90A6;--muted:#5A6072;
+ --mono:'JetBrains Mono',ui-monospace,'SF Mono',Menlo,monospace;--sans:-apple-system,system-ui,"SF Pro Display","Segoe UI",Roboto,sans-serif;
+ --sp:24px;--rad:14px;}
+*{box-sizing:border-box}
+html,body{margin:0;min-height:100%;background:var(--bg);color:var(--txt);font-family:var(--sans);font-size:15px}
+a{color:inherit;text-decoration:none}
+.rail{position:fixed;left:0;top:0;bottom:0;width:222px;z-index:40;background:var(--railbg);border-right:1px solid var(--line);display:flex;flex-direction:column;padding:18px 12px 12px;overflow-y:auto}
+.rail::-webkit-scrollbar{width:0}
+.brand{padding:2px 8px 16px}.brand .wm{font-family:var(--mono);font-size:15px;letter-spacing:2px;font-weight:800;color:var(--txt)}
+.brand .wm .sp{color:var(--gold)}
+.brand .sub{display:block;font-family:var(--mono);font-size:9px;letter-spacing:3px;color:var(--muted);margin-top:3px}
+.nav{display:flex;align-items:center;gap:11px;padding:10px 12px;border-radius:9px;color:var(--lbl);font-weight:600;font-size:14.5px;cursor:pointer}
+.nav i{font-style:normal;width:18px;text-align:center;opacity:.85}.nav:hover{background:#1a1d23;color:var(--txt)}
+.nav.active{background:rgba(114,213,200,.12);color:var(--gold2)}
+.nav .qbadge{margin-left:auto;background:var(--mint);color:#0D0F16;border-radius:9px;padding:1px 7px;font-size:11px;font-weight:800;font-family:var(--mono)}
+.rsec{font-family:var(--mono);font-size:9px;letter-spacing:2px;text-transform:uppercase;color:#4b5260;margin:18px 10px 8px;display:flex}
+.rsec .rt{margin-left:auto;color:var(--amber)}
+.acc{display:flex;align-items:center;padding:7px 12px;border-radius:8px;cursor:pointer;font-size:13px}
+.acc:hover{background:#1a1d23}.acc .an{flex:1;color:var(--lbl);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;padding-right:8px}
+.acc .av{font-family:var(--mono);font-weight:600;color:var(--txt)}.acc.crd .av{color:var(--amber)}
+.soon{display:flex;align-items:center;gap:11px;padding:8px 12px;color:#4b5260;font-size:13.5px}.soon i{font-style:normal;width:18px;text-align:center}
+.soon small{margin-left:auto;font-size:9px;letter-spacing:1px;text-transform:uppercase;color:#4b5260;font-family:var(--mono)}
+.spacer{flex:1;min-height:12px}
+.railstat{font-family:var(--mono);font-size:11px;color:var(--muted);border-top:1px solid var(--line);padding-top:12px;margin-top:8px;display:flex;flex-direction:column;gap:8px}
+.railstat .live{display:inline-flex;align-items:center;gap:7px;color:var(--teal)}
+.railstat .live .d{width:7px;height:7px;border-radius:50%;background:var(--teal);box-shadow:0 0 7px var(--teal);animation:pul 2s infinite}
+.railstat .live.off{color:var(--muted)}.railstat .live.off .d{background:var(--muted);box-shadow:none;animation:none}
+.railstat .live.amber{color:var(--amber)}.railstat .live.amber .d{background:var(--amber);box-shadow:0 0 7px var(--amber)}
+.railstat .bad{color:var(--red)}
+@keyframes pul{0%,100%{opacity:1}50%{opacity:.3}}
+.app{max-width:1600px;padding:22px 28px 64px;margin-left:max(222px,calc((100% - 1600px)/2));margin-right:auto}
+@media(max-width:480px){.app{padding:14px 10px 48px}.summary{grid-template-columns:1fr}.topbar{flex-wrap:wrap;gap:8px}}
+@media(max-width:900px){.rail{width:56px;padding:14px 6px}.brand .wm{font-size:0}.brand .wm::before{content:"✦";font-size:18px;color:var(--gold)}.brand .sub,.nav span:not(.qbadge),.soon span,.rsec,.acc,.railstat{display:none}.nav,.soon{justify-content:center}.app{margin-left:56px}}
+.cur{font-size:.6em;color:var(--muted);margin-right:3px;font-weight:600}.dec{font-size:.6em;color:var(--muted)}
+.topbar{display:flex;align-items:center;gap:14px;margin-bottom:var(--sp)}
+.topbar h1{font-size:22px;font-weight:700;margin:0;letter-spacing:-.3px}
+.topbar .subtitle{font-size:12px;color:var(--muted);margin-top:3px;font-family:var(--mono)}
+.card{background:linear-gradient(180deg,#1B1F2C,#151823);border:1px solid var(--line);border-radius:var(--rad);padding:18px 20px}
+.card+.card{margin-top:var(--sp)}
+.inc{color:var(--inc)}.exp{color:var(--exp)}
+.summary{display:grid;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));gap:var(--sp)}
+.stat .l{font-size:11px;letter-spacing:1px;text-transform:uppercase;color:var(--lbl);font-weight:600}
+.stat .v{font-family:var(--mono);font-size:24px;font-weight:800;letter-spacing:-1px;margin-top:8px}
+.stat .v.sm{font-size:18px}
+.stat .s{font-size:11px;color:var(--muted);font-family:var(--mono);margin-top:6px}
+/* two-zone (house rule) */
+.recwrap{display:grid;grid-template-columns:8fr 4fr;gap:var(--sp);align-items:start}
+.recwrap>*{min-width:0}
+@media(max-width:1200px){.recwrap{grid-template-columns:1fr}}
+.hdr{font-size:13px;font-weight:700;margin-bottom:2px}.hsub{font-size:11px;color:var(--muted);font-family:var(--mono);margin-bottom:12px}
+.oneline{font-size:11.5px;color:var(--muted);font-family:var(--mono);margin-bottom:10px}
+.oneline b{color:var(--set)}
+/* bill rows */
+.brow{display:flex;align-items:center;gap:12px;padding:11px 6px;border-radius:9px;cursor:pointer;transition:.12s}
+.brow:hover{background:var(--panel2)}.brow+.brow{border-top:1px solid var(--line)}
+.pill{width:36px;height:36px;border-radius:10px;display:grid;place-items:center;font-size:15px;flex-shrink:0}
+.bmid{flex:1;min-width:0}
+.bmid .nm{font-size:14px;font-weight:600;display:flex;align-items:center;gap:8px;white-space:nowrap;overflow:hidden}
+.bmid .nm span.t{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.cad{font-family:var(--mono);font-size:9px;letter-spacing:.5px;text-transform:uppercase;color:var(--trf);border:1px solid rgba(155,163,201,.4);border-radius:20px;padding:1px 7px;flex-shrink:0}
+.bmid .due{font-family:var(--mono);font-size:11px;color:var(--muted);margin-top:3px}
+.bmid .due.soon{color:var(--amber)}
+.bamt{font-family:var(--mono);font-weight:800;font-size:14px;text-align:right;flex-shrink:0}
+.setlink{font-family:var(--mono);font-size:11px;font-weight:600;color:var(--set);border-bottom:1px dashed rgba(216,162,74,.5);cursor:pointer}
+.setlink:hover{color:#f0c375}
+.bstat{width:96px;text-align:right;flex-shrink:0;font-family:var(--mono);font-size:11px}
+.bstat.paid{color:var(--mint)}.bstat.exp{color:var(--muted)}
+.bstat i{display:inline-block;width:7px;height:7px;border-radius:50%;margin-right:5px}
+.bstat.paid i{background:var(--mint)}.bstat.exp i{border:1px solid var(--muted)}
+/* right rail cards */
+.rcard{background:linear-gradient(180deg,#1B1F2C,#151823);border:1px solid var(--line);border-radius:var(--rad);padding:16px 18px}
+.rcard+.rcard{margin-top:var(--sp)}
+.rt{font-size:12px;font-weight:700;margin-bottom:2px}.rtsub{font-size:10px;color:var(--muted);font-family:var(--mono);margin-bottom:12px}
+/* timeline */
+.tl{position:relative;margin:8px 0 2px;padding-left:20px}
+.tl:before{content:'';position:absolute;left:5px;top:4px;bottom:4px;width:2px;background:var(--line)}
+.tlnode{position:relative;padding:6px 0}
+.tlnode .dot{position:absolute;left:-18px;top:9px;width:10px;height:10px;border-radius:50%;background:var(--mint);box-shadow:0 0 0 3px rgba(114,213,200,.15)}
+.tlnode.today .dot{background:var(--txt)}
+.tlnode .dd{font-family:var(--mono);font-size:12px;font-weight:700}
+.tlnode .dl{font-size:11px;color:var(--muted);margin-top:1px}
+/* completion ring */
+.ringwrap{display:flex;align-items:center;gap:16px}
+.ringwrap .rc{position:relative;width:78px;height:78px;flex-shrink:0}
+.ringwrap .rc .t{position:absolute;inset:0;display:grid;place-items:center;text-align:center;font-family:var(--mono);font-weight:800;font-size:15px;line-height:1}
+.ringwrap .rc .t small{display:block;font-size:8px;color:var(--muted);font-weight:600;letter-spacing:.5px}
+.ringwrap .side{flex:1}
+.ringwrap .side .rl{font-size:12px;color:var(--lbl);margin-bottom:8px}
+.ffbtn{display:inline-block;background:rgba(114,213,200,.14);color:var(--mint);border-radius:9px;padding:8px 12px;font-family:var(--mono);font-size:11px;font-weight:700}
+.ffbtn:hover{background:rgba(114,213,200,.24)}
+.billmodal{position:fixed;inset:0;background:rgba(0,0,0,.55);z-index:120;display:none;align-items:flex-start;justify-content:center;padding-top:8vh;overflow-y:auto}
+.billmodal.show{display:flex}
+.bmbox{width:min(560px,94vw);background:#151823;border:1px solid var(--line);border-radius:16px;padding:20px 22px;box-shadow:0 24px 60px rgba(0,0,0,.6)}
+.bmbox h2{font-size:16px;margin:0 0 4px}
+.bmbox label{display:block;font-size:10px;text-transform:uppercase;letter-spacing:1px;color:var(--muted);margin:14px 0 5px}
+.bmbox input,.bmbox select{width:100%;background:var(--panel2);border:1px solid var(--line);color:var(--txt);border-radius:9px;padding:10px 12px;font-size:14px;font-family:var(--sans)}
+.bmbox input.amt{font-family:var(--mono);font-weight:800;font-size:18px;text-align:right}
+.bmrow{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.bmbtns{display:flex;gap:8px;margin-top:18px}
+.bmbtns button{flex:1;border-radius:10px;padding:11px;font-weight:800;font-size:13px;cursor:pointer;border:1px solid var(--line);background:var(--panel2);color:var(--txt)}
+.bmbtns .pri{background:var(--mint);border-color:transparent;color:#0D0F16}
+.bmbtns .dz{background:rgba(255,93,108,.12);border-color:rgba(255,93,108,.4);color:#ff9aa6;flex:0 0 auto}
+.allrow{display:flex;align-items:center;gap:10px;padding:9px 0;border-top:1px solid var(--line)}
+.allrow .an{flex:1;font-size:13px}.allrow .af{font-family:var(--mono);color:var(--muted);font-size:10px}
+.allrow input{width:120px;text-align:right;font-family:var(--mono);font-weight:700;background:var(--panel2);border:1px solid var(--line);color:var(--txt);border-radius:8px;padding:7px 9px}
+/* ghost / category breakdown */
+.ghost{border:1px dashed rgba(138,144,166,.35);border-radius:10px;padding:14px;text-align:center;color:var(--muted);font-size:12px;font-family:var(--mono)}
+.ghost .big{font-size:22px;color:var(--muted);font-weight:800;font-family:var(--mono);letter-spacing:-1px;display:block;margin-bottom:4px}
+.catrow{display:flex;align-items:center;gap:9px;padding:5px 0;font-size:12px}
+.catrow i{width:9px;height:9px;border-radius:2px;flex-shrink:0}
+.catrow .cn{flex:1;color:var(--lbl);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.catrow .cv{font-family:var(--mono);color:var(--txt);font-weight:700}
+.catrow .cv.muted{color:var(--muted);font-weight:600}
+.annual{font-family:var(--mono);font-size:26px;font-weight:800;letter-spacing:-1px}
+.annual.muted{color:var(--muted)}
+.muted{color:var(--muted)}
+.notice{color:var(--muted);font-size:13px;padding:16px 4px;font-family:var(--mono)}
+/* global ⌘K search palette */
+.pal{position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:100;display:none;align-items:flex-start;justify-content:center;padding-top:12vh}
+.pal.show{display:flex}
+.palbox{width:min(620px,92vw);background:#151823;border:1px solid var(--line);border-radius:14px;overflow:hidden;box-shadow:0 24px 60px rgba(0,0,0,.6)}
+.palbox input{width:100%;background:transparent;border:none;border-bottom:1px solid var(--line);color:var(--txt);font-size:16px;padding:16px 18px;outline:none;font-family:var(--sans)}
+.pallist{max-height:52vh;overflow-y:auto}
+.palrow{display:flex;align-items:center;gap:12px;padding:11px 18px;cursor:pointer}
+.palrow.on,.palrow:hover{background:var(--panel2)}
+.palrow .pi{width:26px;text-align:center;font-size:15px}
+.palrow .pl{flex:1;min-width:0}.palrow .pl .t{font-size:14px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.palrow .pl .s{font-family:var(--mono);font-size:11px;color:var(--muted)}
+.palrow .pt{font-family:var(--mono);font-size:9px;text-transform:uppercase;color:var(--muted);letter-spacing:1px}
+.palhint{padding:10px 18px;font-family:var(--mono);font-size:11px;color:var(--muted);border-top:1px solid var(--line)}
+</style>
+</head>
+<body>
+<aside class="rail" id="hakim-rail"></aside>
+<div class="app">
+  <div class="topbar">
+    <div><h1>Recurring</h1><div class="subtitle">your subscription register · managed here in HAKIM · click a bill's amount to edit</div></div>
+    <div style="flex:1"></div>
+    <button class="ffbtn" onclick="openAllAmounts()" style="border:none;cursor:pointer">✎ Set all amounts</button>
+    <button class="ffbtn" onclick="openBillEdit(null)" style="border:none;cursor:pointer">＋ New bill</button>
+  </div>
+  <div class="billmodal" id="billmodal" onclick="if(event.target.id==='billmodal')closeBillModal()"><div class="bmbox" id="bmbox"></div></div>
+  <div class="card"><div class="summary" id="summary"></div></div>
+  <div class="recwrap">
+    <div class="card">
+      <div class="hdr">Bills</div><div class="hsub">sorted by next due date</div>
+      <div class="oneline" id="oneline"></div>
+      <div id="rows"><div class="muted">Loading…</div></div>
+    </div>
+    <div id="rail"></div>
+  </div>
+</div>
+<script>
+const esc=s=>(s||'').replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const money0=n=>Number(n||0).toLocaleString('en-US',{maximumFractionDigits:0});
+function m(n){n=Number(n||0);const neg=n<0;n=Math.abs(n);const i=Math.floor(n).toLocaleString('en-US');const d=(n-Math.floor(n)).toFixed(2).slice(1);return `<span class="cur">SAR</span>${neg?'−':''}${i}<span class="dec">${d}</span>`;}
+const FREQLBL={weekly:'weekly',monthly:'monthly',quarterly:'quarterly','half-year':'half-yearly',yearly:'yearly'};
+// bill → [icon, category-group, group-color]. Category color gives the list rhythm.
+const GRP={stream:['#a78bfa','Streaming'],tel:['#5b8def','Telecom'],soft:['#7dd3fc','Software'],
+  school:['#e879a6','School'],ins:['#72D5C8','Insurance'],util:['#d0946b','Utilities'],
+  gov:['#9aa4bf','Government'],house:['#d0946b','Housing'],other:['#9BA3C9','Other']};
+function billGroup(name){const n=(name||'').toLowerCase();
+  const K=[[['netflix','shahid','osn','prime','starz','apple tv','disney','watch','tv+'],window.ic('device'),'stream'],
+    [['stc','mobily','zain','phone','mobile','sim'],window.ic('device'),'tel'],
+    [['school','education','tuition','installment'],window.ic('book'),'school'],
+    [['insurance','takaful'],window.ic('shield'),'ins'],
+    [['iqama','visa','government','renewal','gov','passport'],window.ic('doc'),'gov'],
+    [['microsoft','vpn','software','icloud','google','adobe','subscription','office'],window.ic('device'),'soft'],
+    [['rent','housing','mortgage'],window.ic('home'),'house'],
+    [['electric','water','gas','utility','internet','maid','salary','staff'],window.ic('bolt'),'util']];
+  for(const [keys,ic,g] of K)if(keys.some(k=>n.includes(k)))return [ic,g];
+  return [window.ic('repeat'),'other'];}
+
+let DATA=null;
+const HDR={'Content-Type':'application/json'};
+function evalAmt(s){s=String(s==null?'':s).trim();if(!s)return 0;if(!/^[0-9+\-*/(). ]+$/.test(s))return NaN;
+  try{const v=Function('"use strict";return('+s+')')();return (typeof v==='number'&&isFinite(v))?Math.round(v*100)/100:NaN;}catch(e){return NaN;}}
+async function load(){DATA=await(await fetch('/api/recurring')).json();renderSummary();renderOneline();renderRows();renderRail();}
+const FREQOPTS=['weekly','monthly','quarterly','half-year','yearly'];
+function closeBillModal(){document.getElementById('billmodal').classList.remove('show');}
+function openBillEdit(id){
+  const b=id?DATA.bills.find(x=>String(x.id)===String(id)):{name:'',amount:null,freq:'monthly',next_due:''};
+  const box=document.getElementById('bmbox');
+  box.innerHTML=`<h2>${id?'Edit bill':'New bill'}</h2>
+    <div class="subtitle" style="font-size:11px;color:var(--muted);font-family:var(--mono)">managed in HAKIM · saved to the ledger engine</div>
+    <label>Name</label><input id="bname" value="${esc(b.name||'')}" placeholder="e.g. School fees — Aser">
+    <div class="bmrow">
+      <div><label>Amount (SAR · math ok: 120+35)</label><input id="bamt" class="amt" inputmode="decimal" value="${b.amount!=null?b.amount:''}" placeholder="—" onblur="const v=evalAmt(this.value);if(!isNaN(v)&&/[+\\-*/]/.test(this.value))this.value=v"></div>
+      <div><label>Schedule</label><select id="bfreq">${FREQOPTS.map(f=>`<option value="${f}" ${f===(b.freq||'monthly')?'selected':''}>${f}</option>`).join('')}</select></div>
+    </div>
+    <div class="bmrow">
+      <div><label>Next / anchor date</label><input id="bdate" type="date" value="${(b.next_due||'').slice(0,10)}"></div>
+      <div><label>Active</label><select id="bactive"><option value="1">active</option><option value="0" ${id&&b.active===false?'selected':''}>paused</option></select></div>
+    </div>
+    <div style="margin-top:10px;font-size:11px;color:var(--muted);font-family:var(--mono)" id="bhint"></div>
+    ${id?`<details class="editblk" style="margin-top:12px;border-top:1px solid var(--line);padding-top:10px"><summary style="cursor:pointer;font-size:12px;color:var(--gold2)">${window.ic('calendar')} Irregular instalments — specific dates & amounts (e.g. school fees)</summary>
+      <div style="font-size:11px;color:var(--muted);font-family:var(--mono);margin:8px 0">One bill, several dated payments — never three fake bills. Each lands on its own day in Committed & the Calendar.</div>
+      <div id="schedrows"></div>
+      <button type="button" onclick="addSchedRow()" style="margin-top:6px;background:var(--panel2);border:1px solid var(--line);color:var(--txt);border-radius:8px;padding:6px 12px;font-size:12px;font-family:var(--mono);cursor:pointer">+ add date</button>
+      <div style="display:flex;gap:8px;margin-top:10px">
+        <button type="button" class="pri" onclick="saveSchedule('${id}')" style="flex:1">Save instalments</button>
+        <button type="button" onclick="sinkingHandshake('${esc(b.name).replace(/'/g,"")}')" title="save monthly toward the total">${window.ic('envelope')} Make a sinking fund</button>
+      </div></details>`:''}
+    <div class="bmbtns">
+      <button class="pri" onclick="saveBill('${id||''}')">${id?'Save':'Create bill'}</button>
+      ${id?`<button class="dz" onclick="deleteBill('${id}','${esc(b.name).replace(/'/g,"")}')">Delete</button>`:''}
+      <button onclick="closeBillModal()">Cancel</button>
+    </div>`;
+  document.getElementById('billmodal').classList.add('show');
+  // sinking-fund handshake hint for non-monthly bills
+  const fq=document.getElementById('bfreq');const upd=()=>{const nonMonthly=fq.value!=='monthly'&&fq.value!=='weekly';
+    document.getElementById('bhint').innerHTML=nonMonthly?'<svg class="ic" viewBox="0 0 24 24"><path d="M9 18h6M10 21h4M12 3a6 6 0 0 1 4 10c-.7.7-1 1.3-1 2H9c0-.7-.3-1.3-1-2a6 6 0 0 1 4-10z"/></svg> Non-monthly bill — after saving, you can create a sinking fund (save monthly toward it) from Categories → envelope.':'';};
+  fq.onchange=upd;upd();
+  if(id){SCHED=(b.schedule||[]).map(d=>({date:d.date,amount:d.amount,paid:!!d.paid}));renderSchedRows();}
+}
+let SCHED=[];
+function renderSchedRows(){const el=document.getElementById('schedrows');if(!el)return;
+  el.innerHTML=SCHED.map((d,i)=>`<div style="display:flex;gap:6px;align-items:center;margin-bottom:5px">
+    <input type="date" value="${d.date||''}" onchange="SCHED[${i}].date=this.value" style="flex:1">
+    <input type="number" value="${d.amount||''}" placeholder="SAR" onchange="SCHED[${i}].amount=parseFloat(this.value)||0" style="width:110px">
+    <label style="font-size:10px;font-family:var(--mono);color:var(--muted)"><input type="checkbox" ${d.paid?'checked':''} onchange="SCHED[${i}].paid=this.checked" style="width:auto"> paid</label>
+    <span onclick="SCHED.splice(${i},1);renderSchedRows()" style="cursor:pointer;color:var(--muted)">✕</span></div>`).join('')
+    +(SCHED.length?`<div style="font-family:var(--mono);font-size:11px;color:var(--muted);margin-top:4px">total SAR ${SCHED.reduce((a,d)=>a+(d.amount||0),0).toLocaleString('en-US')}</div>`:'');
+}
+function addSchedRow(){SCHED.push({date:'',amount:0,paid:false});renderSchedRows();}
+async function saveSchedule(id){const dates=SCHED.filter(d=>d.date);
+  const r=await(await fetch('/api/bill/schedule',{method:'POST',headers:HDR,body:JSON.stringify({id,dates})})).json();
+  if(r.ok){closeBillModal();load();}
+}
+async function sinkingHandshake(name){
+  const cat=prompt('Save monthly toward this in which category? (envelope will be created there)','Family & school');if(!cat)return;
+  const total=SCHED.reduce((a,d)=>a+(d.amount||0),0);const due=SCHED.map(d=>d.date).filter(Boolean).sort().pop()||'';
+  const monthly=prompt(`Monthly contribution toward SAR ${total.toLocaleString('en-US')} due ${due||'?'}:`,'1000');if(monthly===null)return;
+  await fetch('/api/category/target',{method:'POST',headers:HDR,body:JSON.stringify({name:cat,amount:monthly,envelope:true,start:new Date().toISOString().slice(0,10),goal:total,due})});
+  alert(`Sinking fund set on “${cat}” — save it, watch it fill toward SAR ${total.toLocaleString('en-US')}. See it in Categories.`);
+}
+async function saveBill(id){
+  const name=document.getElementById('bname').value.trim();if(!name){alert('Name required');return;}
+  const av=document.getElementById('bamt').value.trim();const amount=av===''?'':evalAmt(av);
+  if(av!==''&&isNaN(amount)){alert('Check the amount');return;}
+  const body={name,freq:document.getElementById('bfreq').value,date:document.getElementById('bdate').value||undefined,
+    active:document.getElementById('bactive').value==='1',amount:av===''?'':amount};
+  const url=id?'/api/bill/update':'/api/bill/create';if(id)body.id=id;
+  const r=await(await fetch(url,{method:'POST',headers:HDR,body:JSON.stringify(body)})).json();
+  if(!r.ok){alert(r.error||'failed');return;}
+  closeBillModal();load();
+}
+async function deleteBill(id,name){if(!confirm(`Delete bill "${name}"? (Its past transactions stay in the ledger.)`))return;
+  await fetch('/api/bill/delete',{method:'POST',headers:HDR,body:JSON.stringify({id})});closeBillModal();load();}
+function openAllAmounts(){
+  const box=document.getElementById('bmbox');
+  box.innerHTML=`<h2>Set all amounts</h2>
+    <div class="subtitle" style="font-size:11px;color:var(--muted);font-family:var(--mono)">the 20-bills sitting · type each amount · Save all</div>
+    <div style="max-height:52vh;overflow-y:auto;margin-top:10px">${DATA.bills.map(b=>`
+      <div class="allrow"><span class="an">${esc(b.name)} <span class="af">${esc(b.freq)}</span></span>
+        <input data-bid="${b.id}" inputmode="decimal" value="${b.amount!=null?b.amount:''}" placeholder="amount"></div>`).join('')}</div>
+    <div class="bmbtns"><button class="pri" onclick="saveAllAmounts()">Save all</button><button onclick="closeBillModal()">Cancel</button></div>`;
+  document.getElementById('billmodal').classList.add('show');
+}
+async function saveAllAmounts(){
+  const inputs=[...document.querySelectorAll('#bmbox input[data-bid]')];let n=0;
+  for(const inp of inputs){const v=inp.value.trim();const b=DATA.bills.find(x=>String(x.id)===inp.dataset.bid);
+    const cur=b&&b.amount!=null?String(b.amount):'';if(v===cur)continue;
+    const amt=v===''?'':evalAmt(v);if(v!==''&&isNaN(amt))continue;
+    await fetch('/api/bill/update',{method:'POST',headers:HDR,body:JSON.stringify({id:inp.dataset.bid,amount:v===''?'':amt})});n++;}
+  closeBillModal();load();
+}
+function renderSummary(){
+  const s=DATA.summary;let d='';
+  d+=`<div class="stat"><div class="l">Monthly recurring</div>`+
+    (s.monthly_total!=null?`<div class="v exp">−${money0(s.monthly_total)}</div><div class="s">${DATA.amounts_set<DATA.count?'from '+DATA.amounts_set+' of '+DATA.count+' bills':'normalized per month'}</div>`
+     :`<div class="v sm muted">not set</div><div class="s">0 of ${DATA.count} have amounts</div>`)+`</div>`;
+  d+=`<div class="stat"><div class="l">Active bills</div><div class="v">${s.active}</div><div class="s">managed in HAKIM</div></div>`;
+  d+=`<div class="stat"><div class="l">Next due</div>`+
+    (s.next?`<div class="v sm">${esc(s.next.name)}</div><div class="s">${s.next.days===0?'today':'in '+s.next.days+' days'}</div>`
+     :`<div class="v sm muted">—</div><div class="s">no dated bills</div>`)+`</div>`;
+  d+=`<div class="stat"><div class="l">Paid this month <span data-tip="paidstatus" style="cursor:help;color:var(--mint);font-size:11px;opacity:.8">ⓘ</span></div><div class="v sm">${s.paid_count} <span class="muted" style="font-size:14px">of ${s.paid_total}</span></div><div class="s">matched or marked</div></div>`;
+  document.getElementById('summary').innerHTML=d;
+}
+function renderOneline(){
+  const el=document.getElementById('oneline');const missing=DATA.count-DATA.amounts_set;
+  el.innerHTML=missing>0?`<b>${DATA.amounts_set} of ${DATA.count}</b> bills have real amounts — <span class="setlink" onclick="openAllAmounts()">set the rest here</span> to light up totals & the dashboard.`:'';
+}
+function renderRows(){
+  const box=document.getElementById('rows');
+  if(!DATA.bills.length){box.innerHTML=`<div class="notice">No bills registered yet — <span class="setlink" onclick="openBillEdit(null)">＋ add your first bill</span> (all in-app, no Firefly).</div>`;return;}
+  box.innerHTML=DATA.bills.map(b=>{
+    const [ic,g]=billGroup(b.name),co=GRP[g][0];
+    const soon=b.days!=null&&b.days<=3;
+    const due=b.next_due?`next: ${fmtDate(b.next_due)} · ${b.days===0?'due today':(b.days===1?'tomorrow':'in '+b.days+' days')}`:'no date set';
+    const amt=b.amount!=null?`<div class="bamt exp" onclick="event.stopPropagation();openBillEdit('${b.id}')" style="cursor:pointer" title="click to edit">−${m(b.amount)}</div>`
+      :`<span class="setlink" onclick="event.stopPropagation();openBillEdit('${b.id}')">set amount</span>`;
+    const srcTip=b.paid_source==='marked'?'you marked this paid — click to undo':(b.paid_source==='auto'?'auto-matched a payment by name — click if wrong':'click when you’ve paid it');
+    const st=`<div class="bstat ${b.paid?'paid':'exp'}" title="${srcTip}" style="cursor:pointer" onclick="event.stopPropagation();markPaid('${b.id}',${b.paid?'false':'true'})"><i></i>${b.paid?'paid':'expected'}${b.paid_source==='marked'?' ✓':''}</div>`;
+    return `<div class="brow" onclick="openBillEdit('${b.id}')" title="edit bill">
+      <div class="pill" style="background:${co}22;color:${co}">${ic}</div>
+      <div class="bmid"><div class="nm"><span class="t">${esc(b.name)}</span> <span class="cad">${FREQLBL[b.freq]||esc(b.freq)}</span></div>
+        <div class="due${soon?' soon':''}">${due}</div></div>
+      ${amt}${st}</div>`;
+  }).join('');
+}
+async function markPaid(id,paid){
+  await fetch('/api/bill/mark',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({id,paid})});
+  load();
+}
+function renderRail(){
+  const el=document.getElementById('rail');let h='';
+  // 1. next-30-days timeline — works now (dates exist without amounts)
+  const soonBills=DATA.bills.filter(b=>b.days!=null&&b.days>=0&&b.days<=30);
+  const byDate={};soonBills.forEach(b=>{(byDate[b.next_due]=byDate[b.next_due]||[]).push(b);});
+  const dates=Object.keys(byDate).sort();
+  h+=`<div class="rcard"><div class="rt">Next 30 days</div><div class="rtsub">upcoming due dates</div>
+    <div class="tl"><div class="tlnode today"><div class="dot"></div><div class="dd">Today</div><div class="dl">${fmtDate(DATA.today)}</div></div>`+
+    (dates.length?dates.map(dt=>{const bs=byDate[dt],d0=bs[0].days;
+      return `<div class="tlnode"><div class="dot"></div><div class="dd">${fmtDate(dt)} · in ${d0}d</div><div class="dl">${bs.length} bill${bs.length===1?'':'s'} · ${esc(bs.slice(0,2).map(x=>x.name).join(', '))}${bs.length>2?' +'+(bs.length-2):''}</div></div>`;}).join('')
+     :`<div class="tlnode"><div class="dot" style="background:var(--muted);box-shadow:none"></div><div class="dl">nothing due in the next 30 days</div></div>`)+
+    `</div></div>`;
+  // 2. completion ring — its job is to die at full
+  const set=DATA.amounts_set,tot=DATA.count,frac=tot?set/tot:0,R=32,C=2*Math.PI*R;
+  h+=`<div class="rcard"><div class="rt">Amounts set</div><div class="rtsub">the register's completeness</div>
+    <div class="ringwrap"><div class="rc"><svg width="78" height="78" viewBox="0 0 78 78">
+      <circle cx="39" cy="39" r="${R}" fill="none" stroke="var(--panel2)" stroke-width="7"/>
+      <circle cx="39" cy="39" r="${R}" fill="none" stroke="${frac>=1?'var(--mint)':'var(--set)'}" stroke-width="7" stroke-linecap="round"
+        stroke-dasharray="${(frac*C).toFixed(1)} ${C.toFixed(1)}" transform="rotate(-90 39 39)"/></svg>
+      <div class="t">${set}/${tot}<small>SET</small></div></div>
+      <div class="side"><div class="rl">${set===0?'No amounts yet — the register has names & dates, needs the numbers.':(set>=tot?'All amounts set — totals are live. 🎉':set+' set, '+(tot-set)+' to go.')}</div>
+      <span class="ffbtn" style="cursor:pointer" onclick="openAllAmounts()">✎ Set amounts here →</span></div></div></div>`;
+  // 3. recurring by category — ghost until amounts exist
+  const groups={};DATA.bills.forEach(b=>{const g=billGroup(b.name)[1];const e=groups[g]=groups[g]||{monthly:0,set:0,n:0};e.n++;if(b.monthly!=null){e.monthly+=b.monthly;e.set++;}});
+  const present=Object.keys(groups).sort((a,b)=>groups[b].monthly-groups[a].monthly);
+  const anySet=DATA.amounts_set>0;
+  h+=`<div class="rcard"><div class="rt">Monthly by category</div><div class="rtsub">${anySet?'from bills with amounts':'lights up as amounts are set'}</div>`+
+    (anySet?present.map(g=>{const e=groups[g];const has=e.set>0;
+      return `<div class="catrow"><i style="background:${GRP[g][0]}"></i><span class="cn">${GRP[g][1]}</span><span class="cv${has?'':' muted'}">${has?'−'+money0(e.monthly):'—'}</span></div>`;}).join('')
+     :`<div class="ghost"><span class="big">—</span>waiting for amounts · ${present.length} categories ready</div>`)+`</div>`;
+  // 4. annual recurring cost — the sobering number, ghost logic
+  const annual=DATA.summary.monthly_total!=null?Math.round(DATA.summary.monthly_total*12):null;
+  h+=`<div class="rcard"><div class="rt">Annual recurring cost</div><div class="rtsub">${annual!=null?(DATA.amounts_set<DATA.count?'partial — from '+DATA.amounts_set+' bills':'all bills, annualized'):'school + iqama + insurance + subscriptions'}</div>`+
+    (annual!=null?`<div class="annual exp">−${money0(annual)}<span style="font-size:12px;color:var(--muted)"> / year</span></div>`
+     :`<div class="ghost"><span class="big">—</span>the year-cost of everything that repeats · appears when amounts are set</div>`)+`</div>`;
+  el.innerHTML=h;
+}
+function fmtDate(iso){return new Date(iso+'T00:00:00').toLocaleDateString('en-GB',{day:'numeric',month:'short',year:'numeric'});}
+async function loadRail(){try{const r=await(await fetch('/api/rail')).json();
+  document.getElementById('railcash').innerHTML=r.cash.map(c=>`<div class="acc" onclick="location.href='/?account='+encodeURIComponent('${esc(c.name)}')"><span class="an">${esc(c.name)}</span><span class="av">${money0(c.bal)}</span></div>`).join('');
+  document.getElementById('railcards').innerHTML=r.cards.map(c=>`<div class="acc crd" onclick="location.href='/?account='+encodeURIComponent('${esc(c.name)}')"><span class="an">${esc(c.bank||'')} •${esc(c.last4||'')}</span><span class="av">${money0(Math.abs(c.bal))}</span></div>`).join('');
+  document.getElementById('cardtot').textContent='SAR '+money0(r.cards.reduce((a,c)=>a+Math.abs(c.bal),0));}catch(e){}}
+async function pollStatus(){try{const s=await(await fetch('/api/status')).json();
+  const l=document.getElementById('rlive');l.className='live '+(s.sms_state==='live'?'':(s.sms_state==='amber'?'amber':'off'));l.querySelector('.t').textContent=s.sms_label||'SMS ?';
+  const b=document.getElementById('rbackup');if(s.backup_ok){b.textContent='backup ✓';b.className='';}else{b.textContent='⚠ BACKUP FAILED';b.className='bad';}}catch(e){}setTimeout(pollStatus,60000);}
+async function qCount(){try{const q=await(await fetch('/api/queue')).json();const n=(q.merchants||[]).length+(q.onebyone||[]).length;
+  document.getElementById('rqueue').textContent='QUEUE '+String(n).padStart(2,'0');const rq=document.getElementById('railq');rq.textContent=n;rq.style.display=n?'inline-block':'none';}catch(e){}setTimeout(qCount,120000);}
+function clock(){const el=document.getElementById('rclock');if(el)el.textContent=new Date().toTimeString().slice(0,8);setTimeout(clock,1000);}
+window.hakimReload=load;load();loadRail();pollStatus();qCount();clock();
+
+/* ---- global ⌘K search palette ---- */
+let PAL={items:[],idx:0,t:null};
+function openPal(){const p=document.getElementById('pal');if(!p)return;p.classList.add('show');const i=document.getElementById('palq');i.value='';document.getElementById('pallist').innerHTML='';PAL={items:[],idx:0,t:null};setTimeout(()=>i.focus(),30);}
+function closePal(){const p=document.getElementById('pal');if(p)p.classList.remove('show');}
+function palSearch(){clearTimeout(PAL.t);const q=document.getElementById('palq').value;PAL.t=setTimeout(async()=>{if(!q.trim()){document.getElementById('pallist').innerHTML='';PAL.items=[];return;}try{const d=await(await fetch('/api/search?q='+encodeURIComponent(q))).json();PAL.items=d.results||[];PAL.idx=0;palRender();}catch(e){}},160);}
+function palRender(){document.getElementById('pallist').innerHTML=PAL.items.map((r,i)=>`<div class="palrow ${i===PAL.idx?'on':''}" onmouseenter="PAL.idx=${i}" onclick="palGo(${i})"><span class="pi">${r.icon||'•'}</span><span class="pl"><div class="t">${esc(r.label)}</div><div class="s">${esc(r.sub||'')}</div></span><span class="pt">${esc(r.type)}</span></div>`).join('')||'<div class="palhint">No matches.</div>';}
+function palGo(i){const r=PAL.items[i];if(r)location.href=r.target;}
+function palKey(e){if(e.key==='Escape')closePal();else if(e.key==='ArrowDown'){e.preventDefault();PAL.idx=Math.min(PAL.items.length-1,PAL.idx+1);palRender();}else if(e.key==='ArrowUp'){e.preventDefault();PAL.idx=Math.max(0,PAL.idx-1);palRender();}else if(e.key==='Enter'){e.preventDefault();palGo(PAL.idx);}}
+document.addEventListener('keydown',e=>{if((e.metaKey||e.ctrlKey)&&(e.key==='k'||e.key==='K')){e.preventDefault();openPal();}});
+</script>
+<div class="pal" id="pal" onclick="if(event.target.id==='pal')closePal()">
+  <div class="palbox"><input id="palq" placeholder="Search transactions, categories, accounts, pages…" oninput="palSearch()" onkeydown="palKey(event)">
+    <div class="pallist" id="pallist"></div>
+    <div class="palhint">↑↓ navigate · ↵ open · esc close · ⌘K anywhere</div></div></div>
+<script src="/rail.js"></script>
+</body>
+</html>

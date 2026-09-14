@@ -1,0 +1,133 @@
+<!doctype html>
+<html lang="en" dir="ltr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>HAKIM · Debt coach</title>
+<script src="/face.js"></script>
+<link rel="stylesheet" href="/face.css">
+<style>
+:root{
+ --bg:#0D0F16;--panel:#1B1F2C;--panel2:#232837;--line:#262B3A;--railbg:#0A0C12;
+ --gold:#e8b95a;--gold2:#72D5C8;--teal:#72D5C8;--mint:#72D5C8;--red:#E05252;--amber:#e8b95a;
+ --inc:#72D5C8;--exp:#D98A93;
+ --txt:#FFFFFF;--lbl:#8A90A6;--muted:#5A6072;
+ --mono:'JetBrains Mono',ui-monospace,'SF Mono',Menlo,monospace;--sans:-apple-system,system-ui,"SF Pro Display","Segoe UI",Roboto,sans-serif;
+ --sp:24px;--rad:14px;}
+*{box-sizing:border-box}
+html,body{margin:0;min-height:100%;background:var(--bg);color:var(--txt);font-family:var(--sans);font-size:15px}
+a{color:inherit;text-decoration:none}
+.rail{position:fixed;left:0;top:0;bottom:0;width:222px;z-index:40;background:var(--railbg);border-right:1px solid var(--line);display:flex;flex-direction:column;padding:18px 12px 12px;overflow-y:auto}
+.rail::-webkit-scrollbar{width:0}
+.brand{padding:2px 8px 16px;cursor:pointer}.brand .wm{font-family:var(--mono);font-size:15px;letter-spacing:2px;font-weight:800}
+.brand .wm .sp{color:var(--gold)}.brand .sub{display:block;font-family:var(--mono);font-size:9px;letter-spacing:3px;color:var(--muted);margin-top:3px}
+.nav{display:flex;align-items:center;gap:11px;padding:10px 12px;border-radius:9px;color:var(--lbl);font-weight:600;font-size:14.5px;cursor:pointer}
+.nav i{font-style:normal;width:18px;text-align:center;opacity:.85}.nav:hover{background:#1a1d23;color:var(--txt)}
+.nav.active{background:rgba(114,213,200,.12);color:var(--gold2)}
+.nav .qbadge{margin-left:auto;background:var(--mint);color:#0D0F16;border-radius:9px;padding:1px 7px;font-size:11px;font-weight:800;font-family:var(--mono)}
+.rsec{font-family:var(--mono);font-size:9px;letter-spacing:2px;text-transform:uppercase;color:#4b5260;margin:18px 10px 8px;display:flex}
+.rsec .rt{margin-left:auto;color:var(--amber)}
+.acc{display:flex;align-items:center;padding:7px 12px;border-radius:8px;cursor:pointer;font-size:13px}
+.acc:hover{background:#1a1d23}.acc .an{flex:1;color:var(--lbl);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;padding-right:8px}
+.acc .av{font-family:var(--mono);font-weight:600}.acc.crd .av{color:var(--amber)}
+.spacer{flex:1;min-height:12px}
+.railstat{font-family:var(--mono);font-size:11px;color:var(--muted);border-top:1px solid var(--line);padding-top:12px;margin-top:8px;display:flex;flex-direction:column;gap:8px}
+.railstat .live{display:inline-flex;align-items:center;gap:7px;color:var(--teal)}
+.railstat .live .d{width:7px;height:7px;border-radius:50%;background:var(--teal);box-shadow:0 0 7px var(--teal);animation:pul 2s infinite}
+.railstat .live.off{color:var(--muted)}.railstat .live.off .d{background:var(--muted);box-shadow:none;animation:none}
+.railstat .live.amber{color:var(--amber)}.railstat .live.amber .d{background:var(--amber)}
+.railstat .bad{color:var(--red)}
+@keyframes pul{0%,100%{opacity:1}50%{opacity:.3}}
+.app{max-width:1000px;padding:22px 28px 64px;margin-left:max(222px,calc((100% - 1000px)/2));margin-right:auto}
+@media(max-width:900px){.rail{width:56px;padding:14px 6px}.brand .wm{font-size:0}.brand .wm::before{content:"✦";font-size:18px;color:var(--gold)}.brand .sub,.nav span:not(.qbadge),.rsec,.acc,.railstat{display:none}.nav{justify-content:center}.app{margin-left:56px}}
+.topbar{display:flex;align-items:baseline;gap:14px;margin-bottom:var(--sp);flex-wrap:wrap}
+.topbar h1{font-size:22px;font-weight:700;margin:0}.topbar .subtitle{font-size:12px;color:var(--muted);margin-top:3px;font-family:var(--mono)}
+.card{background:linear-gradient(180deg,#1B1F2C,#151823);border:1px solid var(--line);border-radius:var(--rad);padding:18px 20px;margin-bottom:var(--sp)}
+.lbl{font-size:10px;letter-spacing:1.4px;text-transform:uppercase;color:var(--lbl);font-weight:700}
+.sec{font-size:13px;font-weight:700}.secsub{font-size:11px;color:var(--muted);font-family:var(--mono);margin-top:2px;margin-bottom:12px}
+.cur{font-size:.42em;color:var(--muted);font-weight:400;margin-right:.12em}.dec{font-size:.5em;color:var(--muted);opacity:.7}
+.strip{display:flex;gap:34px;flex-wrap:wrap;align-items:baseline}
+.strip .n{font-family:var(--mono);font-size:20px;font-weight:800;letter-spacing:-.5px}
+.strip .n.hero-num{font-family:var(--face-display);font-size:32px}
+.strip .s{font-size:11px;color:var(--muted);font-family:var(--mono);margin-top:4px}
+.tog{display:inline-flex;gap:2px;background:var(--panel2);border:1px solid var(--line);border-radius:9px;overflow:hidden;margin-left:auto}
+.tog b{font-family:var(--mono);font-size:11px;font-weight:700;color:var(--muted);padding:5px 12px;cursor:pointer}
+.tog b.on{background:rgba(114,213,200,.16);color:var(--mint)}
+.drow{display:flex;align-items:center;gap:14px;padding:12px 4px;border-top:1px solid var(--line)}
+.drow:first-of-type{border-top:none}
+.rank{width:24px;height:24px;border-radius:50%;background:var(--panel2);color:var(--gold2);font-family:var(--mono);font-weight:800;font-size:12px;display:flex;align-items:center;justify-content:center;flex:none}
+.drow.target .rank{background:var(--gold);color:#0D0F16}
+.dmid{flex:1;min-width:0}.dnm{font-size:14px;font-weight:700}.dmeta{font-size:11px;color:var(--muted);font-family:var(--mono);margin-top:2px}
+.dbar{height:6px;border-radius:4px;background:var(--panel2);overflow:hidden;margin-top:6px;max-width:280px}
+.dbar i{display:block;height:100%;background:var(--exp)}
+.dbal{font-family:var(--mono);font-weight:800;text-align:right;white-space:nowrap}
+.tag{display:inline-block;font-family:var(--mono);font-size:9.5px;padding:1px 7px;border-radius:20px;background:var(--panel2);color:var(--lbl);margin-left:6px}
+.tag.zero{color:var(--mint)}.tag.hot{color:var(--exp)}
+</style>
+</head>
+<body>
+<aside class="rail" id="hakim-rail"></aside>
+<div class="app">
+  <div class="topbar"><div><h1>Debt coach</h1><div class="subtitle">what you owe · the order to attack it · the floor to never miss</div></div></div>
+  <div id="body"><div class="secsub">Loading…</div></div>
+</div>
+<script>
+const esc=s=>(s||'').replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const money0=n=>Number(n||0).toLocaleString('en-US',{maximumFractionDigits:0});
+function m(n){n=Number(n||0);const neg=n<0;n=Math.abs(n);const i=Math.floor(n).toLocaleString('en-US');const d=(n-Math.floor(n)).toFixed(2).slice(1);return `<span class="cur">SAR</span>${neg?'−':''}${i}<span class="dec">${d}</span>`;}
+const IC=(n)=>window.ic?window.ic(n):'';
+let DATA=null,STRAT='avalanche';
+
+function render(){
+  const d=DATA;const byName={};d.debts.forEach(x=>byName[x.name]=x);
+  const order=(STRAT==='avalanche'?d.avalanche:d.snowball).map(n=>byName[n]).filter(Boolean);
+  const maxBal=Math.max(1,...d.debts.map(x=>x.balance));
+  let h='';
+
+  // summary
+  h+=`<div class="card"><div class="lbl">What you owe</div>
+    <div class="strip" style="margin-top:10px">
+      <div><div class="n hero-num neg">−${m(d.total_debt)}</div><div class="s">total debt · cards + financing</div></div>
+      <div><div class="n">−${m(d.min_total)}</div><div class="s">minimums / month</div></div>
+      <div><div class="n exp">−${m(d.cost_of_debt)}</div><div class="s">cost of debt so far</div></div>
+    </div></div>`;
+
+  // strategy
+  h+=`<div class="card"><div style="display:flex;align-items:center;gap:10px"><div class="sec">Attack order</div>
+    <div class="tog"><b class="${STRAT==='avalanche'?'on':''}" onclick="STRAT='avalanche';render()">Avalanche · least interest</b><b class="${STRAT==='snowball'?'on':''}" onclick="STRAT='snowball';render()">Snowball · fastest wins</b></div></div>
+    <div class="secsub">${STRAT==='avalanche'?'highest-rate debt first — mathematically the cheapest path':'smallest balance first — the momentum path'}</div>`;
+  h+=order.map((x,i)=>{
+    const util=x.util!=null?`${x.util}% used`:'';
+    const rate=x.rate_known?`${x.rate}% APR`:(x.kind==='card'?'APR not set':(x.zero?'0% · interest-free':'rate n/a'));
+    const rtag=x.zero?'<span class="tag zero">0%</span>':(x.kind==='card'?'<span class="tag hot">card</span>':`<span class="tag">${esc(x.kind)}</span>`);
+    return `<div class="drow ${i===0?'target':''}"><div class="rank">${i+1}</div>
+      <div class="dmid"><div class="dnm">${esc(x.name)} ${rtag}</div><div class="dmeta">${rate}${util?' · '+util:''}${x.min?' · min SAR '+money0(x.min)+'/mo':''}</div>
+        <div class="dbar"><i style="width:${Math.max(3,x.balance/maxBal*100)}%"></i></div></div>
+      <div class="dbal exp">−${m(x.balance)}</div></div>`;
+  }).join('');
+  if(STRAT==='avalanche'&&!d.any_rate_known){h+=`<div class="secsub" style="margin:12px 0 0">${IC('info')} Credit-card APRs aren’t recorded, so cards sort to the top of avalanche — in Saudi they carry the highest rates. Enter each card’s rate for an exact order.</div>`;}
+  h+=`</div>`;
+
+  // SIMAH floor
+  h+=`<div class="card"><div class="sec">The floor · never miss a minimum</div>
+    <div class="secsub" style="margin-bottom:8px">SIMAH-aware: a missed minimum hurts your credit record for years — always pay every minimum first, then throw extra at the #1 target above.</div>
+    <div class="strip"><div><div class="n">−${m(d.min_total)}</div><div class="s">total minimums / month (the floor)</div></div></div></div>`;
+
+  // recommendation gate
+  h+=`<div class="card"><div class="sec">Your payoff plan</div>`;
+  if(d.surplus_validated){
+    h+=`<div class="secsub" style="margin:0">With your validated surplus, throw it at <b>${esc(order[0]?order[0].name:'')}</b> first. (Timeline computed once surplus history deepens.)</div>`;
+  }else{
+    h+=`<div class="matbanner">${IC('clock')} <b>A payoff timeline needs a validated monthly surplus</b> — and there isn’t one yet. Your ${d.maturity.have} complete month${d.maturity.have===1?'':'s'} averaged net <b class="${d.avg_net<0?'':''}" style="color:${d.avg_net<0?'var(--exp)':'var(--mint)'}">${d.avg_net<0?'−':'+'}SAR ${money0(Math.abs(d.avg_net))}/mo</b>. A plan built on a surplus that isn’t there would be a guess — so the <b>order</b> is shown, the <b>timeline waits</b>.</div>
+    <div class="secsub" style="margin:10px 0 0">When income exceeds spending for a lived month, this fills in months-to-debt-free for each strategy. Until then: pay the minimums, and any spare goes to <b>${esc(order[0]?order[0].name:'the top target')}</b>.</div>`;
+  }
+  h+=`</div>`;
+
+  document.getElementById('body').innerHTML=h;
+}
+async function load(){try{DATA=await(await fetch('/api/debt')).json();}catch(e){document.getElementById('body').innerHTML='<div class="card">Could not load Debt coach.</div>';return;}render();}
+load();
+</script>
+<script src="/rail.js"></script>
+</body>
+</html>

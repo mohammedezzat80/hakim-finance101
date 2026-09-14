@@ -1,0 +1,114 @@
+/* ============================================================================
+   HAKIM — the Face layer. Shared design generation, loaded by rail.js on every
+   page. OPT-IN by design: it only adds new utility classes (.ic, .hero-num,
+   .whisper, .emptyface, .tier-*) that a converted page adopts, plus ONE global
+   motion standard + chart tokens that are uniformly safe on any page. A page not
+   yet converted keeps its Classic look untouched — no half-converted surfaces.
+   Rollback: git checkout design-classic-2026-09-13
+   ============================================================================ */
+/* Hero display face — Space Grotesk 600, SIL OFL 1.1, SELF-HOSTED (no CDN, local-first intact).
+   Served by app.py at /hakim-grotesk.woff2 (immutable, 1yr cache). font-display:swap so a slow font
+   never blanks the hero — the system-serif fallback paints first, then the grotesk swaps in. */
+@font-face{
+  font-family:'HAKIM Grotesk';
+  src:url('/hakim-grotesk.woff2') format('woff2');
+  font-weight:600;font-style:normal;font-display:swap;
+}
+:root{
+  /* the one display face for hero numbers — self-hosted grotesk, system serif as graceful fallback */
+  --face-display:'HAKIM Grotesk','Iowan Old Style','Palatino Linotype',Georgia,serif;
+  --face-serif:'Iowan Old Style','Palatino Linotype',Palatino,'Book Antiqua',Georgia,'Times New Roman',serif;
+  /* the one motion dose — absence of abruptness, nothing more */
+  --face-ease:150ms cubic-bezier(.2,.7,.3,1);
+  /* directional palette — one meaning everywhere (in / out / transfer) */
+  --face-in:#72D5C8;   --face-out:#D98A93;   --face-xfer:#7C9DFF;
+  /* chart language */
+  --chart-axis:#6B7488; --chart-grid:rgba(255,255,255,.06); --chart-font:11px var(--mono,ui-monospace,monospace);
+  /* elevation tiers */
+  --elev-quiet:rgba(255,255,255,.02);
+  --elev-attn:rgba(114,213,200,.06);
+  --elev-ambient:rgba(0,0,0,.22);
+}
+
+/* ---- icons: one stroke weight, currentColor, sized to the text (1em).
+   Scoped to svg.ic ONLY — some pages use div.ic as an icon *container* (e.g. the
+   Categories ring), and a bare .ic{width:1em} would collapse those containers and
+   mis-anchor their contents. Every icon we emit is <svg class="ic">, so svg.ic is safe. ---- */
+svg.ic{display:inline-block;width:1em;height:1em;flex:none;vertical-align:-.14em;
+    stroke:currentColor;fill:none;stroke-width:1.75;stroke-linecap:round;stroke-linejoin:round;
+    transition:transform var(--face-ease),opacity var(--face-ease)}
+svg.ic-lg{width:1.35em;height:1.35em}
+svg.ic-xl{width:1.7em;height:1.7em}
+svg.ic-sm{width:.85em;height:.85em}
+
+/* ---- hero typography: one display headline number per page (self-hosted grotesk) ---- */
+.hero-num{font-family:var(--face-display);font-weight:600;letter-spacing:-.02em;line-height:1;
+          font-variant-numeric:tabular-nums;font-feature-settings:"tnum" 1}
+.hero-num .cur{font-size:.40em;font-weight:400;opacity:.52;letter-spacing:.02em;margin-right:.15em;vertical-align:.05em}
+.hero-num .dec{font-size:.5em;font-weight:400;opacity:.48}
+.hero-num.neg{color:var(--exp,#D98A93)}
+
+/* ---- numeric polish (item 3): one rule set, applied via the face layer ----
+   `.amt` marks any major monetary figure so columns align (tabular) and decimals read quieter.
+   Wrap the fraction in `.d` and the currency in `.c`. Mono amounts are already fixed-width; this
+   brings the SANS amounts (tiles, headers, drill rows) up to the same typeset alignment. */
+.amt,.hero-num{font-variant-numeric:tabular-nums;font-feature-settings:"tnum" 1}
+.amt{letter-spacing:-.01em}
+.amt .c{font-size:.72em;opacity:.5;margin-right:.24em;font-weight:inherit}
+.amt .d{font-size:.78em;opacity:.5}
+.amt.neg{color:var(--exp,#D98A93)} .amt.pos{color:var(--in,#72D5C8)}
+/* any element opting in with .tnum gets aligned figures without restyling its size/colour */
+.tnum{font-variant-numeric:tabular-nums;font-feature-settings:"tnum" 1}
+
+/* ---- elevation tiers: the one thing that matters visibly floats ---- */
+.tier-quiet{background:var(--elev-quiet)}
+.tier-attn{background:var(--elev-attn);box-shadow:inset 0 0 0 1px rgba(114,213,200,.32),0 6px 24px -14px rgba(114,213,200,.5)}
+.tier-ambient{background:var(--elev-ambient)}
+
+/* ---- whisper grammar: every system line reads the same ---- */
+.whisper{display:inline-flex;align-items:center;gap:6px;font-size:13px;line-height:1.5;
+         color:var(--muted,#6B7488);font-family:var(--sans,-apple-system,system-ui,sans-serif)}
+.whisper svg.ic{width:14px;height:14px;opacity:.75}
+.whisper.warn{color:var(--amber,#e8b95a)}
+.whisper.alert{color:var(--exp,#D98A93)}
+
+/* ---- empty states: the same dignity as full ones ---- */
+.emptyface{display:flex;flex-direction:column;align-items:center;gap:9px;padding:30px 20px;text-align:center;
+           color:var(--muted,#6B7488);font-size:13px;font-family:var(--sans,system-ui,sans-serif)}
+.emptyface svg.ic{width:26px;height:26px;opacity:.4}
+.emptyface .em-line{max-width:34ch;line-height:1.5}
+.emptyface .em-act{margin-top:2px;color:var(--gold2,#72D5C8);font-family:var(--mono,monospace);font-size:12px;cursor:pointer}
+.emptyface .em-act:hover{text-decoration:underline}
+
+/* ---- THE OPENING · honest-maturity banner (every gated surface wears it) ---- */
+.matbanner{display:flex;align-items:center;gap:9px;padding:10px 14px;border-radius:11px;font-size:13px;
+    line-height:1.45;margin-bottom:16px;border:1px solid rgba(232,185,90,.28);background:rgba(232,185,90,.06);color:var(--lbl,#8b93a2)}
+.matbanner svg.ic{width:15px;height:15px;color:var(--amber,#e8b95a);flex:none}
+.matbanner b{color:var(--txt,#e8ecf2);font-weight:700}
+.matbanner .rdy{color:var(--amber,#e8b95a)}
+.matbanner.met{border-color:rgba(114,213,200,.22);background:rgba(114,213,200,.05)}
+.matbanner.met svg.ic{color:var(--face-in,#72D5C8)}
+.mattag{font-family:var(--mono,monospace);font-size:10px;letter-spacing:.3px;color:var(--amber,#e8b95a);
+    border:1px solid rgba(232,185,90,.3);border-radius:20px;padding:1px 7px;margin-left:8px;white-space:nowrap;vertical-align:middle}
+
+/* ---- ONE shared chart tooltip (one-owner) — every [data-tip] element + line-chart handlers use it ---- */
+.hktip{position:fixed;z-index:9998;display:none;pointer-events:none;max-width:260px;
+    background:#151823;border:1px solid #2b3242;border-radius:9px;padding:8px 11px;
+    box-shadow:0 10px 30px rgba(0,0,0,.55);font-family:var(--sans,-apple-system,system-ui,sans-serif);
+    font-size:12.5px;line-height:1.5;color:var(--txt,#e8ecf2)}
+.hktip .tt-hd{font-weight:700;font-size:11px;letter-spacing:.3px;color:var(--lbl,#8b93a2);margin-bottom:3px}
+.hktip .tt-row{display:flex;justify-content:space-between;gap:16px;font-variant-numeric:tabular-nums;font-feature-settings:"tnum" 1}
+.hktip .tt-row .k{color:var(--lbl,#8b93a2)}
+.hktip .tt-row .v{font-family:var(--mono,monospace);font-weight:700}
+.hktip .tt-row .v.pos{color:var(--face-in,#72D5C8)}.hktip .tt-row .v.neg{color:var(--exp,#D98A93)}
+.hktip .tt-row .v .d{font-size:.82em;opacity:.55}.hktip .tt-row .v .c{font-size:.72em;opacity:.5;margin-right:.2em}
+
+/* value labels sitting on/above chart bars (suppressed by JS when they'd crowd) */
+.barval{font-family:var(--mono,monospace);font-size:9.5px;color:var(--lbl,#8b93a2);white-space:nowrap;font-variant-numeric:tabular-nums}
+
+/* ---- the one motion dose: applied uniformly, safe on any page ---- */
+@media (prefers-reduced-motion:no-preference){
+  button,.btn,.chip,summary,.nav,[role="button"],.tog,.seg button{
+    transition:background var(--face-ease),border-color var(--face-ease),color var(--face-ease),transform var(--face-ease),box-shadow var(--face-ease)}
+  button:active,.btn:active,.chip:active{transform:translateY(.5px)}
+}

@@ -1,0 +1,131 @@
+<!doctype html>
+<html lang="en" dir="ltr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>HAKIM · Budget</title>
+<script src="/face.js"></script>
+<link rel="stylesheet" href="/face.css">
+<style>
+:root{
+ --bg:#0D0F16;--panel:#1B1F2C;--panel2:#232837;--line:#262B3A;--railbg:#0A0C12;
+ --gold:#e8b95a;--gold2:#72D5C8;--teal:#72D5C8;--mint:#72D5C8;--red:#E05252;--amber:#e8b95a;
+ --inc:#72D5C8;--exp:#D98A93;
+ --txt:#FFFFFF;--lbl:#8A90A6;--muted:#5A6072;
+ --mono:'JetBrains Mono',ui-monospace,'SF Mono',Menlo,monospace;--sans:-apple-system,system-ui,"SF Pro Display","Segoe UI",Roboto,sans-serif;
+ --sp:24px;--rad:14px;}
+*{box-sizing:border-box}
+html,body{margin:0;min-height:100%;background:var(--bg);color:var(--txt);font-family:var(--sans);font-size:15px}
+a{color:inherit;text-decoration:none}
+.rail{position:fixed;left:0;top:0;bottom:0;width:222px;z-index:40;background:var(--railbg);border-right:1px solid var(--line);display:flex;flex-direction:column;padding:18px 12px 12px;overflow-y:auto}
+.rail::-webkit-scrollbar{width:0}
+.brand{padding:2px 8px 16px;cursor:pointer}.brand .wm{font-family:var(--mono);font-size:15px;letter-spacing:2px;font-weight:800}
+.brand .wm .sp{color:var(--gold)}.brand .sub{display:block;font-family:var(--mono);font-size:9px;letter-spacing:3px;color:var(--muted);margin-top:3px}
+.nav{display:flex;align-items:center;gap:11px;padding:10px 12px;border-radius:9px;color:var(--lbl);font-weight:600;font-size:14.5px;cursor:pointer}
+.nav i{font-style:normal;width:18px;text-align:center;opacity:.85}.nav:hover{background:#1a1d23;color:var(--txt)}
+.nav.active{background:rgba(114,213,200,.12);color:var(--gold2)}
+.nav .qbadge{margin-left:auto;background:var(--mint);color:#0D0F16;border-radius:9px;padding:1px 7px;font-size:11px;font-weight:800;font-family:var(--mono)}
+.rsec{font-family:var(--mono);font-size:9px;letter-spacing:2px;text-transform:uppercase;color:#4b5260;margin:18px 10px 8px;display:flex}
+.rsec .rt{margin-left:auto;color:var(--amber)}
+.acc{display:flex;align-items:center;padding:7px 12px;border-radius:8px;cursor:pointer;font-size:13px}
+.acc:hover{background:#1a1d23}.acc .an{flex:1;color:var(--lbl);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;padding-right:8px}
+.acc .av{font-family:var(--mono);font-weight:600}.acc.crd .av{color:var(--amber)}
+.spacer{flex:1;min-height:12px}
+.railstat{font-family:var(--mono);font-size:11px;color:var(--muted);border-top:1px solid var(--line);padding-top:12px;margin-top:8px;display:flex;flex-direction:column;gap:8px}
+.railstat .live{display:inline-flex;align-items:center;gap:7px;color:var(--teal)}
+.railstat .live .d{width:7px;height:7px;border-radius:50%;background:var(--teal);box-shadow:0 0 7px var(--teal);animation:pul 2s infinite}
+.railstat .live.off{color:var(--muted)}.railstat .live.off .d{background:var(--muted);box-shadow:none;animation:none}
+.railstat .live.amber{color:var(--amber)}.railstat .live.amber .d{background:var(--amber)}
+.railstat .bad{color:var(--red)}
+@keyframes pul{0%,100%{opacity:1}50%{opacity:.3}}
+.app{max-width:1000px;padding:22px 28px 64px;margin-left:max(222px,calc((100% - 1000px)/2));margin-right:auto}
+@media(max-width:900px){.rail{width:56px;padding:14px 6px}.brand .wm{font-size:0}.brand .wm::before{content:"✦";font-size:18px;color:var(--gold)}.brand .sub,.nav span:not(.qbadge),.rsec,.acc,.railstat{display:none}.nav{justify-content:center}.app{margin-left:56px}}
+.topbar{display:flex;align-items:baseline;gap:14px;margin-bottom:var(--sp);flex-wrap:wrap}
+.topbar h1{font-size:22px;font-weight:700;margin:0}.topbar .subtitle{font-size:12px;color:var(--muted);margin-top:3px;font-family:var(--mono)}
+.card{background:linear-gradient(180deg,#1B1F2C,#151823);border:1px solid var(--line);border-radius:var(--rad);padding:18px 20px;margin-bottom:var(--sp)}
+.lbl{font-size:10px;letter-spacing:1.4px;text-transform:uppercase;color:var(--lbl);font-weight:700}
+.sec{font-size:13px;font-weight:700}.secsub{font-size:11px;color:var(--muted);font-family:var(--mono);margin-top:2px;margin-bottom:12px}
+.cur{font-size:.42em;color:var(--muted);font-weight:400;margin-right:.12em}.dec{font-size:.5em;color:var(--muted);opacity:.7}
+.strip{display:flex;gap:34px;flex-wrap:wrap;align-items:baseline}
+.strip .n{font-family:var(--mono);font-size:20px;font-weight:800;letter-spacing:-.5px}
+.strip .n.hero-num{font-family:var(--face-display);font-size:30px}
+.strip .s{font-size:11px;color:var(--muted);font-family:var(--mono);margin-top:4px}
+.brow{display:flex;align-items:center;gap:14px;padding:11px 4px;border-top:1px solid var(--line)}
+.brow:first-of-type{border-top:none}
+.bmid{flex:1;min-width:0}.bnm{font-size:14px;font-weight:600}.bmeta{font-size:11px;color:var(--muted);font-family:var(--mono);margin-top:2px}
+.pbar{height:7px;border-radius:4px;background:var(--panel2);overflow:hidden;margin-top:6px;max-width:340px}
+.pbar i{display:block;height:100%;background:var(--mint)}.pbar i.over{background:var(--exp)}
+.bval{font-family:var(--mono);font-weight:800;text-align:right;white-space:nowrap;min-width:110px}
+.ev{display:inline-flex;gap:3px;align-items:flex-end;height:22px;margin-top:4px}
+.ev b{width:8px;background:#3a4150;border-radius:2px;display:block}
+.btn{background:var(--gold);color:#0D0F16;border:none;border-radius:8px;padding:6px 12px;font-size:11px;font-family:var(--mono);font-weight:800;cursor:pointer;white-space:nowrap}
+.btn.ghost{background:var(--panel2);color:var(--gold2);border:1px solid var(--line);font-weight:600}
+.btn:hover{opacity:.9}
+.prop{border:1px solid rgba(232,185,90,.22);background:rgba(232,185,90,.04)}
+.pctl{color:var(--exp);font-size:11px;font-family:var(--mono)}.pctl.ok{color:var(--mint)}
+</style>
+</head>
+<body>
+<aside class="rail" id="hakim-rail"></aside>
+<div class="app">
+  <div class="topbar"><div><h1>Budget</h1><div class="subtitle">manual targets · and proposals drawn from what you actually spend</div></div></div>
+  <div id="body"><div class="secsub">Loading…</div></div>
+</div>
+<script>
+const esc=s=>(s||'').replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const money0=n=>Number(n||0).toLocaleString('en-US',{maximumFractionDigits:0});
+function m(n){n=Number(n||0);const neg=n<0;n=Math.abs(n);const i=Math.floor(n).toLocaleString('en-US');const d=(n-Math.floor(n)).toFixed(2).slice(1);return `<span class="cur">SAR</span>${neg?'−':''}${i}<span class="dec">${d}</span>`;}
+const IC=(n)=>window.ic?window.ic(n):'';
+function evbars(hist){const mx=Math.max(1,...hist);return `<span class="ev">${hist.map(v=>`<b style="height:${Math.max(2,v/mx*22)}px" title="SAR ${money0(v)}"></b>`).join('')}</span>`;}
+
+async function setTarget(name,amount){
+  await fetch('/api/category/target',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({name:name,amount:amount,period:'monthly'})});
+  load();
+}
+async function clearTarget(name){await fetch('/api/category/target',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({name:name,amount:0})});load();}
+
+async function load(){
+  let d;try{d=await(await fetch('/api/budget')).json();}catch(e){document.getElementById('body').innerHTML='<div class="card">Could not load Budget.</div>';return;}
+  let h='';
+
+  // summary
+  h+=`<div class="card"><div class="lbl">This month</div>
+    <div class="strip" style="margin-top:10px">
+      <div><div class="n hero-num exp">−${m(d.total_actual)}</div><div class="s">spent so far</div></div>
+      <div><div class="n">${d.total_target>0?'SAR '+money0(d.total_target):'—'}</div><div class="s">targeted / month</div></div>
+      <div><div class="n">${d.targeted_count}</div><div class="s">categories with a target</div></div>
+      <div><div class="n">${d.untargeted_count}</div><div class="s">proposals waiting</div></div>
+    </div></div>`;
+
+  // targets health
+  h+=`<div class="card"><div class="sec">Your targets</div><div class="secsub">manual budgets vs this month’s spend · progress bar fills as you spend</div>`;
+  if(!d.targeted.length){
+    h+=`<div class="secsub" style="margin:0">No manual targets yet. Accept a proposal below, or set them on <a href="/categories" style="color:var(--gold2)">Categories</a>.</div>`;
+  }else{
+    h+=d.targeted.map(r=>{const pct=r.target?Math.round(r.actual/r.target*100):0;const over=r.actual>r.target;
+      return `<div class="brow"><div class="bmid"><div class="bnm">${esc(r.name)}</div><div class="bmeta"><span class="pctl ${over?'':'ok'}">${pct}% of target</span> · target SAR ${money0(r.target)}/mo</div><div class="pbar"><i class="${over?'over':''}" style="width:${Math.min(100,pct)}%"></i></div></div>
+        <div class="bval ${over?'exp':''}" style="color:${over?'var(--exp)':'var(--txt)'}">−${m(r.actual)}</div>
+        <button class="btn ghost" onclick="clearTarget('${esc(r.name).replace(/'/g,"\\'")}')">clear</button></div>`;
+    }).join('');
+  }
+  h+=`</div>`;
+
+  // proposals
+  h+=`<div class="card prop"><div class="sec">Proposed targets · from your spending</div>
+    ${window.matBanner(d.maturity,'These proposals')}
+    <div class="secsub" style="margin-top:0">each is the average of a category’s spend across your ${d.complete_months.length} complete month${d.complete_months.length===1?'':'s'} — accept to make it a target (one tap, editable later)</div>`;
+  if(!d.proposals.length){
+    h+=`<div class="secsub" style="margin:0">No proposals — every spending category already has a target, or has no history yet.</div>`;
+  }else{
+    h+=d.proposals.map(r=>`<div class="brow"><div class="bmid"><div class="bnm">${esc(r.name)}</div><div class="bmeta">avg SAR ${money0(r.proposed)}/mo · this month −${money0(r.actual)} ${evbars(r.evidence)}</div></div>
+      <button class="btn" onclick="setTarget('${esc(r.name).replace(/'/g,"\\'")}',${r.proposed})">set SAR ${money0(r.proposed)}/mo</button></div>`).join('');
+  }
+  h+=`<div class="secsub" style="margin:12px 0 0">Proposals stay <b>provisional</b> until 3 months complete — a two-month average is a starting point, not a verdict. On <b>30 September</b> they firm up.</div></div>`;
+
+  document.getElementById('body').innerHTML=h;
+}
+load();
+</script>
+<script src="/rail.js"></script>
+</body>
+</html>

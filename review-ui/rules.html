@@ -1,0 +1,317 @@
+<!doctype html>
+<html lang="en" dir="ltr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>HAKIM · Rules</title>
+<script src="/face.js"></script>
+<link rel="stylesheet" href="/face.css">
+<style>
+:root{
+ --bg:#0D0F16;--panel:#1B1F2C;--panel2:#232837;--line:#262B3A;--railbg:#0A0C12;
+ --gold:#e8b95a;--gold2:#72D5C8;--teal:#72D5C8;--mint:#72D5C8;--mint2:#60B3A8;--red:#E05252;--amber:#e8b95a;
+ --inc:#72D5C8;--exp:#D98A93;
+ --txt:#FFFFFF;--lbl:#8A90A6;--muted:#5A6072;
+ --mono:'JetBrains Mono',ui-monospace,'SF Mono',Menlo,monospace;--sans:-apple-system,system-ui,"SF Pro Display","Segoe UI",Roboto,sans-serif;
+ --sp:24px;--rad:14px;}
+*{box-sizing:border-box}
+html,body{margin:0;min-height:100%;background:var(--bg);color:var(--txt);font-family:var(--sans);font-size:15px}
+a{color:inherit;text-decoration:none}
+.rail{position:fixed;left:0;top:0;bottom:0;width:222px;z-index:40;background:var(--railbg);border-right:1px solid var(--line);display:flex;flex-direction:column;padding:18px 12px 12px;overflow-y:auto}
+.brand{padding:2px 8px 16px;cursor:pointer}.brand .wm{font-family:var(--mono);font-size:15px;letter-spacing:2px;font-weight:800;color:var(--txt)}
+.brand .wm .sp{color:var(--gold)}
+.brand .sub{display:block;font-family:var(--mono);font-size:9px;letter-spacing:3px;color:var(--muted);margin-top:3px}
+.nav{display:flex;align-items:center;gap:11px;padding:10px 12px;border-radius:9px;color:var(--lbl);font-weight:600;font-size:14.5px;cursor:pointer}
+.nav i{font-style:normal;width:18px;text-align:center;opacity:.85}.nav:hover{background:#1a1d23;color:var(--txt)}
+.nav.active{background:rgba(114,213,200,.12);color:var(--gold2)}
+.spacer{flex:1;min-height:12px}
+.railstat{font-family:var(--mono);font-size:11px;color:var(--muted);border-top:1px solid var(--line);padding-top:12px}
+.app{max-width:960px;padding:22px 28px 64px;margin-left:max(222px,calc((100% - 960px)/2));margin-right:auto}
+@media(max-width:900px){.rail{width:56px;padding:14px 6px}.brand .wm{font-size:0}.brand .wm::before{content:"✦";font-size:18px;color:var(--gold)}.brand .sub,.nav span,.railstat{display:none}.nav{justify-content:center}.app{margin-left:56px}}
+@media(max-width:480px){.app{padding:14px 12px 48px}}
+.topbar{margin-bottom:var(--sp)}.topbar h1{font-size:22px;font-weight:700;margin:0}.topbar .subtitle{font-size:12px;color:var(--muted);margin-top:3px;font-family:var(--mono)}
+.card{background:linear-gradient(180deg,#1B1F2C,#151823);border:1px solid var(--line);border-radius:var(--rad);padding:18px 20px;margin-bottom:var(--sp)}
+.card h2{font-size:15px;margin:0 0 4px}
+.sub{font-size:11.5px;color:var(--muted);font-family:var(--mono)}
+.btn{background:var(--panel2);border:1px solid var(--line);color:var(--lbl);border-radius:9px;padding:8px 14px;font-size:12.5px;font-family:var(--mono);cursor:pointer;transition:.12s}
+.btn:hover{border-color:#39415a;color:var(--txt)}
+.btn.pri{background:var(--mint);border-color:transparent;color:#0D0F16;font-weight:800}
+.btn.pri:hover{filter:brightness(1.08)}
+.btn.dz:hover{border-color:var(--red);color:var(--red)}
+.impact{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin:14px 0}
+.impact .b{background:var(--panel2);border-radius:10px;padding:12px 14px}
+.impact .n{font-family:var(--mono);font-size:22px;font-weight:800;letter-spacing:-.5px}
+.impact .l{font-size:10px;color:var(--muted);text-transform:uppercase;letter-spacing:1px;margin-top:4px}
+.migbar{display:flex;align-items:center;gap:12px;flex-wrap:wrap;margin-top:8px}
+.rule{border:1px solid var(--line);border-radius:11px;padding:12px 14px;margin-bottom:10px;background:#151823}
+.rule.off{opacity:.5}
+.rhd{display:flex;align-items:center;gap:10px}
+.rhd .t{font-weight:700;font-size:14px;flex:1;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.rbody{font-family:var(--mono);font-size:11.5px;color:var(--lbl);margin-top:8px;line-height:1.7}
+.rbody .k{color:var(--muted)}
+.tag{display:inline-block;background:var(--panel2);border-radius:5px;padding:1px 7px;margin:0 3px 3px 0;font-size:11px}
+.tag.cat{color:var(--mint);border:1px solid rgba(114,213,200,.3)}
+.tag.tg{color:var(--gold)}
+.tag.ct{color:var(--txt)}
+.racts{display:flex;gap:6px;flex-wrap:wrap;margin-top:10px}
+.dot{width:8px;height:8px;border-radius:50%;flex-shrink:0}
+.on{background:var(--mint)}.dead{background:var(--muted)}
+.tog{position:relative;width:34px;height:19px;border-radius:19px;background:var(--panel2);border:1px solid var(--line);cursor:pointer;flex-shrink:0;transition:.15s}
+.tog.a{background:rgba(114,213,200,.3);border-color:var(--mint)}
+.tog i{position:absolute;top:1.5px;left:2px;width:14px;height:14px;border-radius:50%;background:var(--muted);transition:.15s}
+.tog.a i{left:16px;background:var(--mint)}
+input,select{background:var(--panel2);border:1px solid var(--line);color:var(--txt);border-radius:9px;padding:9px 11px;font-size:13px;font-family:var(--sans);width:100%}
+label{font-size:10px;text-transform:uppercase;letter-spacing:1px;color:var(--muted);display:block;margin:0 0 5px}
+.frow{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:12px}
+.testout{font-family:var(--mono);font-size:11px;color:var(--muted);margin-top:8px;border-top:1px dashed var(--line);padding-top:8px}
+.testout .m{color:var(--mint)}
+.toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%);background:#151823;border:1px solid var(--mint);color:var(--txt);border-radius:10px;padding:11px 18px;font-family:var(--mono);font-size:12px;opacity:0;transition:.2s;z-index:60;pointer-events:none}
+.toast.show{opacity:1}
+.empty{color:var(--muted);font-family:var(--mono);font-size:12px;text-align:center;padding:24px}
+.prop{border:1px solid var(--line);border-radius:11px;padding:14px 16px;margin-bottom:12px;background:#151823}
+.prop .phd{display:flex;align-items:baseline;gap:10px;flex-wrap:wrap}
+.prop .pname{font-weight:700;font-size:15px}
+.prop .pcnt{font-family:var(--mono);font-size:12px;color:var(--gold2);background:rgba(114,213,200,.1);border-radius:6px;padding:1px 8px}
+.prop .pmeta{font-family:var(--mono);font-size:11px;color:var(--muted);margin-top:5px;line-height:1.6}
+.prop .resurf{font-family:var(--mono);font-size:11px;color:var(--gold);margin-top:4px}
+.prop .prow{display:grid;grid-template-columns:1.3fr 1fr;gap:12px;margin-top:12px}
+@media(max-width:620px){.prop .prow{grid-template-columns:1fr}}
+.chips{display:flex;gap:6px;flex-wrap:wrap}
+.chip{background:var(--panel2);border:1px solid var(--line);color:var(--lbl);border-radius:20px;padding:5px 12px;font-size:12px;font-family:var(--mono);cursor:pointer;transition:.12s}
+.chip:hover{border-color:#39415a;color:var(--txt)}
+.chip.sel{background:rgba(114,213,200,.16);border-color:var(--mint);color:var(--gold2)}
+.pacts{display:flex;gap:8px;flex-wrap:wrap;margin-top:14px}
+.btn.ok{background:var(--mint);border-color:transparent;color:#0D0F16;font-weight:800}
+.btn.ok:hover{filter:brightness(1.08)}
+.btn.wait{border-color:var(--gold);color:var(--gold)}
+.matchline{font-family:var(--mono);font-size:10.5px;color:var(--muted);margin-top:8px}
+.matchline input{display:inline-block;width:auto;padding:3px 7px;font-size:11px;background:#0f1119}
+</style>
+</head>
+<body>
+<aside class="rail" id="hakim-rail"></aside>
+<div class="app">
+  <div class="topbar"><h1>Rules</h1><div class="subtitle">Firefly's native rule engine · triggers → actions · runs on new AND existing transactions</div></div>
+
+  <div class="card" id="migcard"><div class="sub">Loading…</div></div>
+
+  <div class="card" id="propcard" style="border-color:rgba(114,213,200,.28)">
+    <h2><svg class="ic" viewBox="0 0 24 24"><path d="M9 18h6M10 21h4M12 3a6 6 0 0 1 4 10c-.7.7-1 1.3-1 2H9c0-.7-.3-1.3-1-2a6 6 0 0 1 4-10z"/></svg> Rule proposals <span class="sub" id="propcount"></span></h2>
+    <div class="sub">Recurring merchants with no rule yet — teach me one at a time, highest-impact first. <b>Confident</b> builds the rule and applies it now; <b>Not sure yet</b> builds nothing and waits until it recurs before asking again.</div>
+    <div id="proplist" style="margin-top:14px"><div class="empty">Loading…</div></div>
+  </div>
+
+  <div class="card">
+    <h2>Create a rule</h2>
+    <div class="sub">When a transaction's description contains any of these, apply the action. Runs server-side in Firefly — on import and on demand.</div>
+    <div style="margin-top:14px">
+      <label>Title</label><input id="ntitle" placeholder="e.g. Netflix → Subscriptions">
+    </div>
+    <div style="margin-top:12px">
+      <label>Description contains (comma-separated = any-of)</label>
+      <input id="ncontains" placeholder="netflix, nflx">
+    </div>
+    <div class="frow" style="margin-top:12px">
+      <div><label>Set category</label><input id="ncat" list="catlist" placeholder="Subscriptions"><datalist id="catlist"></datalist></div>
+      <div><label>Add tags (comma-separated)</label><input id="ntags" placeholder="Hisham"></div>
+    </div>
+    <button class="btn pri" onclick="createRule()">Create rule</button>
+  </div>
+
+  <div class="card">
+    <h2>Rules <span class="sub" id="rcount"></span></h2>
+    <div id="rlist" style="margin-top:12px"><div class="empty">Loading…</div></div>
+  </div>
+</div>
+<div id="toast" class="toast"></div>
+<script>
+const esc=s=>(s||'').replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const money0=n=>Number(n||0).toLocaleString('en-US',{maximumFractionDigits:0});
+let RULES=[],META={};
+function toast(m){const t=document.getElementById('toast');t.textContent=m;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),2200);}
+
+async function load(){
+  const d=await(await fetch('/api/rules')).json();RULES=d.rules||[];META=d;
+  renderMig();renderList();
+  loadImpact();loadCats();loadProposals();
+}
+/* ── Rule proposals — the page's living heart. Careful learning: Confident builds+applies now;
+   Not-sure builds nothing and waits until the merchant recurs; Dismiss silences a one-off. ── */
+const PEOPLE=['Hisham','Sarah','Aser','Adam','Family','Maid','Driver'];
+let PROPS=[];
+async function loadProposals(){
+  const host=document.getElementById('proplist');
+  let d;try{d=await(await fetch('/api/rules/proposals')).json();}catch(e){host.innerHTML='<div class="empty">could not load</div>';return;}
+  PROPS=d.proposals||[];
+  document.getElementById('propcount').textContent=PROPS.length?`· ${PROPS.length} waiting${d.snoozed_hidden?` · ${d.snoozed_hidden} snoozed`:''}`:(d.snoozed_hidden?`· 0 now · ${d.snoozed_hidden} snoozed`:'· all caught up');
+  if(!PROPS.length){host.innerHTML=`<div class="empty">✓ nothing to teach right now — every recurring merchant has a rule or is snoozed.</div>`;return;}
+  host.innerHTML=PROPS.map((p,i)=>propCard(p,i)).join('');
+  PROPS.forEach((p,i)=>{ // preselect the person hint
+    if(p.person_hint&&p.person_hint!=='Both'){const el=document.querySelector(`#prop-${i} .chip[data-p="${p.person_hint}"]`);if(el)el.classList.add('sel');}
+  });
+}
+function propCard(p,i){
+  const acctTxt=p.accounts.map(esc).join(', ');
+  const who=p.person_hint==='Both'?'<span style="color:var(--gold2)">Hisham + Sarah</span>':(p.person_hint?`<span style="color:var(--gold2)">${esc(p.person_hint)}</span>`:'—');
+  const chips=PEOPLE.map(n=>`<span class="chip" data-p="${n}" onclick="this.classList.toggle('sel')">${n}</span>`).join('');
+  return `<div class="prop" id="prop-${i}">
+    <div class="phd"><span class="pname">${esc(p.label)}</span><span class="pcnt">${p.count}×</span>
+      ${p.total?`<span class="sub">SAR ${money0(p.total)} total</span>`:''}<span class="sub">· ${who}</span></div>
+    <div class="pmeta">on ${acctTxt} · now in <b>${esc(p.current_category)}</b> · recent: ${p.dates.map(esc).join(' · ')}</div>
+    ${p.resurfaced_from!=null?`<div class="resurf">↩ appeared ${p.count-p.resurfaced_from} more time(s) since you deferred — sure now?</div>`:''}
+    <div class="prow">
+      <div><label>Category → subcategory</label><input id="pc-${i}" list="catlist" placeholder="type to search…"></div>
+      <div><label>Person (who spent this)</label><div class="chips">${chips}</div></div>
+    </div>
+    <div style="margin-top:10px"><label>Extra tags (optional, comma-separated)</label><input id="pt-${i}" placeholder="e.g. trip:eid, business"></div>
+    <div class="matchline">rule will match description containing: <input id="pm-${i}" value="${esc(p.match_text)}"></div>
+    <div class="pacts">
+      <button class="btn ok" onclick="propConfirm(${i})">✓ Confident — build &amp; apply</button>
+      <button class="btn wait" onclick="propDefer(${i})">? Not sure yet</button>
+      <button class="btn dz" onclick="propDismiss(${i})">Dismiss</button>
+    </div>
+  </div>`;
+}
+function propPeople(i){return [...document.querySelectorAll(`#prop-${i} .chip.sel`)].map(c=>c.getAttribute('data-p'));}
+async function propConfirm(i){
+  const p=PROPS[i];
+  const category=document.getElementById('pc-'+i).value.trim();
+  const people=propPeople(i);
+  const extra=document.getElementById('pt-'+i).value.split(',').map(s=>s.trim()).filter(Boolean);
+  const match_text=document.getElementById('pm-'+i).value.trim();
+  if(!category&&!people.length&&!extra.length){toast('pick a category (or at least a person)');return;}
+  if(!match_text){toast('the match text can’t be empty');return;}
+  toast('Building rule + applying…');
+  const r=await(await fetch('/api/rules/proposal/confirm',{method:'POST',headers:{'Content-Type':'application/json'},
+    body:JSON.stringify({key:p.key,label:p.label,match_text,category,tags:[...people,...extra]})})).json();
+  if(!r.ok){toast(r.error||'failed');return;}
+  toast(r.applied?'✓ rule created &amp; applied to existing':'✓ rule created (apply had an issue — use Test/Apply)');
+  loadProposals();load();
+}
+async function propDefer(i){
+  const p=PROPS[i];
+  const r=await(await fetch('/api/rules/proposal/defer',{method:'POST',headers:{'Content-Type':'application/json'},
+    body:JSON.stringify({key:p.key,count:p.count})})).json();
+  toast(`snoozed — returns after it recurs ${r.resurface_after||2} more time(s)`);
+  loadProposals();
+}
+async function propDismiss(i){
+  const p=PROPS[i];
+  if(!confirm(`Dismiss "${p.label}"? It’s a one-off — I’ll stop proposing a rule for it.`))return;
+  await fetch('/api/rules/proposal/dismiss',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({key:p.key})});
+  toast('dismissed — won’t propose again');
+  loadProposals();
+}
+async function loadImpact(){
+  try{const i=await(await fetch('/api/rules/impact')).json();
+    document.getElementById('impact-q').textContent=i.queue;
+    document.getElementById('impact-a').textContent=i.addressable;
+    document.getElementById('impact-m').textContent=i.matched;
+    const note=document.getElementById('impact-note');
+    if(note)note.innerHTML=i.transfers?`${i.transfers} of the queue are transfers/SADAD — not merchant purchases, so rules-by-description can't address them (that's honest, not a miss). Of the ${i.addressable} that are, <b style="color:var(--mint)">${i.matched} (${i.pct}%)</b> match a rule today. The real payoff lands when Sarah's merchant-heavy statements arrive.`:`Of ${i.addressable} rule-addressable queue items, <b style="color:var(--mint)">${i.matched} (${i.pct}%)</b> match a rule.`;
+  }catch(e){}
+}
+async function loadCats(){
+  try{const b=await(await fetch('/api/bootstrap')).json();const tr=b.tree||{};
+    const cats=[...Object.keys(tr.expense||{}),...Object.keys(tr.income||{})];
+    document.getElementById('catlist').innerHTML=cats.map(c=>`<option value="${esc(c)}">`).join('');
+  }catch(e){}
+}
+function renderMig(){
+  const un=META.importer_unmigrated||0, tot=META.importer_total||0;
+  let h=`<h2><svg class="ic" viewBox="0 0 24 24"><path d="M13 3L4 14h7l-1 7 9-11h-7z"/></svg> Importer rules → Firefly's engine</h2>
+    <div class="sub">Your ${tot} import-time merchant patterns categorize only on ingest. Migrated into Firefly, they run on existing transactions too and fire on Firefly's own events — the crown find.</div>
+    <div class="impact">
+      <div class="b"><div class="n" id="impact-q">–</div><div class="l">review queue</div></div>
+      <div class="b"><div class="n" id="impact-a" style="color:var(--gold)">–</div><div class="l">rule-addressable</div></div>
+      <div class="b"><div class="n" id="impact-m" style="color:var(--mint)">–</div><div class="l">match a rule now</div></div>
+    </div>
+    <div class="sub" id="impact-note" style="margin:-6px 0 10px"></div>
+    <div class="migbar">`;
+  if(un>0) h+=`<button class="btn pri" onclick="migrate()">Migrate ${un} rule${un>1?'s':''} into Firefly</button>
+      <span class="sub">${tot-un} of ${tot} already migrated</span>`;
+  else h+=`<span class="sub">✓ all ${tot} importer rules are in Firefly. Substring migration is best-effort (regex ⊃ contains) — spot-check with Test.</span>`;
+  h+=`</div>`;
+  document.getElementById('migcard').innerHTML=h;
+}
+async function migrate(){
+  toast('Migrating…');
+  const r=await(await fetch('/api/rules/migrate',{method:'POST',headers:{'Content-Type':'application/json'},body:'{}'})).json();
+  toast(`✓ ${r.created} created · ${r.skipped} skipped`);
+  load();
+}
+function renderList(){
+  document.getElementById('rcount').textContent=`· ${RULES.length}`;
+  if(!RULES.length){document.getElementById('rlist').innerHTML=`<div class="empty">No native rules yet. Migrate your importer rules above, or create one.</div>`;return;}
+  const byg={};RULES.forEach(r=>{(byg[r.group||'Rules']=byg[r.group||'Rules']||[]).push(r);});
+  let h='';
+  for(const g in byg){
+    h+=`<div class="sub" style="margin:14px 0 8px;text-transform:uppercase;letter-spacing:1px">${esc(g)}</div>`;
+    h+=byg[g].map(ruleRow).join('');
+  }
+  document.getElementById('rlist').innerHTML=h;
+}
+function ruleRow(r){
+  const contains=r.triggers.filter(t=>t.type==='description_contains').map(t=>`<span class="tag ct">${esc(t.value)}</span>`).join('');
+  const acts=r.actions.map(a=>{
+    if(a.type==='set_category')return `<span class="tag cat">→ ${esc(a.value)}</span>`;
+    if(a.type==='add_tag')return `<span class="tag tg">+${esc(a.value)}</span>`;
+    return `<span class="tag">${esc(a.type)}: ${esc(a.value)}</span>`;
+  }).join('');
+  return `<div class="rule ${r.active?'':'off'}" id="rule-${r.id}">
+    <div class="rhd">
+      <div class="tog ${r.active?'a':''}" onclick="toggle('${r.id}')"><i></i></div>
+      <div class="t">${esc(r.title)}</div>
+      <span class="sub">${r.strict?'all':'any'}</span>
+    </div>
+    <div class="rbody"><span class="k">contains</span> ${contains||'<span class="k">—</span>'}<br><span class="k">then</span> ${acts||'<span class="k">—</span>'}</div>
+    <div class="racts">
+      <button class="btn" onclick="test('${r.id}')">Test — preview matches</button>
+      <button class="btn" onclick="apply('${r.id}','${esc(r.title).replace(/'/g,"")}')">Apply to existing ▸</button>
+      <button class="btn dz" onclick="del('${r.id}','${esc(r.title).replace(/'/g,"")}')">Delete</button>
+    </div>
+    <div class="testout" id="test-${r.id}" style="display:none"></div>
+  </div>`;
+}
+async function toggle(id){
+  const r=await(await fetch('/api/rule/toggle',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({id})})).json();
+  const rule=RULES.find(x=>x.id===id);if(rule)rule.active=r.active;renderList();
+}
+async function test(id){
+  const el=document.getElementById('test-'+id);el.style.display='block';el.innerHTML='testing…';
+  const r=await(await fetch('/api/rule/'+id+'/test')).json();
+  if(!r.ok){el.innerHTML=`<span style="color:var(--red)">test failed: ${esc(r.error||'')}</span>`;return;}
+  let h=`<span class="m">${r.matches}</span> transaction${r.matches===1?'':'s'} in the ledger match`;
+  if(r.sample&&r.sample.length){h+=':<br>'+r.sample.map(s=>`· ${esc(s.desc||'')} <span style="color:var(--muted)">${s.date} · SAR ${money0(s.amount)}</span>`).join('<br>');
+    if(r.matches>r.sample.length)h+=`<br><span style="color:var(--muted)">…and ${r.matches-r.sample.length} more</span>`;}
+  el.innerHTML=h;
+}
+async function apply(id,title){
+  if(!confirm(`Run "${title}" over ALL existing transactions now? This writes categories/tags on every match (undoable per-transaction, but bulk).`))return;
+  toast('Applying across the ledger…');
+  await fetch('/api/rule/'+id+'/apply',{method:'POST'});
+  toast('✓ rule applied — matched transactions updated');
+  loadImpact();
+}
+async function del(id,title){
+  if(!confirm(`Delete rule "${title}"? (The importer merchant map is untouched.)`))return;
+  await fetch('/api/rule/delete',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({id})});
+  toast('deleted');load();
+}
+async function createRule(){
+  const title=document.getElementById('ntitle').value.trim();
+  const contains=document.getElementById('ncontains').value.split(',').map(s=>s.trim()).filter(Boolean);
+  const category=document.getElementById('ncat').value.trim();
+  const tags=document.getElementById('ntags').value.split(',').map(s=>s.trim()).filter(Boolean);
+  if(!contains.length){toast('add at least one "contains" value');return;}
+  if(!category&&!tags.length){toast('add a category or a tag');return;}
+  const r=await(await fetch('/api/rule/create',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({title,contains,category,tags})})).json();
+  if(!r.ok){toast(r.error||'failed');return;}
+  document.getElementById('ntitle').value='';document.getElementById('ncontains').value='';document.getElementById('ncat').value='';document.getElementById('ntags').value='';
+  toast('✓ rule created');load();
+}
+load();
+</script>
+<script src="/rail.js"></script>
+</body>
+</html>

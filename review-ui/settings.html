@@ -1,0 +1,193 @@
+<!doctype html>
+<html lang="en" dir="ltr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>HAKIM · Settings</title>
+<script src="/face.js"></script>
+<link rel="stylesheet" href="/face.css">
+<style>
+:root{
+ --bg:#0D0F16;--panel:#1B1F2C;--panel2:#232837;--line:#262B3A;--railbg:#0A0C12;
+ --gold:#e8b95a;--gold2:#72D5C8;--teal:#72D5C8;--mint:#72D5C8;--mint2:#60B3A8;--red:#E05252;--amber:#b6bccb;
+ --inc:#72D5C8;--exp:#D98A93;
+ --txt:#FFFFFF;--lbl:#8A90A6;--muted:#5A6072;
+ --mono:'JetBrains Mono',ui-monospace,'SF Mono',Menlo,monospace;--sans:-apple-system,system-ui,"SF Pro Display","Segoe UI",Roboto,sans-serif;
+ --sp:24px;--rad:14px;}
+*{box-sizing:border-box}
+html,body{margin:0;min-height:100%;background:var(--bg);color:var(--txt);font-family:var(--sans);font-size:15px}
+a{color:inherit;text-decoration:none}
+.rail{position:fixed;left:0;top:0;bottom:0;width:222px;z-index:40;background:var(--railbg);border-right:1px solid var(--line);display:flex;flex-direction:column;padding:18px 12px 12px;overflow-y:auto}
+.brand{padding:2px 8px 16px;cursor:pointer}.brand .wm{font-family:var(--mono);font-size:15px;letter-spacing:2px;font-weight:800;color:var(--txt)}
+.brand .wm .sp{color:var(--gold)}
+.brand .sub{display:block;font-family:var(--mono);font-size:9px;letter-spacing:3px;color:var(--muted);margin-top:3px}
+.nav{display:flex;align-items:center;gap:11px;padding:10px 12px;border-radius:9px;color:var(--lbl);font-weight:600;font-size:14.5px;cursor:pointer}
+.nav i{font-style:normal;width:18px;text-align:center;opacity:.85}.nav:hover{background:#1a1d23;color:var(--txt)}
+.nav.active{background:rgba(114,213,200,.12);color:var(--gold2)}
+.spacer{flex:1;min-height:12px}
+.railstat{font-family:var(--mono);font-size:11px;color:var(--muted);border-top:1px solid var(--line);padding-top:12px}
+@media(max-width:900px){.rail{width:56px;padding:14px 6px}.brand .wm{font-size:0}.brand .wm::before{content:"✦";font-size:18px;color:var(--gold)}.brand .sub,.nav span,.railstat{display:none}.nav{justify-content:center}.app{margin-left:56px}}
+.app{max-width:820px;padding:22px 28px 64px;margin-left:max(222px,calc((100% - 820px)/2));margin-right:auto}
+@media(max-width:480px){.app{padding:14px 12px 48px}}
+.topbar{margin-bottom:var(--sp)}.topbar h1{font-size:22px;font-weight:700;margin:0}.topbar .subtitle{font-size:12px;color:var(--muted);margin-top:3px;font-family:var(--mono)}
+.card{background:linear-gradient(180deg,#1B1F2C,#151823);border:1px solid var(--line);border-radius:var(--rad);padding:6px 20px;margin-bottom:var(--sp)}
+.srow{display:flex;align-items:center;justify-content:space-between;gap:16px;padding:16px 0}.srow+.srow{border-top:1px solid var(--line)}
+.srow .k{font-size:14px;font-weight:600}.srow .kd{font-size:12px;color:var(--muted);font-family:var(--mono);margin-top:3px}
+.seg{display:flex;gap:6px;flex-wrap:wrap}
+.seg button{background:var(--panel2);border:1px solid var(--line);color:var(--lbl);border-radius:9px;padding:8px 14px;font-size:13px;font-family:var(--mono);cursor:pointer}
+.seg button.on{background:rgba(114,213,200,.16);border-color:transparent;color:var(--mint)}
+.seg button[disabled]{opacity:.45;cursor:not-allowed}
+.seg button .soon{font-size:9px;text-transform:uppercase;letter-spacing:1px;color:var(--muted);margin-left:6px}
+.saved{font-family:var(--mono);font-size:11px;color:var(--mint);opacity:0;transition:opacity .2s}.saved.show{opacity:1}
+</style>
+</head>
+<body>
+<aside class="rail" id="hakim-rail"></aside>
+<div class="app">
+  <div class="topbar"><h1>Settings</h1><div class="subtitle">your preferences · stored locally · only switches that actually work</div></div>
+  <div class="card" id="settings"></div>
+  <div class="card" id="backups" style="padding:16px 20px"><div class="kd" style="color:var(--muted)">Loading backup status…</div></div>
+  <div class="card" id="agents" style="padding:16px 20px"><div class="kd" style="color:var(--muted)">Loading agents…</div></div>
+  <div class="card" id="hawl" style="padding:16px 20px"><div class="kd" style="color:var(--muted)">Loading hawl status…</div></div>
+  <div class="card" id="merchants" style="padding:16px 20px"><div class="kd" style="color:var(--muted)">Loading merchant map…</div></div>
+  <div class="card" style="padding:16px 20px"><div class="kd" style="color:var(--muted);font-size:12px;font-family:var(--mono)">
+    Deferred (honest): full Arabic localization (RTL + every string) and a light theme are real projects on the
+    roadmap — shown here but not switched on, so nothing half-works.</div></div>
+  <div class="saved" id="saved">saved ✓</div>
+</div>
+<script>
+let S={};
+function seg(key,options,def){return `<div class="seg">`+options.map(o=>{
+  const on=(S[key]||def)===o.v;const dis=o.disabled;
+  return `<button class="${on?'on':''}" ${dis?'disabled':''} onclick="setPref('${key}','${o.v}')">${o.t}${o.soon?`<span class="soon">${o.soon}</span>`:''}</button>`;}).join('')+`</div>`;}
+function render(){
+  document.getElementById('settings').innerHTML=
+   row('Theme','the surface look',seg('theme',[{v:'dark',t:'Dark'},{v:'light',t:'Light',disabled:1,soon:'coming later'}],'dark'))
+  +row('Language','interface language',seg('language',[{v:'en',t:'English'},{v:'ar',t:'العربية',disabled:1,soon:'translation in progress'}],'en'))
+  +row('Default landing page','where the ✦ logo takes you',seg('landing',[{v:'/dashboard',t:'Dashboard'},{v:'/',t:'Desk'},{v:'/calendar',t:'Calendar'},{v:'/categories',t:'Categories'}],'/dashboard'));
+}
+function row(k,d,ctrl){return `<div class="srow"><div><div class="k">${k}</div><div class="kd">${d}</div></div>${ctrl}</div>`;}
+async function setPref(key,val){S[key]=val;render();
+  await fetch('/api/settings',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({[key]:val})});
+  const s=document.getElementById('saved');s.classList.add('show');setTimeout(()=>s.classList.remove('show'),1200);}
+async function load(){S=await(await fetch('/api/settings')).json();render();}
+load();
+
+/* ---- Backups panel (incident + visibility) ---- */
+function ago(ts){if(!ts)return '—';const d=new Date(ts),s=(Date.now()-d)/1000;
+  if(s<3600)return Math.round(s/60)+'m ago';if(s<86400)return Math.round(s/3600)+'h ago';return Math.round(s/86400)+'d ago';}
+async function loadBackups(){
+  let d;try{d=await(await fetch('/api/backup/status')).json();}catch(e){document.getElementById('backups').innerHTML='<div class="kd">Backup status unavailable.</div>';return;}
+  const st=d.status||{},m=d.manifest||{};
+  const ok=st.ok===true, ts=st.ts;
+  const stale=ts?((Date.now()-new Date(ts))/3600000>30):true;
+  const good=ok&&!stale;
+  const dot=`<span style="display:inline-block;width:9px;height:9px;border-radius:50%;background:${good?'var(--mint)':'var(--red)'};box-shadow:0 0 7px ${good?'var(--mint)':'var(--red)'};margin-right:8px"></span>`;
+  const nas=m.nas||{};
+  let h=`<div class="srow" style="padding:6px 0 14px"><div><div class="k">${dot}Backups${good?'':' — needs attention'}</div>
+      <div class="kd">last snapshot ${ago(ts)}${ts?' · '+new Date(ts).toLocaleString('en-GB'):''} · ${good?'healthy':(stale?'stale >30h':'last run failed')}</div></div>
+      <button id="bnow" class="seg" style="background:var(--mint);color:#0D0F16;font-weight:800;border:none;padding:9px 16px;border-radius:9px;cursor:pointer" onclick="backupNow()">↻ Back up now</button></div>`;
+  const grid=[['Snapshots',(m.count!=null?m.count:'—')],['Repository size',m.size||'—'],
+    ['Schedule',m.schedule||'nightly 03:15'],['Retention',m.retention||'—'],
+    ['Location',m.repo||'—'],['Offsite (NAS)',nas.configured?(nas.ok?('✓ synced '+ago(nas.ts)):'⚠ configured, last sync failed'):'⚠ not set — repo is Mac-only']];
+  h+=`<div style="display:grid;grid-template-columns:1fr 1fr;gap:10px 20px;margin:8px 0 12px">`+
+    grid.map(([k,v])=>`<div><div class="kd" style="font-size:10px;letter-spacing:1px;text-transform:uppercase">${k}</div><div style="font-family:var(--mono);font-size:12.5px;word-break:break-all;color:${/not set|failed|needs/.test(String(v))?'var(--amber)':'var(--txt)'}">${v}</div></div>`).join('')+`</div>`;
+  if(!nas.configured)h+=`<div class="kd" style="color:var(--amber);font-size:11.5px;font-family:var(--mono);margin-bottom:10px">⚠ Offsite copy pending — a dead Mac would take the ledger AND its backups. Mount the NAS and set HAKIM_NAS_REPO in com.hakim.backup.plist to activate the mirror.</div>`;
+  if((m.snapshots||[]).length){h+=`<div class="kd" style="font-size:10px;letter-spacing:1px;text-transform:uppercase;margin:6px 0 6px">Recent snapshots</div>`+
+    m.snapshots.slice(0,8).map(s=>`<div style="display:flex;justify-content:space-between;font-family:var(--mono);font-size:11.5px;padding:3px 0;color:var(--muted)"><span>${s.time}</span><span>${s.id} · ${(s.tags||[]).join(',')}</span></div>`).join('');}
+  h+=`<div class="kd" style="font-size:11px;color:var(--muted);margin-top:10px">Restore is deliberately not one-click — it's an assisted operation (accidental restores are more dangerous than none). Ask Finance/Claude to restore from a snapshot ID.</div>`;
+  document.getElementById('backups').innerHTML=h;
+}
+let bpoll=null;
+async function backupNow(){const b=document.getElementById('bnow');b.textContent='backing up…';b.disabled=true;
+  const before=(await(await fetch('/api/backup/status')).json()).status?.ts;
+  const r=await(await fetch('/api/backup/run',{method:'POST',headers:{'Content-Type':'application/json'},body:'{}'})).json();
+  if(!r.ok){b.textContent='↻ Back up now';b.disabled=false;alert(r.error||'failed to signal backup');return;}
+  let tries=0;clearInterval(bpoll);bpoll=setInterval(async()=>{tries++;
+    const s=(await(await fetch('/api/backup/status')).json()).status||{};
+    if(s.ts&&s.ts!==before){clearInterval(bpoll);b.textContent='✓ done';await loadBackups();setTimeout(()=>{b.textContent='↻ Back up now';b.disabled=false;},1500);}
+    else if(tries>20){clearInterval(bpoll);b.textContent='↻ Back up now';b.disabled=false;alert('Backup did not confirm in time — check that com.hakim.backup-trigger is loaded.');}
+  },1500);}
+loadBackups();
+
+/* ---- Agents panel (dead-man's switch) ---- */
+function agAgo(ts){if(!ts)return 'never';const s=(Date.now()-new Date(ts))/1000;if(s<3600)return Math.round(s/60)+'m ago';if(s<86400)return Math.round(s/3600)+'h ago';return Math.round(s/86400)+'d ago';}
+async function loadAgents(){
+  let d;try{d=await(await fetch('/api/agents')).json();}catch(e){document.getElementById('agents').innerHTML='<div class="kd">Agent status unavailable.</div>';return;}
+  const dot=g=>`<span style="display:inline-block;width:9px;height:9px;border-radius:50%;background:${g?'var(--mint)':(g===null?'var(--muted)':'var(--red)')};box-shadow:0 0 6px ${g?'var(--mint)':'transparent'};margin-right:9px;flex-shrink:0"></span>`;
+  let h=`<div class="srow" style="padding:6px 0 12px"><div><div class="k">${dot(d.all_ok)}Background agents${d.all_ok?' — all ran':' — '+d.down.join(', ')+' need attention'}</div>
+    <div class="kd">the 7 launchd jobs · live status</div></div></div>`;
+  h+=d.agents.map(a=>`<div style="display:flex;align-items:center;gap:4px;padding:8px 0;border-top:1px solid var(--line)">
+    ${dot(a.ok)}<div style="flex:1"><div style="font-size:13px;font-weight:600">${a.name}</div><div class="kd" style="font-size:11px">${a.note} · last ${agAgo(a.last)}${a.interval_h?' · expects ≤'+(a.interval_h>=24?Math.round(a.interval_h/24)+'d':a.interval_h+'h'):' · on-demand'}</div></div>
+    ${a.runnable?`<button class="seg" style="background:var(--panel2);border:1px solid var(--line);color:var(--lbl);padding:6px 12px;border-radius:8px;cursor:pointer;font-size:11px" onclick="backupNow()">↻ run</button>`:''}</div>`).join('');
+  h+=`<div class="kd" style="font-size:11px;color:var(--muted);margin-top:12px;line-height:1.6;border-top:1px solid var(--line);padding-top:12px"><svg class="ic" viewBox="0 0 24 24"><path d="M12 3l8 3v6c0 5-3.5 8-8 9-4.5-1-8-4-8-9V6z"/></svg> <b>Dead-man's switch:</b> the weekly health line arrives every Sunday — <b>its absence is the alarm</b>. If you stop getting it, the health agent itself is down; check this panel. Silent death is the only real failure mode of a system like this.</div>`;
+  document.getElementById('agents').innerHTML=h;
+}
+loadAgents();
+
+/* ---- Hawl groundwork (one line — data-only, no zakat calculation) ---- */
+const m0=n=>Number(n||0).toLocaleString('en-US',{maximumFractionDigits:0});
+async function loadHawl(){
+  let d;try{d=await(await fetch('/api/hawl')).json();}catch(e){document.getElementById('hawl').innerHTML='<div class="kd">Hawl status unavailable.</div>';return;}
+  const cfg=d.nisab_config||{};
+  const running=!!d.hawl_start;
+  const good=d.tracking;
+  const dot=`<span style="display:inline-block;width:9px;height:9px;border-radius:50%;background:${good?'var(--mint)':'var(--muted)'};box-shadow:0 0 6px ${good?'var(--mint)':'transparent'};margin-right:9px"></span>`;
+  let status;
+  if(!good) status='recording starts tonight — nothing to calculate yet';
+  else if(running) status=`above nisab · hawl clock running since <b>${d.hawl_start}</b> → earliest zakat due <b>~${d.projected_due||'—'}</b>`;
+  else status='below nisab — clock not running (resets on each dip below the threshold)';
+  const nis=cfg.set?`SAR ${m0(cfg.nisab)}`:`SAR ${m0(cfg.nisab)} <span style="color:var(--amber)">(estimate — set yours)</span>`;
+  let h=`<div class="srow" style="padding:6px 0 12px;align-items:flex-start"><div style="flex:1">
+      <div class="k">${dot}Zakat · Hawl tracking</div>
+      <div class="kd" style="line-height:1.6">${status}<br>
+      <span style="font-family:var(--mono);font-size:11px">${d.records||0} day${d.records===1?'':'s'} recorded${d.zakatable!=null?` · zakatable today SAR ${m0(d.zakatable)}`:''} · nisab ${nis}</span></div></div></div>`;
+  h+=`<div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;border-top:1px solid var(--line);padding-top:12px">
+      <span class="kd" style="font-size:12px">Your verified nisab (SAR):</span>
+      <input id="nisabin" type="number" placeholder="${m0(cfg.estimate||cfg.nisab)}" value="${cfg.set?cfg.nisab:''}" style="width:130px;background:var(--panel2);border:1px solid var(--line);color:var(--txt);border-radius:8px;padding:8px 10px;font-family:var(--mono);font-size:13px">
+      <button class="seg" style="background:var(--mint);color:#0D0F16;font-weight:800;border:none;padding:8px 14px;border-radius:8px;cursor:pointer" onclick="saveNisab()">Save</button></div>`;
+  h+=`<div class="kd" style="font-size:11px;color:var(--muted);margin-top:12px;line-height:1.6;border-top:1px solid var(--line);padding-top:12px"><svg class="ic" viewBox="0 0 24 24"><path d="M20 14a8 8 0 1 1-9-11 6.5 6.5 0 0 0 9 11z"/></svg> <b>Why this exists now:</b> the hawl is one lunar year of continuously holding wealth at/above nisab — and whether the streak held can only be known from a daily record. It can't be backfilled. HAKIM records nightly and <b>calculates nothing</b> (no zakat assessed, no fatwa implied). Set your own nisab (85g gold on the day you check); until then an unverified estimate is used and flagged.</div>`;
+  document.getElementById('hawl').innerHTML=h;
+}
+async function saveNisab(){
+  const v=document.getElementById('nisabin').value.trim();
+  await fetch('/api/zakat/settings',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({nisab_sar:v===''?null:v})});
+  await loadHawl();
+  const s=document.getElementById('saved');s.classList.add('show');setTimeout(()=>s.classList.remove('show'),1200);
+}
+loadHawl();
+/* ---- Z6: merchant-normalization map ---- */
+let MERCH=[];
+async function loadMerchants(){
+  const d=await(await fetch('/api/merchants')).json();MERCH=d.rules||[];
+  const rows=MERCH.map(r=>`<div style="display:flex;align-items:center;gap:8px;padding:6px 0;border-top:1px solid var(--line);font-size:12px">
+    <div style="flex:1;min-width:0"><b style="white-space:nowrap;overflow:hidden;text-overflow:ellipsis;display:block">${em(r.merchant)}</b>
+      <span style="font-family:var(--mono);color:var(--muted);font-size:10px">⟵ ${em(r.pattern)}${r.category?' → '+em(r.category):''}</span></div>
+    <span onclick="editMerchant(${r.i})" style="cursor:pointer;color:var(--muted)" title="edit">✎</span>
+    <span onclick="delMerchant(${r.i})" style="cursor:pointer;color:var(--muted)" title="delete">✕</span></div>`).join('');
+  document.getElementById('merchants').innerHTML=`
+    <div style="font-weight:700;margin-bottom:4px">Merchant map <span style="color:var(--muted);font-weight:400;font-size:12px">· ${MERCH.length} rules</span></div>
+    <div class="kd" style="color:var(--muted);font-size:11px;font-family:var(--mono);margin-bottom:10px">How raw statement lines become clean names + categories on import. Fix a mislabel here (e.g. the “Aser STC” kind) and every future match follows.</div>
+    <div style="display:flex;gap:6px;margin-bottom:8px"><input id="mq" placeholder="filter…" oninput="loadMerchants()" style="flex:1;background:var(--panel2);border:1px solid var(--line);color:var(--txt);border-radius:8px;padding:7px 10px;font-size:12px;font-family:var(--mono)"><button class="seg" onclick="editMerchant(null)">+ add rule</button></div>
+    <div style="max-height:320px;overflow:auto">${filterMerch(rows)}</div>`;
+}
+function em(s){return (s||'').replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));}
+function filterMerch(rows){const q=(document.getElementById('mq')&&document.getElementById('mq').value||'').toLowerCase();
+  if(!q)return rows;return MERCH.filter(r=>(r.merchant+' '+r.pattern+' '+r.category).toLowerCase().includes(q))
+    .map(r=>`<div style="display:flex;align-items:center;gap:8px;padding:6px 0;border-top:1px solid var(--line);font-size:12px"><div style="flex:1;min-width:0"><b>${em(r.merchant)}</b> <span style="font-family:var(--mono);color:var(--muted);font-size:10px">⟵ ${em(r.pattern)}${r.category?' → '+em(r.category):''}</span></div><span onclick="editMerchant(${r.i})" style="cursor:pointer;color:var(--muted)">✎</span><span onclick="delMerchant(${r.i})" style="cursor:pointer;color:var(--muted)">✕</span></div>`).join('');
+}
+async function editMerchant(i){const r=(i==null)?{}:MERCH.find(x=>x.i===i)||{};
+  const pattern=prompt('Match pattern (regex, matched against the raw line):',r.pattern||'');if(pattern===null)return;
+  const merchant=prompt('Clean merchant name:',r.merchant||'');if(merchant===null||!merchant.trim())return;
+  const category=prompt('Category (optional):',r.category||'');if(category===null)return;
+  await fetch('/api/merchant/save',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({i:(i==null?null:i),pattern,merchant,category})});
+  loadMerchants();
+}
+async function delMerchant(i){if(!confirm('Delete this merchant rule? (Past transactions are untouched; only future imports change.)'))return;
+  await fetch('/api/merchant/delete',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({i})});loadMerchants();
+}
+loadMerchants();
+</script>
+<script src="/rail.js"></script>
+</body>
+</html>

@@ -1,0 +1,387 @@
+<!doctype html>
+<html lang="en" dir="ltr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>HAKIM · Calendar</title>
+<script src="/face.js"></script>
+<link rel="stylesheet" href="/face.css">
+<style>
+:root{
+ --bg:#0D0F16;--panel:#1B1F2C;--panel2:#232837;--line:#262B3A;--railbg:#0A0C12;
+ --gold:#e8b95a;--gold2:#72D5C8;--teal:#72D5C8;--mint:#72D5C8;--mint2:#60B3A8;--red:#E05252;--amber:#b6bccb;
+ --inc:#72D5C8;--exp:#D98A93;--trf:#9BA3C9;--alert:#E05252;
+ --txt:#FFFFFF;--lbl:#8A90A6;--muted:#5A6072;
+ --mono:'JetBrains Mono',ui-monospace,'SF Mono',Menlo,monospace;--sans:-apple-system,system-ui,"SF Pro Display","Segoe UI",Roboto,sans-serif;
+ --sp:24px;--rad:14px;}
+*{box-sizing:border-box}
+html,body{margin:0;min-height:100%;background:var(--bg);color:var(--txt);font-family:var(--sans);font-size:15px}
+a{color:inherit;text-decoration:none}
+/* left nav (shared shell) */
+.rail{position:fixed;left:0;top:0;bottom:0;width:222px;z-index:40;background:var(--railbg);border-right:1px solid var(--line);display:flex;flex-direction:column;padding:18px 12px 12px;overflow-y:auto}
+.rail::-webkit-scrollbar{width:0}
+.brand{padding:2px 8px 16px}.brand .wm{font-family:var(--mono);font-size:15px;letter-spacing:2px;font-weight:800;color:var(--txt)}
+.brand .wm .sp{color:var(--gold)}
+.brand .sub{display:block;font-family:var(--mono);font-size:9px;letter-spacing:3px;color:var(--muted);margin-top:3px}
+.nav{display:flex;align-items:center;gap:11px;padding:10px 12px;border-radius:9px;color:var(--lbl);font-weight:600;font-size:14.5px;cursor:pointer}
+.nav i{font-style:normal;width:18px;text-align:center;opacity:.85}.nav:hover{background:#1a1d23;color:var(--txt)}
+.nav.active{background:rgba(114,213,200,.12);color:var(--gold2)}.nav.dis{color:#4b5260;cursor:default}
+.nav .qbadge{margin-left:auto;background:var(--mint);color:#0D0F16;border-radius:9px;padding:1px 7px;font-size:11px;font-weight:800;font-family:var(--mono)}
+.rsec{font-family:var(--mono);font-size:9px;letter-spacing:2px;text-transform:uppercase;color:#4b5260;margin:18px 10px 8px;display:flex}
+.rsec .rt{margin-left:auto;color:var(--amber)}
+.acc{display:flex;align-items:center;padding:7px 12px;border-radius:8px;cursor:pointer;font-size:13px}
+.acc:hover{background:#1a1d23}.acc .an{flex:1;color:var(--lbl);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;padding-right:8px}
+.acc .av{font-family:var(--mono);font-weight:600;color:var(--txt)}.acc.crd .av{color:var(--amber)}
+.soon{display:flex;align-items:center;gap:11px;padding:8px 12px;color:#4b5260;font-size:13.5px}.soon i{font-style:normal;width:18px;text-align:center}
+.soon small{margin-left:auto;font-size:9px;letter-spacing:1px;text-transform:uppercase;color:#4b5260;font-family:var(--mono)}
+.spacer{flex:1;min-height:12px}
+.railstat{font-family:var(--mono);font-size:11px;color:var(--muted);border-top:1px solid var(--line);padding-top:12px;margin-top:8px;display:flex;flex-direction:column;gap:8px}
+.railstat .live{display:inline-flex;align-items:center;gap:7px;color:var(--teal)}
+.railstat .live .d{width:7px;height:7px;border-radius:50%;background:var(--teal);box-shadow:0 0 7px var(--teal);animation:pul 2s infinite}
+.railstat .live.off{color:var(--muted)}.railstat .live.off .d{background:var(--muted);box-shadow:none;animation:none}
+.railstat .live.amber{color:var(--amber)}.railstat .live.amber .d{background:var(--amber);box-shadow:0 0 7px var(--amber)}
+.railstat .bad{color:var(--red)}
+@keyframes pul{0%,100%{opacity:1}50%{opacity:.3}}
+/* content */
+.app{max-width:1760px;padding:22px 28px 64px;margin-left:max(222px,calc((100% - 1760px)/2));margin-right:auto}
+@media(max-width:480px){.app{padding:14px 10px 48px}.topbar{flex-wrap:wrap;gap:8px}.mnav{flex-wrap:wrap;gap:6px}.mnav .mlabel{min-width:0;font-size:11px;padding:0 2px;white-space:normal;flex:1 1 100%;text-align:left}.mnav input[type=month]{display:none}.seasonlegend{font-size:9px;gap:9px}.cal{gap:4px}.dowh{gap:4px}.cell{min-height:58px;padding:5px 4px}.cell .dn{font-size:12px}.cell .hj{font-size:8px;top:5px;right:5px}.cell .net{font-size:10px}.cell .bdue{display:none}.mfoot{gap:14px}}
+@media(max-width:900px){.rail{width:56px;padding:14px 6px}.brand .wm{font-size:0}.brand .wm::before{content:"✦";font-size:18px;color:var(--gold)}.brand .sub,.nav span:not(.qbadge),.soon span,.rsec,.acc,.railstat{display:none}.nav,.soon{justify-content:center}.app{margin-left:56px}}
+.cur{font-size:.6em;color:var(--muted);margin-right:3px;font-weight:600}.dec{font-size:.6em;color:var(--muted)}
+/* top bar */
+.topbar{display:flex;align-items:center;gap:14px;margin-bottom:var(--sp)}
+.topbar h1{font-size:22px;font-weight:700;margin:0;letter-spacing:-.3px}
+.topbar .subtitle{font-size:12px;color:var(--muted);margin-top:3px;font-family:var(--mono)}
+.topbar .grow{flex:1}
+.mnav{display:flex;align-items:center;gap:8px}
+.mnav .arw{background:var(--panel);border:1px solid var(--line);border-radius:10px;color:var(--txt);width:36px;height:36px;font-size:16px;cursor:pointer;display:grid;place-items:center}
+.mnav .arw:hover{border-color:var(--mint)}
+.mnav .mlabel{font-family:var(--mono);font-size:14px;font-weight:700;padding:0 6px;min-width:190px;text-align:center}
+.mnav .mlabel .hij{color:var(--gold2);font-weight:600}
+.mnav .today{background:rgba(114,213,200,.14);color:var(--mint);border:1px solid transparent;border-radius:10px;padding:8px 14px;font-family:var(--mono);font-size:12px;font-weight:700;cursor:pointer}
+.mnav input[type=month]{background:var(--panel);color:var(--txt);border:1px solid var(--line);border-radius:10px;padding:7px 10px;font-family:var(--mono);font-size:12px;color-scheme:dark}
+/* two-zone */
+.calwrap{display:grid;grid-template-columns:8.4fr 3.6fr;gap:var(--sp);align-items:start}
+.calwrap>*{min-width:0}
+#daypanel{position:sticky;top:22px}
+@media(max-width:1200px){.calwrap{grid-template-columns:1fr}#daypanel{position:static}}
+.card{background:linear-gradient(180deg,#1B1F2C,#151823);border:1px solid var(--line);border-radius:var(--rad);padding:18px 20px}
+/* month grid */
+.dowh{display:grid;grid-template-columns:repeat(7,1fr);gap:9px;margin-bottom:9px}
+.dowh div{font-family:var(--mono);font-size:10px;letter-spacing:1px;text-transform:uppercase;color:var(--lbl);text-align:center;padding:2px 0}
+.dowh div.we{color:var(--muted)}
+.cal{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:9px}
+.cell{position:relative;min-height:118px;border:1px solid var(--line);border-radius:11px;background:#151823;padding:10px 11px;cursor:pointer;transition:.12s;display:flex;flex-direction:column;overflow:hidden}
+.cell:hover{border-color:#39415a;background:#171b26}
+/* season shading (meteorological) + Umm-al-Qura markers */
+.cell.s-winter{background:#131a24}.cell.s-spring{background:#131f1a}.cell.s-summer{background:#211a10}.cell.s-autumn{background:#1f1712}
+.cell.we{box-shadow:inset 3px 0 0 rgba(155,163,201,.16)}
+.cell .dn .isl{font-size:11px;margin-left:5px;opacity:.85}
+.seasonlegend{display:flex;flex-wrap:wrap;align-items:center;gap:14px;margin-bottom:12px;font-family:var(--mono);font-size:10px;color:var(--muted)}
+.seasonlegend .sl{display:inline-flex;align-items:center;gap:6px}
+.seasonlegend .sw{width:12px;height:12px;border-radius:3px;border:1px solid var(--line)}
+.seasonlegend .sw.s-winter{background:#131a24}.seasonlegend .sw.s-spring{background:#131f1a}.seasonlegend .sw.s-summer{background:#211a10}.seasonlegend .sw.s-autumn{background:#1f1712}
+/* spending-heat overlay (rebuilt heatmap — lives here now, its best home) */
+.cell .heat{position:absolute;inset:0;border-radius:11px;pointer-events:none;opacity:0;transition:opacity .18s;background:radial-gradient(120% 120% at 50% 120%,rgba(230,90,90,.85),rgba(230,90,90,.28) 60%,transparent);mix-blend-mode:screen}
+.cal.heaton .cell .heat{opacity:var(--h,0)}
+.cal.heaton .cell{border-color:#2a2230}
+.heattog{cursor:pointer;user-select:none;border:1px solid var(--line);border-radius:20px;padding:3px 11px;transition:.12s;color:var(--muted)}
+.heattog:hover{border-color:#39415a;color:var(--txt)}
+.heattog.on{border-color:rgba(230,90,90,.6);color:#e88;background:rgba(230,90,90,.1)}
+.heatscale{display:none;align-items:center;gap:6px}
+.heatscale.on{display:inline-flex}
+.heatscale .grad{width:60px;height:8px;border-radius:4px;background:linear-gradient(90deg,#151823,rgba(230,90,90,.85))}
+.cell.blank{background:transparent;border:none;cursor:default}
+.cell.today{border-color:var(--mint);box-shadow:inset 0 0 0 1px var(--mint)}
+.cell.sel{border-color:var(--mint);background:#182028}
+.cell .dn{font-family:var(--mono);font-weight:700;font-size:16px}
+.cell.today .dn{color:var(--mint)}
+.cell .hj{position:absolute;top:10px;right:11px;font-family:var(--mono);font-size:10px;color:var(--muted)}
+.cell .rev{position:absolute;top:11px;right:38px;width:6px;height:6px;border-radius:50%;background:var(--amber)}
+.cell .bdue{position:absolute;left:11px;bottom:38px;font-size:11px;opacity:.75}
+.cell .net{margin-top:auto;font-family:var(--mono);font-size:13.5px;font-weight:700;letter-spacing:-.3px}
+.cell .dots{display:flex;gap:4px;margin-top:6px}
+.cell .dots i{width:6px;height:6px;border-radius:50%}
+/* month summary footer */
+.mfoot{display:flex;gap:34px;flex-wrap:wrap;align-items:baseline;margin-top:16px;padding-top:16px;border-top:1px solid var(--line)}
+.mfoot .n{font-family:var(--mono);font-size:20px;font-weight:800;letter-spacing:-.5px}
+.mfoot .s{font-size:10px;color:var(--muted);font-family:var(--mono);margin-top:4px;text-transform:uppercase;letter-spacing:1px}
+.mfoot .chip{margin-left:auto;background:var(--panel2);border-radius:20px;padding:6px 14px;font-family:var(--mono);font-size:12px}
+.mfoot .chip b{color:var(--mint)}
+/* state-aware empty panel */
+.emptyday{text-align:center;padding:10px 6px 4px}
+.emptyday .eh{font-size:34px;opacity:.4}
+.emptyday .em{color:var(--muted);font-size:13px;margin:8px 0 2px}
+.billsdue{margin-top:16px;text-align:left}
+.billsdue .bt{font-size:11px;letter-spacing:1px;text-transform:uppercase;color:var(--lbl);font-weight:600;margin-bottom:8px}
+.bdrow{display:flex;align-items:center;gap:10px;padding:7px 0;font-size:13px}.bdrow+.bdrow{border-top:1px solid var(--line)}
+.bdrow .bi{width:26px;height:26px;border-radius:8px;display:grid;place-items:center;font-size:13px;flex-shrink:0}
+.bdrow .bn{flex:1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.bdrow .ba{font-family:var(--mono);font-size:12px;color:var(--muted)}
+.nearest{margin-top:16px;font-family:var(--mono);font-size:11px;color:var(--muted);border-top:1px solid var(--line);padding-top:12px}
+.inc{color:var(--inc)}.exp{color:var(--exp)}.trf{color:var(--trf)}
+.bg-inc{background:var(--inc)}.bg-exp{background:var(--exp)}.bg-trf{background:var(--trf)}
+.netzero{color:var(--muted)}
+/* day panel */
+.dp .dph{display:flex;align-items:baseline;justify-content:space-between;flex-wrap:wrap;gap:8px}
+.dp .dpg{font-size:18px;font-weight:700}
+.dp .dphj{font-family:var(--mono);font-size:12px;color:var(--gold2)}
+.dp .dpw{font-family:var(--mono);font-size:11px;color:var(--muted);margin-top:2px}
+.dp .tot{display:flex;gap:22px;margin:14px 0 6px}
+.dp .tot .n{font-family:var(--mono);font-size:17px;font-weight:800;letter-spacing:-.5px}
+.dp .tot .s{font-size:10px;color:var(--muted);font-family:var(--mono);margin-top:3px;text-transform:uppercase;letter-spacing:1px}
+.addbtn{width:100%;margin:8px 0 12px;background:rgba(114,213,200,.12);border:1px dashed rgba(114,213,200,.5);color:var(--mint);border-radius:10px;padding:10px;font-weight:700;font-size:13px;cursor:pointer;font-family:var(--sans)}
+.addbtn:hover{background:rgba(114,213,200,.2)}
+.trow{display:flex;align-items:center;gap:11px;padding:9px 6px;border-radius:9px;cursor:pointer;border-left:3px solid transparent}
+.trow:hover{background:var(--panel2)}
+.trow .disc{width:32px;height:32px;border-radius:9px;display:grid;place-items:center;font-size:15px;flex-shrink:0;background:var(--panel2)}
+.trow .mid{flex:1;min-width:0}
+.trow .nm{font-size:13.5px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.trow .meta{font-family:var(--mono);font-size:10.5px;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;margin-top:2px}
+.trow .amt{font-family:var(--mono);font-weight:800;font-size:14px;white-space:nowrap;opacity:.86;transition:opacity .12s,filter .12s;filter:saturate(.85)}
+.trow:hover .amt{opacity:1;filter:saturate(1.15)}
+.revdot{display:inline-flex;align-items:center;gap:4px;color:var(--mint);font-family:var(--mono);font-size:10px}
+.revdot i{width:6px;height:6px;border-radius:50%;border:1px solid var(--mint)}
+.muted{color:var(--muted)}
+.dphint{color:var(--muted);text-align:center;padding:40px 10px;font-size:13px}
+.dphint .big{font-size:30px;display:block;margin-bottom:10px;opacity:.5}
+/* global ⌘K search palette */
+.pal{position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:100;display:none;align-items:flex-start;justify-content:center;padding-top:12vh}
+.pal.show{display:flex}
+.palbox{width:min(620px,92vw);background:#151823;border:1px solid var(--line);border-radius:14px;overflow:hidden;box-shadow:0 24px 60px rgba(0,0,0,.6)}
+.palbox input{width:100%;background:transparent;border:none;border-bottom:1px solid var(--line);color:var(--txt);font-size:16px;padding:16px 18px;outline:none;font-family:var(--sans)}
+.pallist{max-height:52vh;overflow-y:auto}
+.palrow{display:flex;align-items:center;gap:12px;padding:11px 18px;cursor:pointer}
+.palrow.on,.palrow:hover{background:var(--panel2)}
+.palrow .pi{width:26px;text-align:center;font-size:15px}
+.palrow .pl{flex:1;min-width:0}.palrow .pl .t{font-size:14px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.palrow .pl .s{font-family:var(--mono);font-size:11px;color:var(--muted)}
+.palrow .pt{font-family:var(--mono);font-size:9px;text-transform:uppercase;color:var(--muted);letter-spacing:1px}
+.palhint{padding:10px 18px;font-family:var(--mono);font-size:11px;color:var(--muted);border-top:1px solid var(--line)}
+</style>
+</head>
+<body>
+<aside class="rail" id="hakim-rail"></aside>
+<div class="app">
+  <div class="topbar">
+    <div><h1>Calendar</h1><div class="subtitle">reading your real days · writes happen on the Desk</div></div>
+    <div class="grow"></div>
+    <div class="mnav">
+      <button class="arw" onclick="stepMonth(-1)" title="Previous month">‹</button>
+      <div class="mlabel" id="mlabel">…</div>
+      <button class="arw" onclick="stepMonth(1)" title="Next month">›</button>
+      <button class="today" onclick="goToday()">Today</button>
+      <input type="month" id="mpick" onchange="loadMonth(this.value)">
+    </div>
+  </div>
+  <div class="calwrap">
+    <div class="card">
+      <div class="seasonlegend">
+        <span class="sl"><span class="sw s-winter"></span>Winter</span>
+        <span class="sl"><span class="sw s-spring"></span>Spring</span>
+        <span class="sl"><span class="sw s-summer"></span>Summer</span>
+        <span class="sl"><span class="sw s-autumn"></span>Autumn</span>
+        <span class="sl"><svg class="ic" viewBox="0 0 24 24"><path d="M20 14a8 8 0 1 1-9-11 6.5 6.5 0 0 0 9 11z"/></svg> Ramadan</span><span class="sl"><svg class="ic" viewBox="0 0 24 24"><path d="M4 20V11a8 8 0 0 1 16 0v9M4 20h16M9 20v-4a3 3 0 0 1 6 0v4M12 3v-1"/></svg> Hajj</span><span class="sl"><svg class="ic" viewBox="0 0 24 24"><path d="M12 4l2.4 5 5.6.6-4.2 3.8 1.2 5.6L12 16.9 7 19l1.2-5.6L4 9.6 9.6 9z"/></svg> Eid</span>
+        <span class="sl heattog" id="heattog" onclick="toggleHeat()" style="margin-left:auto" title="Shade each day by how much you spent"><svg class="ic" viewBox="0 0 24 24"><path d="M13 3L4 14h7l-1 7 9-11h-7z"/></svg> Spending heat</span>
+        <span class="sl heatscale" id="heatscale">less <span class="grad"></span> more</span>
+        <span class="sl">Fri–Sat weekend ▎</span>
+      </div>
+      <div class="dowh" id="dowh"></div>
+      <div class="cal" id="cal"><div class="muted">Loading…</div></div>
+    </div>
+    <div class="card dp" id="daypanel"></div>
+  </div>
+</div>
+<script>
+const esc=s=>(s||'').replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const money=n=>Number(n||0).toLocaleString('en-US',{minimumFractionDigits:2,maximumFractionDigits:2});
+const money0=n=>Number(n||0).toLocaleString('en-US',{maximumFractionDigits:0});
+const DOWN=['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
+let MONTH='', DATA=null, SELDAY='', HEAT=(new URLSearchParams(location.search).get('heat')==='1')||(localStorage.getItem('cal_heat')==='1');
+// money typography: SAR + decimals muted
+function m(n){n=Number(n||0);const neg=n<0;n=Math.abs(n);const i=Math.floor(n).toLocaleString('en-US');const d=(n-Math.floor(n)).toFixed(2).slice(1);return `<span class="cur">SAR</span>${neg?'−':''}${i}<span class="dec">${d}</span>`;}
+const kindGlyph={in:window.ic('coins'),out:window.ic('receipt'),xfer:window.ic('transfer')};
+function kindCls(k){return k==='in'?'inc':k==='out'?'exp':'trf';}
+
+function stepMonth(d){const [y,mo]=MONTH.split('-').map(Number);const dt=new Date(y,mo-1+d,1);loadMonth(dt.getFullYear()+'-'+String(dt.getMonth()+1).padStart(2,'0'));}
+function goToday(){const t=(DATA&&DATA.today)||new Date().toISOString().slice(0,10);loadMonth(t.slice(0,7),t);}
+
+async function loadMonth(mn,selectDay){
+  MONTH=mn;document.getElementById('mpick').value=mn;
+  const r=await fetch('/api/calendar?month='+mn);DATA=await r.json();
+  document.getElementById('mlabel').innerHTML=`${esc(DATA.greg_label)} <span class="hij">· ${esc(DATA.hijri_label)}</span>`;
+  renderGrid();
+  // auto-select: requested day, else today if in view, else first day with txns
+  let pick=selectDay;
+  if(!pick&&DATA.today&&DATA.today.slice(0,7)===mn)pick=DATA.today;
+  if(!pick){const withtx=Object.values(DATA.days).filter(d=>d.txns.length).sort((a,b)=>a.date.localeCompare(b.date));pick=withtx.length?withtx[0].date:null;}
+  if(pick)selDay(pick);else renderPanel(null);
+}
+function renderGrid(){
+  document.getElementById('dowh').innerHTML=DOWN.map((d,i)=>`<div class="${i===5||i===6?'we':''}">${d}</div>`).join('');
+  const [y,mo]=MONTH.split('-').map(Number);
+  const first=new Date(y,mo-1,1).getDay(); // 0=Sun
+  // spending-heat scale: brightest day this month = 1.0 (sqrt eases the long tail)
+  const maxOut=Math.max(1,...Object.values(DATA.days).map(d=>Number(d.out||0)));
+  let cells='';
+  for(let i=0;i<first;i++)cells+=`<div class="cell blank"></div>`;
+  for(let dnum=1;dnum<=DATA.days_in;dnum++){
+    const iso=`${y}-${String(mo).padStart(2,'0')}-${String(dnum).padStart(2,'0')}`;
+    const c=DATA.days[iso];const has=c.txns.length>0;
+    const out=Number(c.out||0);const hv=out>0?(0.14+0.86*Math.sqrt(out/maxOut)).toFixed(3):0;
+    const heat=out>0?`<div class="heat" style="--h:${hv}"></div>`:'';
+    const wd=new Date(y,mo-1,dnum).getDay();const we=(wd===5||wd===6);
+    const season=seasonOf(mo-1);
+    const isl=c.hijri.m===9?'<span class="isl" title="Ramadan"><svg class="ic" viewBox="0 0 24 24"><path d="M20 14a8 8 0 1 1-9-11 6.5 6.5 0 0 0 9 11z"/></svg></span>':(c.hijri.m===12&&c.hijri.d<=13?'<span class="isl" title="Hajj / Dhul-Hijjah"><svg class="ic" viewBox="0 0 24 24"><path d="M4 20V11a8 8 0 0 1 16 0v9M4 20h16M9 20v-4a3 3 0 0 1 6 0v4M12 3v-1"/></svg></span>':(c.hijri.m===10&&c.hijri.d<=3?'<span class="isl" title="Eid al-Fitr"><svg class="ic" viewBox="0 0 24 24"><path d="M12 4l2.4 5 5.6.6-4.2 3.8 1.2 5.6L12 16.9 7 19l1.2-5.6L4 9.6 9.6 9z"/></svg></span>':''));
+    const isToday=iso===DATA.today,isSel=iso===SELDAY;
+    const netCls=!has?'':(c.net>0?'inc':(c.net<0?'exp':'netzero'));
+    const netStr=has?`<div class="net ${netCls}">${c.net>0?'+':(c.net<0?'−':'')}${money0(Math.abs(c.net))}</div>`:'';
+    const dots=has?`<div class="dots">${c.types.slice(0,3).map(t=>`<i class="bg-${kindCls(t)}"></i>`).join('')}</div>`:'';
+    const rev=c.review?`<span class="rev" title="has items to review"></span>`:'';
+    const bdue=(c.bills&&c.bills.length)?`<div class="bdue" title="${c.bills.length} bill${c.bills.length===1?'':'s'} due">${window.ic('bell')}${c.bills.length>1?' '+c.bills.length:''}</div>`:''
+      +((c.payouts&&c.payouts.length)?`<div class="bdue" style="left:auto;right:11px" title="certificate payout">${window.ic('coins')}</div>`:'');
+    cells+=`<div class="cell s-${season}${we?' we':''}${isToday?' today':''}${isSel?' sel':''}" onclick="selDay('${iso}')">
+      ${heat}<div class="dn">${dnum}${isl}</div><div class="hj">${c.hijri.d}</div>${rev}${bdue}
+      ${netStr}${dots}</div>`;
+  }
+  const calEl=document.getElementById('cal');
+  calEl.innerHTML=cells;
+  calEl.classList.toggle('heaton',HEAT);
+  document.getElementById('heattog').classList.toggle('on',HEAT);
+  document.getElementById('heatscale').classList.toggle('on',HEAT);
+  renderFooter();
+}
+function toggleHeat(){
+  HEAT=!HEAT;localStorage.setItem('cal_heat',HEAT?'1':'0');
+  const calEl=document.getElementById('cal');
+  calEl.classList.toggle('heaton',HEAT);
+  document.getElementById('heattog').classList.toggle('on',HEAT);
+  document.getElementById('heatscale').classList.toggle('on',HEAT);
+}
+function renderFooter(){
+  let el=document.getElementById('mfoot');
+  if(!el){el=document.createElement('div');el.id='mfoot';el.className='mfoot';document.getElementById('cal').after(el);}
+  const days=Object.values(DATA.days);
+  const tin=days.reduce((a,d)=>a+d.in,0),tout=days.reduce((a,d)=>a+d.out,0),net=tin-tout;
+  const busy=days.filter(d=>d.txns.length).sort((a,b)=>b.txns.length-a.txns.length)[0];
+  const nt=days.reduce((a,d)=>a+d.txns.length,0);
+  // bills layer footer — for the live month, what's still due from today forward; else the
+  // whole month. Honest: separates known amounts from bills whose amount isn't set yet.
+  const today=DATA.today;const isCur=today&&today.slice(0,7)===MONTH;
+  const upcoming=days.filter(d=>d.bills&&d.bills.length&&(!isCur||d.date>=today));
+  const billCount=upcoming.reduce((a,d)=>a+d.bills.length,0);
+  const billSum=upcoming.reduce((a,d)=>a+d.bills.reduce((s,b)=>s+(b.amount||0),0),0);
+  const unpriced=upcoming.reduce((a,d)=>a+d.bills.filter(b=>b.amount==null).length,0);
+  let billChip='';
+  if(billCount){
+    const scope=isCur?'rest of month':'this month';
+    const money=billSum>0?`<b>SAR ${money0(billSum)}</b> due · ${scope}`:`<b>${billCount}</b> bill${billCount>1?'s':''} due · ${scope}`;
+    const note=unpriced?` <span style="color:var(--amber)">· ${unpriced} amount${unpriced>1?'s':''} not set</span>`:'';
+    billChip=`<div class="chip" title="Bills layer — activates fully once bill amounts are entered">${window.ic('bell')} ${money}${note}</div>`;
+  }
+  el.innerHTML=`<div><div class="n inc">+${money0(tin)}</div><div class="s">in</div></div>
+    <div><div class="n exp">−${money0(tout)}</div><div class="s">out</div></div>
+    <div><div class="n ${net>=0?'inc':'exp'}">${net>=0?'+':'−'}${money0(Math.abs(net))}</div><div class="s">net</div></div>
+    <div><div class="n">${nt}</div><div class="s">transactions</div></div>
+    ${billChip||(busy?`<div class="chip">busiest: <b>${fmtShort(busy.date)}</b> · ${busy.txns.length} txns</div>`:'')}`;
+}
+function fmtShort(iso){return new Date(iso+'T00:00:00').toLocaleDateString('en-GB',{day:'numeric',month:'short'});}
+function seasonOf(mi){return (mi<=1||mi===11)?'winter':(mi<=4)?'spring':(mi<=7)?'summer':'autumn';} // mi:0=Jan
+function selDay(iso){SELDAY=iso;renderGrid();renderPanel(DATA.days[iso]);}
+function renderPanel(c){
+  const el=document.getElementById('daypanel');
+  if(!c){el.innerHTML=`<div class="dphint"><span class="big">${window.ic('calendar')}</span>Pick a day to see its transactions.</div>`;return;}
+  const dt=new Date(c.date+'T00:00:00');
+  const greg=dt.toLocaleDateString('en-GB',{weekday:'long',day:'numeric',month:'long',year:'numeric'});
+  const h=c.hijri;
+  let out=`<div class="dph"><div><div class="dpg">${dt.toLocaleDateString('en-GB',{day:'numeric',month:'long'})}</div>
+      <div class="dpw">${dt.toLocaleDateString('en-GB',{weekday:'long'})} · ${dt.getFullYear()}</div></div>
+      <div class="dphj" dir="rtl">${h.d} ${esc(h.mname)} ${h.y}</div></div>`;
+  const addbtn=`<button class="addbtn" onclick="location.href='/?add=${c.date}'">＋ Add on this date</button>`;
+  if(c.txns.length){
+    out+=`<div class="tot"><div><div class="n inc">+${money0(c.in)}</div><div class="s">in</div></div>
+      <div><div class="n exp">−${money0(c.out)}</div><div class="s">out</div></div>
+      <div><div class="n ${c.net>=0?'inc':'exp'}">${c.net>=0?'+':'−'}${money0(Math.abs(c.net))}</div><div class="s">net</div></div></div>`;
+    out+=addbtn;
+    out+=c.txns.map(t=>{
+      const cl=kindCls(t.kind);
+      const meta=`${esc(t.account||'')}${t.category&&t.category!=='To review'?' · '+esc(t.category):''}`;
+      const rev=t.review?` <span class="revdot"><i></i>review</span>`:'';
+      return `<div class="trow" style="border-left-color:var(--${cl==='inc'?'inc':cl==='exp'?'exp':'trf'})" onclick="location.href='/?txn=${t.id}'">
+        <div class="disc">${kindGlyph[t.kind]||window.ic('card')}</div>
+        <div class="mid"><div class="nm" dir="auto">${esc(t.name)}</div><div class="meta">${meta}${rev}</div></div>
+        <div class="amt ${cl}">${t.signed>=0?'+':'−'}${m(Math.abs(t.signed))}</div></div>`;
+    }).join('');
+  } else {
+    // state-aware empty day: context instead of a void
+    out+=`<div class="emptyday"><div class="eh">${window.ic('calendar')}</div><div class="em">No transactions on this day.</div></div>`+addbtn;
+  }
+  // bills layer — always shown when the day has bills due (not only on empty days).
+  // Paid-status matched against the day's own withdrawals until Firefly bill↔journal
+  // links are wired (staged §G) — honest: "amount not set" while amounts are blank.
+  if(c.bills&&c.bills.length){
+    out+=`<div class="billsdue"><div class="bt">${window.ic('bell')} Bill${c.bills.length>1?'s':''} due this day</div>`+c.bills.map(b=>{
+      const [ic,co]=billLook(b.name);
+      const paid=(c.txns||[]).some(t=>t.kind==='out'&&(b.amount==null||Math.abs(Math.abs(t.signed)-b.amount)<0.5));
+      const amt=b.amount!=null?'SAR '+money0(b.amount):`<span style="color:var(--amber)">amount not set</span>`;
+      const tag=paid?`<span style="color:var(--inc);font-family:var(--mono);font-size:10px;margin-left:8px">paid ✓</span>`:`<span style="color:var(--muted);font-family:var(--mono);font-size:10px;margin-left:8px">${esc(FREQ[b.freq]||b.freq)}</span>`;
+      return `<div class="bdrow"><div class="bi" style="background:${co}22;color:${co}">${ic}</div><div class="bn">${esc(b.name)}${tag}</div><div class="ba">${amt}</div></div>`;
+    }).join('')+`</div>`;
+  }
+  if(c.payouts&&c.payouts.length){
+    out+=`<div class="billsdue"><div class="bt">${window.ic('coins')} Certificate payout${c.payouts.length>1?'s':''} (expected)</div>`+c.payouts.map(pp=>{
+      const matched=(c.txns||[]).some(t=>t.kind==='in'&&Math.abs(Math.abs(t.signed)-pp.amount)<Math.max(1,pp.amount*0.05));
+      const tag=matched?`<span style="color:var(--inc);font-family:var(--mono);font-size:10px;margin-left:8px">received ✓</span>`:`<span style="color:var(--muted);font-family:var(--mono);font-size:10px;margin-left:8px">as contracted</span>`;
+      return `<div class="bdrow"><div class="bi" style="background:rgba(114,213,200,.15);color:var(--inc)">${window.ic('certificate')}</div><div class="bn">${esc(pp.name)}${tag}</div><div class="ba inc">+SAR ${money0(pp.amount)}</div></div>`;
+    }).join('')+`</div>`;
+  }
+  if(!c.txns.length){
+    const near=nearestActivity(c.date);
+    out+=`<div class="nearest">last activity: ${near.prev?fmtShort(near.prev):'—'} · next: ${near.next?fmtShort(near.next):'—'}</div>`;
+  }
+  el.innerHTML=out;
+}
+const FREQ={weekly:'weekly',monthly:'monthly',quarterly:'quarterly','half-year':'half-yearly',yearly:'yearly'};
+function billLook(name){const n=(name||'').toLowerCase();
+  const K=[[['netflix','shahid','osn','prime','starz','apple tv','disney','tv+'],window.ic('device'),'#a78bfa'],
+    [['stc','mobily','zain','phone','sim'],window.ic('device'),'#5b8def'],[['school','education','tuition','installment'],window.ic('book'),'#e879a6'],
+    [['insurance','takaful'],window.ic('shield'),'#72D5C8'],[['iqama','visa','government','renewal','gov'],window.ic('doc'),'#9aa4bf'],
+    [['microsoft','vpn','software','icloud','office'],window.ic('device'),'#7dd3fc'],
+    [['electric','water','gas','utility','internet','maid','salary'],window.ic('bolt'),'#d0946b']];
+  for(const [keys,ic,co] of K)if(keys.some(k=>n.includes(k)))return [ic,co];return [window.ic('repeat'),'#9BA3C9'];}
+function nearestActivity(date){let prev=null,next=null;
+  Object.values(DATA.days).forEach(d=>{if(!d.txns.length)return;
+    if(d.date<date&&(!prev||d.date>prev))prev=d.date;
+    if(d.date>date&&(!next||d.date<next))next=d.date;});
+  return {prev,next};}
+// shared rail
+async function loadRail(){try{const r=await(await fetch('/api/rail')).json();
+  document.getElementById('railcash').innerHTML=r.cash.map(c=>`<div class="acc" onclick="location.href='/?account='+encodeURIComponent('${esc(c.name)}')"><span class="an">${esc(c.name)}</span><span class="av">${money0(c.bal)}</span></div>`).join('');
+  document.getElementById('railcards').innerHTML=r.cards.map(c=>`<div class="acc crd" onclick="location.href='/?account='+encodeURIComponent('${esc(c.name)}')"><span class="an">${esc(c.bank||'')} •${esc(c.last4||'')}</span><span class="av">${money0(Math.abs(c.bal))}</span></div>`).join('');
+  document.getElementById('cardtot').textContent='SAR '+money0(r.cards.reduce((a,c)=>a+Math.abs(c.bal),0));}catch(e){}}
+async function pollStatus(){try{const s=await(await fetch('/api/status')).json();
+  const l=document.getElementById('rlive');l.className='live '+(s.sms_state==='live'?'':(s.sms_state==='amber'?'amber':'off'));l.querySelector('.t').textContent=s.sms_label||'SMS ?';
+  const b=document.getElementById('rbackup');if(s.backup_ok){b.textContent='backup ✓';b.className='';}else{b.textContent='⚠ BACKUP FAILED';b.className='bad';}}catch(e){}setTimeout(pollStatus,60000);}
+async function qCount(){try{const q=await(await fetch('/api/queue')).json();const n=(q.merchants||[]).length+(q.onebyone||[]).length;
+  document.getElementById('rqueue').textContent='QUEUE '+String(n).padStart(2,'0');const rq=document.getElementById('railq');rq.textContent=n;rq.style.display=n?'inline-block':'none';}catch(e){}setTimeout(qCount,120000);}
+function clock(){const el=document.getElementById('rclock');if(el)el.textContent=new Date().toTimeString().slice(0,8);setTimeout(clock,1000);}
+
+const u=new URL(location);const qm=u.searchParams.get('month');
+loadMonth(qm||new Date().toISOString().slice(0,10).slice(0,7));
+loadRail();pollStatus();qCount();clock();
+
+/* ---- global ⌘K search palette ---- */
+let PAL={items:[],idx:0,t:null};
+function openPal(){const p=document.getElementById('pal');if(!p)return;p.classList.add('show');const i=document.getElementById('palq');i.value='';document.getElementById('pallist').innerHTML='';PAL={items:[],idx:0,t:null};setTimeout(()=>i.focus(),30);}
+function closePal(){const p=document.getElementById('pal');if(p)p.classList.remove('show');}
+function palSearch(){clearTimeout(PAL.t);const q=document.getElementById('palq').value;PAL.t=setTimeout(async()=>{if(!q.trim()){document.getElementById('pallist').innerHTML='';PAL.items=[];return;}try{const d=await(await fetch('/api/search?q='+encodeURIComponent(q))).json();PAL.items=d.results||[];PAL.idx=0;palRender();}catch(e){}},160);}
+function palRender(){document.getElementById('pallist').innerHTML=PAL.items.map((r,i)=>`<div class="palrow ${i===PAL.idx?'on':''}" onmouseenter="PAL.idx=${i}" onclick="palGo(${i})"><span class="pi">${r.icon||'•'}</span><span class="pl"><div class="t">${esc(r.label)}</div><div class="s">${esc(r.sub||'')}</div></span><span class="pt">${esc(r.type)}</span></div>`).join('')||'<div class="palhint">No matches.</div>';}
+function palGo(i){const r=PAL.items[i];if(r)location.href=r.target;}
+function palKey(e){if(e.key==='Escape')closePal();else if(e.key==='ArrowDown'){e.preventDefault();PAL.idx=Math.min(PAL.items.length-1,PAL.idx+1);palRender();}else if(e.key==='ArrowUp'){e.preventDefault();PAL.idx=Math.max(0,PAL.idx-1);palRender();}else if(e.key==='Enter'){e.preventDefault();palGo(PAL.idx);}}
+document.addEventListener('keydown',e=>{if((e.metaKey||e.ctrlKey)&&(e.key==='k'||e.key==='K')){e.preventDefault();openPal();}});
+</script>
+<div class="pal" id="pal" onclick="if(event.target.id==='pal')closePal()">
+  <div class="palbox"><input id="palq" placeholder="Search transactions, categories, accounts, pages…" oninput="palSearch()" onkeydown="palKey(event)">
+    <div class="pallist" id="pallist"></div>
+    <div class="palhint">↑↓ navigate · ↵ open · esc close · ⌘K anywhere</div></div></div>
+<script src="/rail.js"></script>
+</body>
+</html>

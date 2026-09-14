@@ -1,0 +1,143 @@
+<!doctype html>
+<html lang="en" dir="ltr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>HAKIM · Coming</title>
+<script src="/face.js"></script>
+<link rel="stylesheet" href="/face.css">
+<style>
+:root{
+ --bg:#0D0F16;--panel:#1B1F2C;--panel2:#232837;--line:#262B3A;--railbg:#0A0C12;
+ --gold:#e8b95a;--gold2:#72D5C8;--teal:#72D5C8;--mint:#72D5C8;--red:#E05252;--amber:#c9a15f;
+ --txt:#FFFFFF;--lbl:#8A90A6;--muted:#5A6072;
+ --mono:'JetBrains Mono',ui-monospace,'SF Mono',Menlo,monospace;--sans:-apple-system,system-ui,"SF Pro Display","Segoe UI",Roboto,sans-serif;
+ --sp:24px;--rad:14px;}
+*{box-sizing:border-box}
+html,body{margin:0;min-height:100%;background:var(--bg);color:var(--txt);font-family:var(--sans);font-size:15px}
+a{color:inherit;text-decoration:none}
+.rail{position:fixed;left:0;top:0;bottom:0;width:222px;z-index:40;background:var(--railbg);border-right:1px solid var(--line);display:flex;flex-direction:column;padding:18px 12px 12px;overflow-y:auto}
+.rail::-webkit-scrollbar{width:0}
+.brand{padding:2px 8px 16px;cursor:pointer}.brand .wm{font-family:var(--mono);font-size:15px;letter-spacing:2px;font-weight:800}
+.brand .wm .sp{color:var(--gold)}.brand .sub{display:block;font-family:var(--mono);font-size:9px;letter-spacing:3px;color:var(--muted);margin-top:3px}
+.nav{display:flex;align-items:center;gap:11px;padding:10px 12px;border-radius:9px;color:var(--lbl);font-weight:600;font-size:14.5px;cursor:pointer}
+.nav i{font-style:normal;width:18px;text-align:center;opacity:.85}.nav:hover{background:#1a1d23;color:var(--txt)}
+.nav.active{background:rgba(114,213,200,.12);color:var(--gold2)}
+.nav .qbadge{margin-left:auto;background:var(--mint);color:#0D0F16;border-radius:9px;padding:1px 7px;font-size:11px;font-weight:800;font-family:var(--mono)}
+.rsec{font-family:var(--mono);font-size:9px;letter-spacing:2px;text-transform:uppercase;color:#4b5260;margin:18px 10px 8px;display:flex;align-items:center}
+.acc{display:flex;align-items:center;padding:7px 12px;border-radius:8px;cursor:pointer;font-size:13px}
+.acc:hover{background:#1a1d23}.acc .an{flex:1;color:var(--lbl);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;padding-right:8px}
+.acc .av{font-family:var(--mono);font-weight:600}.acc.crd .av{color:var(--amber)}
+.spacer{flex:1;min-height:12px}
+.railstat{font-family:var(--mono);font-size:11px;color:var(--muted);border-top:1px solid var(--line);padding-top:12px;margin-top:8px;display:flex;flex-direction:column;gap:8px}
+.railstat .live{display:inline-flex;align-items:center;gap:7px;color:var(--teal)}
+.railstat .live .d{width:7px;height:7px;border-radius:50%;background:var(--teal);box-shadow:0 0 7px var(--teal);animation:pul 2s infinite}
+.railstat .live.off{color:var(--muted)}.railstat .live.off .d{background:var(--muted);box-shadow:none;animation:none}
+.railstat .live.amber{color:var(--amber)}.railstat .live.amber .d{background:var(--amber)}
+.railstat .bad{color:var(--red)}
+@keyframes pul{0%,100%{opacity:1}50%{opacity:.3}}
+.app{max-width:900px;padding:34px 28px 64px;margin-left:max(222px,calc((100% - 900px)/2));margin-right:auto}
+@media(max-width:900px){.rail{width:56px;padding:14px 6px}.brand .wm{font-size:0}.brand .wm::before{content:"✦";font-size:18px;color:var(--gold)}.brand .sub,.nav span:not(.qbadge),.rsec,.acc,.railstat,.hakim-soon span,.hakim-soon small{display:none}.nav{justify-content:center}.app{margin-left:56px}}
+.crumb{font-family:var(--mono);font-size:11px;color:var(--muted);margin-bottom:20px}.crumb a{color:var(--gold2)}
+.hero{display:flex;align-items:center;gap:18px;margin-bottom:8px}
+.hero .ic{width:60px;height:60px;border-radius:16px;background:var(--panel);border:1px solid var(--line);display:grid;place-items:center;font-size:30px;filter:grayscale(.15)}
+.hero h1{font-size:26px;margin:0;font-weight:800;letter-spacing:-.5px}
+.wavetag{display:inline-block;font-family:var(--mono);font-size:10px;letter-spacing:1px;text-transform:uppercase;color:var(--gold);border:1px solid rgba(232,185,90,.4);border-radius:20px;padding:3px 10px;margin-top:8px}
+.soonbig{font-family:var(--mono);font-size:10px;letter-spacing:2px;text-transform:uppercase;color:var(--muted);margin-left:8px}
+.card{background:linear-gradient(180deg,#1B1F2C,#151823);border:1px solid var(--line);border-radius:var(--rad);padding:22px 24px;margin-top:22px}
+.what{font-size:16px;line-height:1.65;color:#d7dae2}
+.gate{background:rgba(114,213,200,.06);border:1px solid rgba(114,213,200,.25);border-radius:12px;padding:16px 18px;margin-top:22px}
+.gate .gl{font-family:var(--mono);font-size:10px;letter-spacing:2px;text-transform:uppercase;color:var(--gold2);margin-bottom:8px}
+.gate .gt{font-size:14.5px;line-height:1.6;color:#cfd3db}
+.trace{font-family:var(--mono);font-size:11px;color:var(--muted);margin-top:16px}
+.honest{font-family:var(--mono);font-size:11.5px;color:var(--muted);margin-top:26px;border-top:1px solid var(--line);padding-top:16px;line-height:1.6}
+/* index grid */
+.ihead h1{font-size:24px;margin:0 0 4px;font-weight:800}
+.ihead .sub{font-family:var(--mono);font-size:12px;color:var(--muted);margin-bottom:24px}
+.igrid{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+@media(max-width:760px){.igrid{grid-template-columns:1fr}}
+.icard{background:#151823;border:1px solid var(--line);border-radius:13px;padding:16px 18px;cursor:pointer;transition:.12s}
+.icard:hover{border-color:#39415a;background:#171b26}
+.icard .ih{display:flex;align-items:center;gap:11px}
+.icard .ic{width:38px;height:38px;border-radius:11px;background:var(--panel2);display:grid;place-items:center;font-size:19px;filter:grayscale(.2)}
+.icard .in{font-size:15px;font-weight:700}.icard .iw{font-family:var(--mono);font-size:9.5px;color:var(--muted);margin-top:2px}
+.icard .iu{font-size:12.5px;color:var(--lbl);margin-top:11px;line-height:1.5}
+.icard .iu b{color:var(--gold2);font-weight:600}
+/* Face Finale — outline icons in the placeholder pages (one stroke weight, no grayscale) */
+.hero .ic{color:var(--gold2);filter:none;font-size:0}.hero .ic svg{width:32px;height:32px}
+.icard .ic{color:var(--lbl);filter:none;font-size:0}.icard .ic svg{width:20px;height:20px}
+.icard.near .ic{color:var(--gold2)}.icard.near{border-color:rgba(114,213,200,.28)}
+.gate .gl{display:inline-flex;align-items:center;gap:7px}.gate .gl svg{width:13px;height:13px}
+</style>
+</head>
+<body>
+<aside class="rail" id="hakim-rail"></aside>
+<div class="app" id="app"></div>
+<script>
+const esc=s=>(s||'').replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+// Every surface traces to BLOCKED.md (the register) + the blueprint. No mock data — the
+// promise and the gate only. Order = rough unlock order.
+const S={
+ today:{icon:'☀️',ic:'sun',name:'Today',wave:'Wave 2 · plan → approve → actual',
+   what:"HAKIM's crown jewel. Bills due and <b>predicted repeats</b> — “you usually buy groceries on Thursdays” — surface as one-tap entries, and approving one is the PAID moment. Planned items live on the calendar <b>without touching a single balance</b> until you confirm them; then they feed the forecast.",
+   unlock:"<b>Gate G0</b> — Sarah’s statements imported, the review queue at zero, cash &amp; safes counted, and 3–4 normal weeks lived — plus enough recurring history for the predictions to be real, not guesses.",
+   trace:"Blueprint §13 (Money Pro DNA) · register A6"},
+ budget:{icon:'🧮',ic:'budget',name:'Budget',wave:'Wave 2 · the intelligent engine',
+   what:"The engine on top of the manual targets you already set in Categories. <b>AI-proposed limits</b> learned from your real spending, <b>Safe-to-spend</b> (“today you can spend X without touching anything promised”), and <b>rollover / taper</b> — leftover carries forward, overspend tightens next period.",
+   unlock:"A few normal months of <b>budgets-in-use after Gate G0</b>. Proposals and rollover are meaningless until there’s lived surplus history to learn from — building them now would invent numbers.",
+   trace:"Blueprint §2/§3 · register A1, A2, A5, A9"},
+ forecast:{icon:'🔮',ic:'forecast',name:'Forecast',wave:'Wave 3 · projected balances',
+   what:"Where your accounts land next month given bills, income, and plans — and what-ifs: “what if I pay the card down faster?” The <b>Projected Balance</b> report type is held out of Reports on purpose until this exists.",
+   unlock:"The <b>plan→approve→actual system (Today)</b> live, plus recurring history — you can’t project a line from data that isn’t there yet.",
+   trace:"Blueprint §4 · register A4"},
+ subs:{icon:'🕵️',ic:'repeat',name:'Subscriptions',wave:'Wave 2 · the hunter',
+   what:"Automatically spots <b>recurring charges</b>, warns three days before renewals, and flags subscriptions you pay for but don’t use.",
+   unlock:"A few months of transaction history after Gate G0, so recurrence is detectable — <b>one charge isn’t a subscription</b>.",
+   trace:"Blueprint §6 (Rocket Money absorbed) · register A7"},
+ debt:{icon:'💳',ic:'card',name:'Debt coach',wave:'Wave 2–3',
+   what:"<b>Avalanche vs snowball</b> payoff plans across your cards, real payoff dates, and the true cost of carrying debt (including <b>Tawarruq</b> markup) — with a monthly amount to throw at it.",
+   unlock:"A real <b>surplus number</b> (post-G0) — the “extra to put on debt” figure only exists after a few lived months. Your card balances are already tracked.",
+   trace:"Blueprint §5 · register A3"},
+ zakat:{icon:'🌙',ic:'moon',name:'Zakat',wave:'Wave 3',
+   what:"Continuous <b>nisab tracking</b> across your zakatable wealth and a <b>one-tap zakat report</b> when due — amount, basis, and a full audit trail, linked to the Zakat &amp; charity category. Local, user-updated gold-price table; no external calls.",
+   unlock:"A complete asset picture (cash counted, gold/savings, asset accounts populated) and <b>a full Hijri year</b> of tracking — zakat is due on wealth held one lunar year, so the clock has to actually run.",
+   trace:"Blueprint §12 · register C13"},
+ wealth:{icon:'📈',ic:'gem',name:'Wealth',wave:'Wave 4 · furthest out',
+   what:"Whole-wealth net worth aggregated <b>at answer time</b> across every domain — personal, trading (HISSAR), the factory — plus a <b>SIMAH credit-report tracker</b> (obligations vs ledger, score trend).",
+   unlock:"The <b>Wealth / WAZIR agent era</b> (cross-domain aggregation) and periodic manual SIMAH imports. <svg class='ic' viewBox='0 0 24 24' style='width:13px;height:13px;color:#c9a15f;vertical-align:-2px'><path d='M12 4l9 16H3z'/><path d='M12 10v4M12 17h.01'/></svg> SIMAH integration also depends on an <b>access decision you haven’t made yet</b> — flagged, not assumed.",
+   trace:"Blueprint §9 · register C14"},
+ family:{icon:'👪',ic:'users',name:'Family',wave:'Wave 4',
+   what:"Per-person views (yours / mine / ours), Sarah’s household view per the family rules, and <b>HAKIM Wrapped</b> — a private end-of-year “year in money” story: biggest month, what the villa cost, per-person totals.",
+   unlock:"Sarah’s ledger imported, plus months of complete <b>person-tagged</b> data — a full year for Wrapped.",
+   trace:"Blueprint §11 (Monarch household, done privately) · register C15"},
+ insights:{icon:'🧠',ic:'bulb',name:'Insights',wave:'Wave 3–4 · behavioral',
+   what:"Behavioral patterns and <b>anomaly whispers</b> — double charges, “this bill is 40% above its norm”, odd-hour card use — and <b>Sankey</b> flow diagrams (income → categories → savings/debt).",
+   unlock:"Enough lived history to have <b>a norm</b> — an anomaly is only meaningful against a baseline, so this needs months of data.",
+   trace:"Blueprint §8 + §1 · register D16"}
+};
+const NEAR={subs:1,zakat:1,wealth:1};
+const ORDER=['today','budget','forecast','subs','debt','zakat','wealth','family','insights'];
+function oneLine(u){return u.replace(/<\/?b>/g,'').split(' — ')[0];}
+function render(){
+  const k=new URL(location).searchParams.get('s');
+  const app=document.getElementById('app');
+  if(k&&S[k]){const d=S[k];
+    app.innerHTML=`<div class="crumb"><a href="/soon">← Coming in waves</a> · this surface isn't built yet — here's the honest promise</div>
+      <div class="hero"><div class="ic">${window.ic?window.ic(d.ic):""}</div><div><h1>${esc(d.name)}<span class="soonbig">soon</span></h1><span class="wavetag">${esc(d.wave)}</span></div></div>
+      <div class="card"><div class="what">${d.what}</div>
+        <div class="gate"><div class="gl">${window.ic?window.ic("lock"):""} Unlocks when</div><div class="gt">${d.unlock}</div></div>
+        <div class="trace">traces to ${esc(d.trace)}</div></div>
+      <div class="honest">This is a real, planned surface — not a mock-up. HAKIM won't fake data or preview numbers it doesn't honestly have; when the gate above clears, this page becomes the real thing. Every promise here is written down in <b>BLOCKED.md</b>, the system's complete future register.</div>`;
+  } else {
+    app.innerHTML=`<div class="ihead"><h1>Coming in waves</h1><div class="sub">the system's honest future · every surface traces to BLOCKED.md · nothing invented</div></div>
+      <div class="igrid">${ORDER.map(key=>{const d=S[key];return `<div class="icard ${NEAR[key]?'near':''}" onclick="location.href='/soon?s=${key}'">
+        <div class="ih"><div class="ic">${window.ic?window.ic(d.ic):""}</div><div><div class="in">${esc(d.name)}</div><div class="iw">${esc(d.wave)}</div></div></div>
+        <div class="iu"><b>Unlocks:</b> ${oneLine(d.unlock)}</div></div>`;}).join('')}</div>
+      <div class="honest">These are the tab-worthy surfaces still ahead. Features that live inside existing pages (tell-Finance entry, receipt-item parsing, the whisper layer, cross-month split, the G+L entry types) and ecosystem work (Factory, MENTCO, Regulatory) are in BLOCKED.md but intentionally kept off the rail so the live tabs stay dominant.</div>`;
+  }
+}
+render();
+</script>
+<script src="/rail.js"></script>
+</body>
+</html>

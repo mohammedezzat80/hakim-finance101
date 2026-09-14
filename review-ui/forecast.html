@@ -1,0 +1,136 @@
+<!doctype html>
+<html lang="en" dir="ltr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>HAKIM · Forecast</title>
+<script src="/face.js"></script>
+<link rel="stylesheet" href="/face.css">
+<style>
+:root{
+ --bg:#0D0F16;--panel:#1B1F2C;--panel2:#232837;--line:#262B3A;--railbg:#0A0C12;
+ --gold:#e8b95a;--gold2:#72D5C8;--teal:#72D5C8;--mint:#72D5C8;--red:#E05252;--amber:#e8b95a;
+ --inc:#72D5C8;--exp:#D98A93;
+ --txt:#FFFFFF;--lbl:#8A90A6;--muted:#5A6072;
+ --mono:'JetBrains Mono',ui-monospace,'SF Mono',Menlo,monospace;--sans:-apple-system,system-ui,"SF Pro Display","Segoe UI",Roboto,sans-serif;
+ --sp:24px;--rad:14px;}
+*{box-sizing:border-box}
+html,body{margin:0;min-height:100%;background:var(--bg);color:var(--txt);font-family:var(--sans);font-size:15px}
+a{color:inherit;text-decoration:none}
+.rail{position:fixed;left:0;top:0;bottom:0;width:222px;z-index:40;background:var(--railbg);border-right:1px solid var(--line);display:flex;flex-direction:column;padding:18px 12px 12px;overflow-y:auto}
+.rail::-webkit-scrollbar{width:0}
+.brand{padding:2px 8px 16px;cursor:pointer}.brand .wm{font-family:var(--mono);font-size:15px;letter-spacing:2px;font-weight:800}
+.brand .wm .sp{color:var(--gold)}.brand .sub{display:block;font-family:var(--mono);font-size:9px;letter-spacing:3px;color:var(--muted);margin-top:3px}
+.nav{display:flex;align-items:center;gap:11px;padding:10px 12px;border-radius:9px;color:var(--lbl);font-weight:600;font-size:14.5px;cursor:pointer}
+.nav i{font-style:normal;width:18px;text-align:center;opacity:.85}.nav:hover{background:#1a1d23;color:var(--txt)}
+.nav.active{background:rgba(114,213,200,.12);color:var(--gold2)}
+.nav .qbadge{margin-left:auto;background:var(--mint);color:#0D0F16;border-radius:9px;padding:1px 7px;font-size:11px;font-weight:800;font-family:var(--mono)}
+.rsec{font-family:var(--mono);font-size:9px;letter-spacing:2px;text-transform:uppercase;color:#4b5260;margin:18px 10px 8px;display:flex}
+.rsec .rt{margin-left:auto;color:var(--amber)}
+.acc{display:flex;align-items:center;padding:7px 12px;border-radius:8px;cursor:pointer;font-size:13px}
+.acc:hover{background:#1a1d23}.acc .an{flex:1;color:var(--lbl);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;padding-right:8px}
+.acc .av{font-family:var(--mono);font-weight:600}.acc.crd .av{color:var(--amber)}
+.spacer{flex:1;min-height:12px}
+.railstat{font-family:var(--mono);font-size:11px;color:var(--muted);border-top:1px solid var(--line);padding-top:12px;margin-top:8px;display:flex;flex-direction:column;gap:8px}
+.railstat .live{display:inline-flex;align-items:center;gap:7px;color:var(--teal)}
+.railstat .live .d{width:7px;height:7px;border-radius:50%;background:var(--teal);box-shadow:0 0 7px var(--teal);animation:pul 2s infinite}
+.railstat .live.off{color:var(--muted)}.railstat .live.off .d{background:var(--muted);box-shadow:none;animation:none}
+.railstat .live.amber{color:var(--amber)}.railstat .live.amber .d{background:var(--amber)}
+.railstat .bad{color:var(--red)}
+@keyframes pul{0%,100%{opacity:1}50%{opacity:.3}}
+.app{max-width:1080px;padding:22px 28px 64px;margin-left:max(222px,calc((100% - 1080px)/2));margin-right:auto}
+@media(max-width:900px){.rail{width:56px;padding:14px 6px}.brand .wm{font-size:0}.brand .wm::before{content:"✦";font-size:18px;color:var(--gold)}.brand .sub,.nav span:not(.qbadge),.rsec,.acc,.railstat{display:none}.nav{justify-content:center}.app{margin-left:56px}}
+.topbar{display:flex;align-items:baseline;gap:14px;margin-bottom:var(--sp);flex-wrap:wrap}
+.topbar h1{font-size:22px;font-weight:700;margin:0}.topbar .subtitle{font-size:12px;color:var(--muted);margin-top:3px;font-family:var(--mono)}
+.card{background:linear-gradient(180deg,#1B1F2C,#151823);border:1px solid var(--line);border-radius:var(--rad);padding:18px 20px;margin-bottom:var(--sp)}
+.lbl{font-size:10px;letter-spacing:1.4px;text-transform:uppercase;color:var(--lbl);font-weight:700}
+.sec{font-size:13px;font-weight:700}.secsub{font-size:11px;color:var(--muted);font-family:var(--mono);margin-top:2px;margin-bottom:12px}
+.cur{font-size:.42em;color:var(--muted);font-weight:400;margin-right:.12em}.dec{font-size:.5em;color:var(--muted);opacity:.7}
+.strip{display:flex;gap:30px;flex-wrap:wrap;align-items:baseline}
+.strip .n{font-family:var(--mono);font-size:20px;font-weight:800;letter-spacing:-.5px}
+.strip .n.hero-num{font-family:var(--face-display);font-size:32px}
+.strip .s{font-size:11px;color:var(--muted);font-family:var(--mono);margin-top:4px}
+.leg{display:flex;gap:18px;font-family:var(--mono);font-size:11px;color:var(--muted);margin-top:10px;flex-wrap:wrap}
+.leg i{display:inline-block;width:16px;height:0;border-top:2px solid;margin-right:6px;vertical-align:middle}
+.trow{display:flex;align-items:center;gap:12px;padding:8px 4px;border-top:1px solid var(--line)}
+.trow:first-of-type{border-top:none}
+.trow .mid{flex:1;min-width:0}.trow .nm{font-size:13.5px;font-weight:600}
+.trow .meta{font-size:11px;color:var(--muted);font-family:var(--mono)}
+.trow .amt{font-family:var(--mono);font-weight:800}.amt.exp{color:var(--exp)}.amt.inc{color:var(--inc)}
+.when{font-family:var(--mono);font-size:11px;color:var(--muted);width:64px;text-align:right;flex:none}
+.crunch{border-color:rgba(224,82,82,.4)!important;background:rgba(224,82,82,.06)!important}
+</style>
+</head>
+<body>
+<aside class="rail" id="hakim-rail"></aside>
+<div class="app">
+  <div class="topbar"><div><h1>Forecast</h1><div class="subtitle">90-day cash curve · what’s known vs what’s inferred</div></div></div>
+  <div id="body"><div class="secsub">Loading…</div></div>
+</div>
+<script>
+const esc=s=>(s||'').replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const money0=n=>Number(n||0).toLocaleString('en-US',{maximumFractionDigits:0});
+function m(n){n=Number(n||0);const neg=n<0;n=Math.abs(n);const i=Math.floor(n).toLocaleString('en-US');const d=(n-Math.floor(n)).toFixed(2).slice(1);return `<span class="cur">SAR</span>${neg?'−':''}${i}<span class="dec">${d}</span>`;}
+const IC=(n)=>window.ic?window.ic(n):'';
+function dlabel(iso){return new Date(iso+'T00:00:00').toLocaleDateString('en-GB',{day:'numeric',month:'short'});}
+
+function chart(known,prov,discOn){
+  const W=920,H=280,L=56,R=16,T=14,B=28;
+  const all=known.map(p=>p.bal).concat(discOn?prov.map(p=>p.bal):[]);
+  let mn=Math.min(0,...all),mx=Math.max(...all);const pad=(mx-mn)*0.1||1000;mn-=pad;mx+=pad;
+  const n=known.length;
+  const x=i=>L+i*(W-L-R)/(n-1), y=v=>T+(1-(v-mn)/(mx-mn))*(H-T-B);
+  let grid='',ylab='';for(let k=0;k<4;k++){const v=mn+(mx-mn)*k/3,yy=y(v);grid+=`<line x1="${L}" x2="${W-R}" y1="${yy.toFixed(1)}" y2="${yy.toFixed(1)}" stroke="#232830"/>`;ylab+=`<text x="${L-8}" y="${(yy+3).toFixed(1)}" text-anchor="end" style="fill:#5A6072;font:11px var(--mono)">${(v/1000).toFixed(0)}K</text>`;}
+  // zero line
+  const zy=y(0);const zero=`<line x1="${L}" x2="${W-R}" y1="${zy.toFixed(1)}" y2="${zy.toFixed(1)}" stroke="#E05252" stroke-dasharray="2 3" opacity=".6"/>`;
+  let xlab='';let lm=-1;known.forEach((p,i)=>{const mo=new Date(p.date).getMonth();if(mo!==lm){lm=mo;xlab+=`<text x="${x(i).toFixed(1)}" y="${H-8}" text-anchor="middle" style="fill:#5A6072;font:11px var(--mono)">${new Date(p.date+'T00:00:00').toLocaleDateString('en-GB',{month:'short'})}</text>`;}});
+  const line=(pts,col,dash)=>`<polyline points="${pts.map((p,i)=>x(i).toFixed(1)+','+y(p.bal).toFixed(1)).join(' ')}" fill="none" stroke="${col}" stroke-width="2"${dash?' stroke-dasharray="4 4"':''}/>`;
+  const provLine=discOn?line(prov,'#e8b95a',true):'';
+  // hover band per day → shared face tooltip (one-owner). transparent, sits on top.
+  const step=(W-L-R)/(n-1);const M=v=>window.hkMoney?window.hkMoney(v):('SAR '+money0(v));
+  const hov=known.map((p,i)=>{const pv=(discOn&&prov[i])?` · <span style="color:#e8b95a">pattern ${money0(prov[i].bal)}</span>`:'';
+    return `<rect x="${(x(i)-step/2).toFixed(1)}" y="${T}" width="${step.toFixed(1)}" height="${(H-T-B).toFixed(1)}" fill="transparent" data-tip="${dlabel(p.date)} · known ${M(p.bal)}${pv}"/>`;}).join('');
+  return `<svg viewBox="0 0 ${W} ${H}" width="100%" height="${H}">${grid}${zero}${provLine}${line(known,'#72D5C8')}${ylab}${xlab}${hov}</svg>`;
+}
+
+let DATA=null,DISC=false;   // lead with the KNOWN line; the provisional pattern is an explicit opt-in
+function render(){
+  const d=DATA;let h='';
+  const negOn=d.neg_date;
+  // headline
+  h+=`<div class="card ${negOn?'crunch':''}"><div class="lbl">In 90 days · known obligations only</div>
+    <div class="strip" style="margin-top:10px">
+      <div><div class="n hero-num ${d.end_known<0?'neg':''}">${m(d.end_known)}</div><div class="s">projected cash · from today’s SAR ${money0(d.cash0)}</div></div>
+      <div><div class="n exp">−${m(d.out_total)}</div><div class="s">known out (90d)</div></div>
+      <div><div class="n inc">+${m(d.in_total)}</div><div class="s">known in (90d)</div></div>
+      <div><div class="n ${d.lowest.bal<0?'exp':''}">${m(d.lowest.bal)}</div><div class="s">lowest point · ${dlabel(d.lowest.date)}</div></div>
+    </div>
+    ${negOn?`<div class="matbanner" style="margin:16px 0 0;border-color:rgba(224,82,82,.4);background:rgba(224,82,82,.07)">${IC('alert')} <b>Cash goes negative on ${dlabel(negOn)}</b> on dated obligations alone — a known event (School fees + committed savings exceed liquid cash). Plan the cover now.</div>`:''}
+  </div>`;
+
+  // chart
+  h+=`<div class="card"><div class="sec">The 90-day curve</div><div class="secsub">solid = <b>known</b> dated obligations · dashed = <b>provisional</b> spending pattern</div>
+    ${chart(d.series,d.prov,DISC)}
+    <div class="leg"><span><i style="border-color:#72D5C8"></i>known (bills · installments · card dues · payouts)</span><span><i style="border-color:#e8b95a;border-top-style:dashed"></i>+ pattern burn ≈ SAR ${money0(d.disc_daily)}/day <a onclick="DISC=!DISC;render()" style="color:var(--gold2);cursor:pointer">[${DISC?'hide':'show'}]</a></span></div>
+    ${window.matBanner(d.maturity,'The dashed pattern line')}
+    ${d.unpriced>0?`<div class="secsub" style="margin:2px 0 0">Even the solid line is <b style="color:var(--amber)">understated</b> — ${d.unpriced} bills are unpriced, so known obligations aren’t complete yet. <a href="/recurring" style="color:var(--gold2)">set amounts →</a></div>`:''}
+  </div>`;
+
+  // known events list
+  h+=`<div class="card"><div class="sec">Known events ahead</div><div class="secsub">every dated obligation in the next 90 days</div>`;
+  if(!d.events.length){h+=`<div class="secsub" style="margin:0">No dated obligations in the window.</div>`;}
+  else{h+=d.events.map(e=>`<div class="trow"><span class="when">${dlabel(e.date)}</span><div class="mid"><div class="nm">${esc(e.name||e.kind)}</div><div class="meta">${e.kind}</div></div><div class="amt ${e.amount<0?'exp':'inc'}">${e.amount<0?'−':'+'}${m(Math.abs(e.amount))}</div></div>`).join('');}
+  h+=`</div>`;
+
+  document.getElementById('body').innerHTML=h;
+}
+
+async function load(){
+  try{DATA=await(await fetch('/api/forecast')).json();}catch(e){document.getElementById('body').innerHTML='<div class="card">Could not load Forecast.</div>';return;}
+  render();
+}
+load();
+</script>
+<script src="/rail.js"></script>
+</body>
+</html>

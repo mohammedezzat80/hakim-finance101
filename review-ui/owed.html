@@ -1,0 +1,227 @@
+<!doctype html>
+<html lang="en" dir="ltr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>HAKIM · Owed to me</title>
+<script src="/face.js"></script>
+<link rel="stylesheet" href="/face.css">
+<style>
+:root{
+ --bg:#0D0F16;--panel:#1B1F2C;--panel2:#232837;--line:#262B3A;--railbg:#0A0C12;
+ --gold:#e8b95a;--gold2:#72D5C8;--teal:#72D5C8;--mint:#72D5C8;--red:#E05252;--amber:#e8b95a;
+ --inc:#72D5C8;--exp:#D98A93;
+ --txt:#FFFFFF;--lbl:#8A90A6;--muted:#5A6072;
+ --mono:'JetBrains Mono',ui-monospace,'SF Mono',Menlo,monospace;--sans:-apple-system,system-ui,"SF Pro Display","Segoe UI",Roboto,sans-serif;
+ --sp:24px;--rad:14px;}
+*{box-sizing:border-box}
+html,body{margin:0;min-height:100%;background:var(--bg);color:var(--txt);font-family:var(--sans);font-size:15px}
+a{color:inherit;text-decoration:none}
+.rail{position:fixed;left:0;top:0;bottom:0;width:222px;z-index:40;background:var(--railbg);border-right:1px solid var(--line);display:flex;flex-direction:column;padding:18px 12px 12px;overflow-y:auto}
+.rail::-webkit-scrollbar{width:0}
+.brand{padding:2px 8px 16px;cursor:pointer}.brand .wm{font-family:var(--mono);font-size:15px;letter-spacing:2px;font-weight:800}
+.brand .wm .sp{color:var(--gold)}.brand .sub{display:block;font-family:var(--mono);font-size:9px;letter-spacing:3px;color:var(--muted);margin-top:3px}
+.nav{display:flex;align-items:center;gap:11px;padding:10px 12px;border-radius:9px;color:var(--lbl);font-weight:600;font-size:14.5px;cursor:pointer}
+.nav i{font-style:normal;width:18px;text-align:center;opacity:.85}.nav:hover{background:#1a1d23;color:var(--txt)}
+.nav.active{background:rgba(114,213,200,.12);color:var(--gold2)}
+.nav .qbadge{margin-left:auto;background:var(--mint);color:#0D0F16;border-radius:9px;padding:1px 7px;font-size:11px;font-weight:800;font-family:var(--mono)}
+.rsec{font-family:var(--mono);font-size:9px;letter-spacing:2px;text-transform:uppercase;color:#4b5260;margin:18px 10px 8px;display:flex}
+.rsec .rt{margin-left:auto;color:var(--amber)}
+.acc{display:flex;align-items:center;padding:7px 12px;border-radius:8px;cursor:pointer;font-size:13px}
+.acc:hover{background:#1a1d23}.acc .an{flex:1;color:var(--lbl);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;padding-right:8px}
+.acc .av{font-family:var(--mono);font-weight:600}.acc.crd .av{color:var(--amber)}
+.soon{display:flex;align-items:center;gap:11px;padding:8px 12px;color:#4b5260;font-size:13.5px}.soon i{font-style:normal;width:18px;text-align:center}
+.soon small{margin-left:auto;font-size:9px;letter-spacing:1px;text-transform:uppercase;color:#4b5260;font-family:var(--mono)}
+.spacer{flex:1;min-height:12px}
+.railstat{font-family:var(--mono);font-size:11px;color:var(--muted);border-top:1px solid var(--line);padding-top:12px;margin-top:8px;display:flex;flex-direction:column;gap:8px}
+.railstat .live{display:inline-flex;align-items:center;gap:7px;color:var(--teal)}
+.railstat .live .d{width:7px;height:7px;border-radius:50%;background:var(--teal);box-shadow:0 0 7px var(--teal);animation:pul 2s infinite}
+.railstat .live.off{color:var(--muted)}.railstat .live.off .d{background:var(--muted);box-shadow:none;animation:none}
+.railstat .live.amber{color:var(--amber)}.railstat .live.amber .d{background:var(--amber)}
+.railstat .bad{color:var(--red)}
+@keyframes pul{0%,100%{opacity:1}50%{opacity:.3}}
+.app{max-width:1100px;padding:22px 28px 64px;margin-left:max(222px,calc((100% - 1100px)/2));margin-right:auto}
+@media(max-width:900px){.rail{width:56px;padding:14px 6px}.brand .wm{font-size:0}.brand .wm::before{content:"✦";font-size:18px;color:var(--gold)}.brand .sub,.nav span:not(.qbadge),.soon span,.rsec,.acc,.railstat{display:none}.nav,.soon{justify-content:center}.app{margin-left:56px}}
+.cur{font-size:.62em;color:var(--muted);margin-right:3px;font-weight:600}.dec{font-size:.62em;color:var(--muted)}
+.topbar{display:flex;align-items:center;gap:14px;margin-bottom:var(--sp);flex-wrap:wrap}
+.topbar h1{font-size:22px;font-weight:700;margin:0}.topbar .subtitle{font-size:12px;color:var(--muted);margin-top:3px;font-family:var(--mono)}
+.grow{flex:1}
+.btn{background:var(--panel);color:var(--txt);border:1px solid var(--line);border-radius:10px;padding:9px 15px;font-size:13px;font-family:var(--mono);cursor:pointer}
+.btn.pri{background:var(--gold);color:#0D0F16;border-color:transparent;font-weight:800}
+.summary{display:flex;gap:26px;background:linear-gradient(180deg,#1B1F2C,#151823);border:1px solid var(--line);border-radius:var(--rad);padding:18px 22px;margin-bottom:var(--sp);flex-wrap:wrap}
+.summary .n{font-family:var(--mono);font-size:22px;font-weight:800}.summary .n.sm{font-size:16px}
+.summary .s{font-size:11px;color:var(--muted);font-family:var(--mono);margin-top:3px;text-transform:uppercase;letter-spacing:1px}
+.inv{margin-left:auto;font-family:var(--mono);font-size:11px;align-self:center;text-align:right}
+.inv.ok{color:var(--mint)}.inv.warn{color:var(--amber)}
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:var(--sp)}
+@media(max-width:820px){.grid{grid-template-columns:1fr}}
+.card{background:linear-gradient(180deg,#1B1F2C,#151823);border:1px solid var(--line);border-radius:var(--rad);padding:18px 20px}
+.card.settled{opacity:.55}
+.gh{display:flex;align-items:center;gap:12px}
+.gi{width:40px;height:40px;border-radius:11px;display:grid;place-items:center;font-size:17px;font-weight:800;flex-shrink:0;background:rgba(232,185,90,.16);color:var(--gold)}
+.gn{font-size:15px;font-weight:700}.gm{font-size:11px;color:var(--muted);font-family:var(--mono);margin-top:2px}
+.gx{margin-left:auto;color:var(--muted);cursor:pointer}.gx:hover{color:var(--exp)}
+.amt{font-family:var(--mono);font-size:20px;font-weight:800;margin:14px 0 4px}
+.age{font-family:var(--mono);font-size:11px;color:var(--muted)}
+.age .warn{color:var(--amber)}
+.reps{margin-top:12px;border-top:1px solid var(--line);padding-top:10px;font-family:var(--mono);font-size:11px;color:var(--lbl)}
+.reps .r{display:flex;justify-content:space-between;padding:2px 0}
+.acts{display:flex;gap:8px;margin-top:14px}
+.acts button{flex:1;background:var(--panel2);border:1px solid var(--line);color:var(--txt);border-radius:9px;padding:8px;font-size:12px;font-family:var(--mono);cursor:pointer}
+.acts button.pri{background:rgba(114,213,200,.16);color:var(--mint);border-color:transparent}
+.tag{display:inline-block;font-family:var(--mono);font-size:9px;letter-spacing:1px;text-transform:uppercase;background:var(--panel2);color:var(--muted);border-radius:6px;padding:2px 6px;margin-left:6px}
+.notice{color:var(--muted);font-size:13px;padding:24px 4px;font-family:var(--mono)}
+.blocked{font-family:var(--mono);font-size:11px;color:var(--muted);margin-top:16px;border-top:1px solid var(--line);padding-top:12px}
+.ov{position:fixed;inset:0;background:rgba(0,0,0,.55);z-index:120;display:none;align-items:flex-start;justify-content:center;padding-top:9vh}
+.ov.show{display:flex}
+.box{width:min(520px,94vw);background:#151823;border:1px solid var(--line);border-radius:14px;padding:20px 22px}
+.mhd{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px}.mhd .x{cursor:pointer;color:var(--muted);font-size:18px}
+.field{margin-bottom:14px}.field label{display:block;font-size:10px;letter-spacing:1px;text-transform:uppercase;color:var(--lbl);font-weight:700;margin-bottom:7px}
+.field input,.field select{width:100%;background:var(--panel2);color:var(--txt);border:1px solid var(--line);border-radius:9px;padding:10px 12px;font-size:13px;font-family:var(--mono)}
+.save{width:100%;background:var(--gold);color:#0D0F16;border:none;border-radius:10px;padding:11px;font-weight:800;cursor:pointer}
+.proof{font-family:var(--mono);font-size:11px;margin-top:12px;padding:10px;border-radius:9px;display:none}
+.proof.ok{background:rgba(114,213,200,.1);color:var(--mint);display:block}
+.proof.bad{background:rgba(224,82,82,.12);color:var(--red);display:block}
+</style>
+</head>
+<body>
+<aside class="rail" id="hakim-rail"></aside>
+<div class="app">
+  <div class="topbar">
+    <div><h1>Owed to me</h1><div class="subtitle">مستحقات · money you lent — per person, with repayments and aging</div></div>
+    <div class="grow"></div>
+    <button class="btn" id="migbtn" style="display:none" onclick="openMig()">Attribute existing balance</button>
+    <button class="btn pri" onclick="openLend()">＋ Lend money</button>
+  </div>
+  <div class="summary" id="summary"></div>
+  <div id="qlens" style="margin:-10px 0 16px;display:flex;gap:8px"></div>
+  <div class="grid" id="list"><div class="notice">Loading…</div></div>
+  <div class="blocked">Lending and repayments post <b>real transfers</b> between your cash and the “Owed to me” account, so your net worth stays exact. This page is the per-person layer on top — the invariant line above shows the two agree.</div>
+</div>
+
+<div class="ov" id="lend" onclick="if(event.target.id==='lend')close('lend')">
+  <div class="box">
+    <div class="mhd"><b>Lend money</b><span class="x" onclick="close('lend')">✕</span></div>
+    <div class="field"><label>Person</label><input id="l_person" placeholder="e.g. Ahmed / cousin Khaled"></div>
+    <div class="field"><label>Amount (SAR)</label><input id="l_amount" type="number" placeholder="0"></div>
+    <div class="field"><label>From which account (money leaves here)</label><select id="l_from"></select></div>
+    <div class="field" id="l_owedwrap" style="display:none"><label>Into which “Owed to me” account</label><select id="l_owed"></select></div>
+    <div class="field"><label>Date lent</label><input id="l_date" type="date"></div>
+    <div class="field"><label>Note (optional)</label><input id="l_note" placeholder="what it was for"></div>
+    <button class="save" onclick="doLend()">Record loan</button>
+    <div class="proof" id="l_proof"></div>
+  </div>
+</div>
+
+<div class="ov" id="repay" onclick="if(event.target.id==='repay')close('repay')">
+  <div class="box">
+    <div class="mhd"><b id="r_title">Record repayment</b><span class="x" onclick="close('repay')">✕</span></div>
+    <div class="field"><label>Amount repaid (SAR)</label><input id="r_amount" type="number" placeholder="0"></div>
+    <div class="field"><label>Into which account (money arrives here)</label><select id="r_to"></select></div>
+    <div class="field"><label>Date</label><input id="r_date" type="date"></div>
+    <div class="field"><label>Note (optional)</label><input id="r_note"></div>
+    <button class="save" onclick="doRepay()">Record repayment</button>
+    <div class="proof" id="r_proof"></div>
+  </div>
+</div>
+
+<div class="ov" id="mig" onclick="if(event.target.id==='mig')close('mig')">
+  <div class="box">
+    <div class="mhd"><b>Attribute existing balance</b><span class="x" onclick="close('mig')">✕</span></div>
+    <div class="field" style="color:var(--muted);font-size:12px;font-family:var(--mono)">Your “Owed to me” account already holds a balance that isn’t tied to a person yet. Name who it belongs to — <b>no money moves</b>, this only labels what’s already there.</div>
+    <div class="field"><label>Person</label><input id="m_person" placeholder="who owes this"></div>
+    <div class="field"><label>Amount (SAR)</label><input id="m_amount" type="number"></div>
+    <div class="field"><label>Note (optional)</label><input id="m_note"></div>
+    <button class="save" onclick="doMig()">Attribute</button>
+  </div>
+</div>
+
+<script>
+const esc=s=>(s||'').replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const money0=n=>Number(n||0).toLocaleString('en-US',{maximumFractionDigits:0});
+const money2=n=>Number(n||0).toLocaleString('en-US',{minimumFractionDigits:2,maximumFractionDigits:2});
+const H={'Content-Type':'application/json'};
+const todayISO=()=>new Date().toISOString().slice(0,10);
+let DATA={},CASH=[],OWED=[],CUR=null;
+function ageStr(d){if(d==null)return '';if(d<1)return 'today';if(d<30)return d+'d ago';const m=Math.floor(d/30.44);return m<12?m+'mo ago':(Math.floor(m/12))+'y '+(m%12)+'mo ago';}
+async function load(){
+  const d=await(await fetch('/api/receivables')).json();
+  DATA=d;CASH=d.cash_accounts||[];OWED=d.owed_accounts||[];
+  document.getElementById('migbtn').style.display=(d.unattributed>0.5)?'':'none';
+  const inv=Math.abs(d.unattributed)<0.5;
+  document.getElementById('summary').innerHTML=
+    `<div><div class="n">SAR ${money0(d.total_outstanding)}</div><div class="s">outstanding · owed to you <span data-tip="owed" style="cursor:help;color:var(--gold2);font-size:11px;opacity:.8">ⓘ</span></div></div>
+     <div><div class="n sm">${(d.receivables||[]).filter(r=>!r.settled).length}</div><div class="s">people</div></div>
+     <div><div class="n sm">SAR ${money0(d.owed_balance)}</div><div class="s">“Owed to me” account</div></div>
+     ${d.qattah_total>0?`<div><div class="n sm" style="color:var(--gold)">SAR ${money0(d.qattah_total)}</div><div class="s">قطة qattah</div></div>`:''}
+     <div class="inv ${inv?'ok':'warn'}">${inv?'✓ ledger matches the account':'⚠ SAR '+money0(d.unattributed)+' on the account not yet attributed<br><span style="color:var(--muted)">use “Attribute existing balance”</span>'}</div>`;
+  const hasQ=(d.receivables||[]).some(r=>r.origin==='qattah');
+  document.getElementById('qlens').innerHTML=hasQ?`<span class="btn ${QLENS==='all'?'':''}" onclick="setLens('all')" style="${QLENS==='all'?'background:var(--gold);color:#0D0F16':''}">All</span> <span class="btn" onclick="setLens('qattah')" style="${QLENS==='qattah'?'background:var(--gold);color:#0D0F16':''}">قطة Qattah only</span>`:'';
+  render((d.receivables||[]).filter(r=>QLENS==='all'||r.origin===QLENS));
+}
+let QLENS='all';function setLens(v){QLENS=v;load();}
+function render(rows){
+  const box=document.getElementById('list');
+  if(!rows.length){box.innerHTML='<div class="notice" style="grid-column:1/-1">No one owes you (tracked) yet. Hit <b>＋ Lend money</b> when you lend — or <b>Attribute existing balance</b> to label money already on the account.</div>';return;}
+  box.innerHTML=rows.map(r=>{
+    const settled=r.settled;
+    const reps=(r.repayments||[]);
+    const warn=(!settled && r.age_days!=null && r.age_days>=90);
+    return `<div class="card ${settled?'settled':''}">
+      <div class="gh"><div class="gi">${esc((r.person||'?').slice(0,1).toUpperCase())}</div>
+        <div><div class="gn">${esc(r.person)}${r.origin==='qattah'?'<span class="tag" style="color:var(--gold)">قطة</span>':''}${r.migrated?'<span class="tag">migrated</span>':''}${settled?'<span class="tag" style="color:var(--mint)">settled ✓</span>':''}</div>
+          <div class="gm">${r.note?esc(r.note):'—'}</div></div>
+        <span class="gx" onclick="del('${r.id}')" title="remove from ledger (money untouched)">✕</span></div>
+      <div class="amt" style="color:${settled?'var(--mint)':'var(--gold)'}">SAR ${money2(r.outstanding)}</div>
+      <div class="age">lent SAR ${money0(r.principal)}${r.date_lent?' · '+r.date_lent+' · <span class="'+(warn?'warn':'')+'">'+ageStr(r.age_days)+'</span>':''}${r.repaid>0?' · repaid SAR '+money0(r.repaid):''}</div>
+      ${reps.length?`<div class="reps">${reps.map(x=>`<div class="r"><span>${x.date}</span><span>− SAR ${money2(x.amount)}</span></div>`).join('')}</div>`:''}
+      ${settled?'':`<div class="acts"><button class="pri" onclick="openRepay('${r.id}','${esc(r.person).replace(/'/g,"")}',${r.outstanding})">Record repayment</button></div>`}
+    </div>`;
+  }).join('');
+}
+function fillAccts(sel){document.getElementById(sel).innerHTML=CASH.map(a=>`<option value="${a.id}">${esc(a.name)} — SAR ${money0(a.sar)}</option>`).join('');}
+function openLend(){document.getElementById('lend').classList.add('show');fillAccts('l_from');
+  const ow=document.getElementById('l_owedwrap');if(OWED.length>1){ow.style.display='';document.getElementById('l_owed').innerHTML=OWED.map(a=>`<option value="${a.id}">${esc(a.name)}</option>`).join('');}else{ow.style.display='none';}
+  document.getElementById('l_date').value=todayISO();document.getElementById('l_proof').className='proof';}
+async function doLend(){
+  const body={person:document.getElementById('l_person').value.trim(),amount:document.getElementById('l_amount').value,
+    from_account_id:document.getElementById('l_from').value,date:document.getElementById('l_date').value,
+    note:document.getElementById('l_note').value.trim()};
+  if(OWED.length>1)body.owed_account_id=document.getElementById('l_owed').value;
+  const r=await(await fetch('/api/receivable/lend',{method:'POST',headers:H,body:JSON.stringify(body)})).json();
+  const pf=document.getElementById('l_proof');
+  if(!r.ok){pf.className='proof bad';pf.textContent=r.error||'failed';return;}
+  const p=r.proof;pf.className='proof '+(p.proof_ok?'ok':'bad');
+  pf.innerHTML=`${p.proof_ok?'✓ balance proof':'⚠ proof'}: Owed ${money2(p.owed_before)}→${money2(p.owed_after)} · cash ${money2(p.cash_before)}→${money2(p.cash_after)}`;
+  document.getElementById('l_person').value='';document.getElementById('l_amount').value='';document.getElementById('l_note').value='';
+  setTimeout(()=>{close('lend');load();},1400);
+}
+function openRepay(id,person,out){CUR=id;document.getElementById('repay').classList.add('show');
+  document.getElementById('r_title').textContent='Repayment from '+person;
+  document.getElementById('r_amount').value=out;fillAccts('r_to');
+  document.getElementById('r_date').value=todayISO();document.getElementById('r_proof').className='proof';}
+async function doRepay(){
+  const body={id:CUR,amount:document.getElementById('r_amount').value,to_account_id:document.getElementById('r_to').value,
+    date:document.getElementById('r_date').value,note:document.getElementById('r_note').value.trim()};
+  const r=await(await fetch('/api/receivable/repay',{method:'POST',headers:H,body:JSON.stringify(body)})).json();
+  const pf=document.getElementById('r_proof');
+  if(!r.ok){pf.className='proof bad';pf.textContent=r.error||'failed';return;}
+  const p=r.proof;pf.className='proof '+(p.proof_ok?'ok':'bad');
+  pf.innerHTML=`${p.proof_ok?'✓ balance proof':'⚠ proof'}: Owed ${money2(p.owed_before)}→${money2(p.owed_after)} · cash ${money2(p.cash_before)}→${money2(p.cash_after)} · left SAR ${money2(r.outstanding)}`;
+  document.getElementById('r_note').value='';
+  setTimeout(()=>{close('repay');load();},1400);
+}
+function openMig(){document.getElementById('mig').classList.add('show');document.getElementById('m_amount').value=(DATA.unattributed||0).toFixed(2);}
+async function doMig(){
+  const body={person:document.getElementById('m_person').value.trim(),amount:document.getElementById('m_amount').value,note:document.getElementById('m_note').value.trim()};
+  const r=await(await fetch('/api/receivable/migrate',{method:'POST',headers:H,body:JSON.stringify(body)})).json();
+  if(!r.ok){alert(r.error||'failed');return;}close('mig');document.getElementById('m_person').value='';load();
+}
+async function del(id){if(!confirm('Remove this from the ledger? (The money on your accounts is untouched — this only drops the per-person label.)'))return;
+  await fetch('/api/receivable/delete',{method:'POST',headers:H,body:JSON.stringify({id})});load();}
+function close(id){document.getElementById(id).classList.remove('show');}
+window.hakimReload=load;load();
+</script>
+<script src="/rail.js"></script>
+</body>
+</html>
