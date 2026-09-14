@@ -1,0 +1,208 @@
+# ─────────────────────────────────────────────────────────────
+# HAKIM — self-hosted personal AI system
+# Step 0: Open WebUI (chat) + Homepage (launcher) + Postgres + Redis
+# Firefly III (Step 1) and the Finance agent (Step 4/5) are added later.
+# ─────────────────────────────────────────────────────────────
+
+name: hakim
+
+services:
+  # ---- Shared platform database -------------------------------------------
+  postgres:
+    image: postgres:16-alpine
+    container_name: hakim-postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_DB: ${POSTGRES_DB}
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+      - ./postgres/init:/docker-entrypoint-initdb.d:ro
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER} -d ${POSTGRES_DB}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks: [hakim]
+
+  # ---- Shared cache / queue -----------------------------------------------
+  redis:
+    image: redis:7-alpine
+    container_name: hakim-redis
+    restart: unless-stopped
+    command: ["redis-server", "--save", "60", "1", "--loglevel", "warning"]
+    volumes:
+      - redisdata:/data
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks: [hakim]
+
+  # ---- Open WebUI: the chat interface -------------------------------------
+  open-webui:
+    image: ghcr.io/open-webui/open-webui:main
+    container_name: hakim-open-webui
+    restart: unless-stopped
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+      finance-agent:
+        condition: service_started
+    ports:
+      - "3000:8080"
+    environment:
+      WEBUI_SECRET_KEY: ${OWUI_SECRET_KEY}
+      # Talk to Ollama running on the host (Homebrew install):
+      OLLAMA_BASE_URL: ${OLLAMA_BASE_URL}
+      DATABASE_URL: postgresql://${POSTGRES_USER}:${POSTGRES_PASSWORD}@postgres:5432/openwebui
+      REDIS_URL: redis://redis:6379/0
+      WEBUI_NAME: "HAKIM"
+      # Wire in the Finance agent as an OpenAI-compatible model provider.
+      # It advertises the "hakim-finance" model, which appears in the dropdown.
+      ENABLE_OPENAI_API: "true"
+      OPENAI_API_BASE_URLS: "http://finance-agent:8000/v1"
+      OPENAI_API_KEYS: ${AGENT_API_KEY}
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    volumes:
+      - openwebui:/app/backend/data
+    networks: [hakim]
+
+  # ---- Firefly III: the finance ledger (Step 1) ---------------------------
+  firefly:
+    image: fireflyiii/core:latest
+    container_name: hakim-firefly
+    restart: unless-stopped
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    ports:
+      - "8080:8080"
+    environment:
+      APP_KEY: ${FIREFLY_APP_KEY}
+      APP_URL: http://localhost:8080
+      TZ: ${FIREFLY_TZ}
+      TRUSTED_PROXIES: "**"
+      # Database (shared Postgres, 'firefly' database)
+      DB_CONNECTION: pgsql
+      DB_HOST: postgres
+      DB_PORT: 5432
+      DB_DATABASE: firefly
+      DB_USERNAME: ${POSTGRES_USER}
+      DB_PASSWORD: ${POSTGRES_PASSWORD}
+      # Cache / sessions via shared Redis
+      CACHE_DRIVER: redis
+      SESSION_DRIVER: redis
+      REDIS_HOST: redis
+      REDIS_PORT: 6379
+      # Cron token for scheduled jobs (recurring txns etc.)
+      STATIC_CRON_TOKEN: ${FIREFLY_CRON_TOKEN}
+      DEFAULT_LANGUAGE: en_US
+      DEFAULT_LOCALE: equal
+    volumes:
+      - fireflyupload:/var/www/html/storage/upload
+    networks: [hakim]
+
+  # ---- Finance agent: read-only finance intelligence (Step 4/5) -----------
+  finance-agent:
+    build: ./finance-agent
+    image: hakim/finance-agent:latest
+    container_name: hakim-finance-agent
+    restart: unless-stopped
+    depends_on:
+      - firefly
+    ports:
+      - "8000:8000"
+    environment:
+      FIREFLY_URL: http://firefly:8080
+      FIREFLY_PAT: ${FIREFLY_PAT}
+      AGENT_API_KEY: ${AGENT_API_KEY}
+      AGENT_MODEL: ${AGENT_MODEL}
+      AGENT_OLLAMA_URL: ${AGENT_OLLAMA_URL}
+      AGENT_CURRENCY: ${FIREFLY_DEFAULT_CURRENCY}
+      FIREFLY_TZ: ${FIREFLY_TZ}
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    volumes:
+      - ./finance-agent/logs:/app/logs
+    networks: [hakim]
+
+  # ---- Review UI: the permanent review surface (Brief 03b) -----------------
+  review-ui:
+    build: ./review-ui
+    image: hakim/review-ui:latest
+    container_name: hakim-review-ui
+    restart: unless-stopped
+    depends_on:
+      - firefly
+    ports:
+      - "8001:8001"
+    environment:
+      FIREFLY_URL: http://firefly:8080
+      FIREFLY_ADMIN_TOKEN: ${FIREFLY_ADMIN_TOKEN}
+      FIREFLY_PAT: ${FIREFLY_PAT}
+      AGENT_URL: http://finance-agent:8000
+      AGENT_API_KEY: ${AGENT_API_KEY}
+      DATA_DIR: /app/data
+      MERCHANTS_PATH: /app/data/merchants.yaml
+      REVIEW_LOG: /app/logs/review.log
+    volumes:
+      - ./data:/app/data
+      - ./logs:/app/logs
+      # STATE.md mounted read-only so /changelog ("What's new") renders live without a rebuild.
+      - ./STATE.md:/app/STATE.md:ro
+      # read-only so the host backup can reach ground-truth context via Docker (which has
+      # Full Disk Access) instead of the launchd agent touching TCC-protected ~/Documents.
+      - ./hakim-brain:/app/hakim-brain:ro
+      # "Back up now": app drops a trigger here (NON-Documents host dir, no TCC) which a
+      # host launchd WatchPath agent watches → runs the same backup.sh.
+      - /Users/hishamadelabdelrahman/Hakim-Backups/triggers:/app/triggers
+      # agent logs live here (moved out of ~/Documents to escape TCC) — read-only for the
+      # Agents panel + dead-man alerts.
+      - /Users/hishamadelabdelrahman/Library/Logs/hakim:/app/joblogs:ro
+    networks: [hakim]
+
+  # ---- Uptime Kuma: real-time service monitoring --------------------------
+  uptime-kuma:
+    image: louislam/uptime-kuma:1
+    container_name: hakim-uptime-kuma
+    restart: unless-stopped
+    ports:
+      - "3002:3001"
+    volumes:
+      - uptimekuma:/app/data
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+    networks: [hakim]
+
+  # ---- Homepage: the dashboard launcher -----------------------------------
+  homepage:
+    image: ghcr.io/gethomepage/homepage:latest
+    container_name: hakim-homepage
+    restart: unless-stopped
+    ports:
+      - "3001:3000"
+    environment:
+      HOMEPAGE_ALLOWED_HOSTS: "localhost:3001,127.0.0.1:3001"
+    volumes:
+      - ./homepage/config:/app/config
+      # read-only docker socket lets Homepage show live container state
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+    networks: [hakim]
+
+volumes:
+  pgdata:
+  redisdata:
+  openwebui:
+  fireflyupload:
+  uptimekuma:
+
+networks:
+  hakim:
+    name: hakim

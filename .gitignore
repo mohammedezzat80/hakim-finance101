@@ -1,0 +1,39 @@
+# === HAKIM — never commit anything sensitive or runtime ===
+
+# Secrets / credentials
+.env
+.env.*
+*.env
+**/.restic-password
+secrets/
+
+# Real financial data — bank statements, SMS, ledger DBs, runtime state
+data/
+logs/
+inbox/
+statements-archive/
+finance-agent/logs/
+exports/
+
+# Personal ground-truth knowledge base (financial truth, family, businesses)
+hakim-brain/
+
+# Databases
+*.db
+*.sqlite
+*.sqlite3
+
+# Python virtualenvs / caches
+.venv-importer/
+.venv/
+venv/
+**/__pycache__/
+*.pyc
+
+# Postgres runtime data (keep only init/ scripts)
+postgres/data/
+
+# OS / editor cruft
+.DS_Store
+**/.DS_Store
+*.swp
