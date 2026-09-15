@@ -4,7 +4,7 @@ The permanent truth-desk on :8001 — data entry + review + confirmation ONLY.
 NO charts, NO analysis, NO advice (that's the future intelligence layer).
 
 Colour language everywhere: GREEN = money in, RED = money out, BLUE = transfer.
-Trust dots: ⚪ imported · 🟡 proposed · 🟢 verified by Hisham.
+Trust dots: ⚪ imported · 🟡 proposed · 🟢 verified by Mohamed.
 """
 from __future__ import annotations
 
@@ -34,7 +34,7 @@ LOG_PATH = os.environ.get("REVIEW_LOG", "/app/logs/review.log")
 REVIEW_CATEGORY = "To review"
 OWED = "Owed to me (مستحقات)"
 
-PERSON_TAGS = ["Hisham", "Sarah", "Aser", "Adam", "Family", "Maid", "Driver"]
+PERSON_TAGS = ["Mohamed", "Sarah", "Heba", "Seif", "Yassin", "Family", "Maid", "Driver"]
 CONTEXT_TAGS = ["online", "luxury", "work", "home-project"]
 TRANSFERISH = re.compile(r"تحويل|transfer|ac to ac|\bips\b|ipsp|sadad|card:", re.I)
 ATM_RE = re.compile(r"\batm\b|cash withdraw|سحب نقد|نقدي", re.I)
@@ -476,26 +476,26 @@ def _dash_impl(month: str = ""):
              "last": last_shape, "typical": typical,
              "fixed": round(fx_fixed, 2), "flexible": round(fx_flex, 2), "untagged": round(fx_untag, 2)}
     # --- Household split (Dashboard charter #3): uniquely available since Sarah's import.
-    #     Attribution: explicit person tag first (Hisham/Sarah → that person; Family → joint); else the
+    #     Attribution: explicit person tag first (Mohamed/Sarah → that person; Family → joint); else the
     #     account's owner IF the account name is unambiguously personal; else honestly "unassigned"
     #     (flag-don't-guess — a joint/ambiguous account is never forced onto a person). ---
     def _own(name):
         nm = (name or "").lower()
-        if "hisham" in nm or "هشام" in nm:
-            return "Hisham"
+        if "mohamed" in nm or "هشام" in nm:
+            return "Mohamed"
         if "sarah" in nm or "سار" in nm:
             return "Sarah"
         return None
     def _who(t):
         tags = t.get("tags") or []
-        if "Hisham" in tags:
-            return "Hisham"
+        if "Mohamed" in tags:
+            return "Mohamed"
         if "Sarah" in tags:
             return "Sarah"
         if "Family" in tags:
             return "joint"
         return _own(t.get("account")) or "unassigned"
-    hh = {k: {"spend": 0.0, "net": 0.0} for k in ("Hisham", "Sarah", "joint", "unassigned")}
+    hh = {k: {"spend": 0.0, "net": 0.0} for k in ("Mohamed", "Sarah", "joint", "unassigned")}
     for t in m:
         who = _who(t)
         if t["type"] == "withdrawal":
@@ -682,9 +682,35 @@ def status():
 
 
 # ---------------------------------------------------------------- reference data
+# The category tree is the app's own presentation layer over Firefly's flat
+# categories. On a FRESH install data/category_tree.yaml doesn't exist yet — that
+# is an empty state, not a failure, so seed it from the v2 spec instead of 500ing
+# every surface that asks for a category (doctrine: honest empty, never a crash).
+DEFAULT_TREE = {
+    "Groceries & supermarket": [], "Eating out & delivery": [], "Personal care": [],
+    "Clothing & accessories": [], "Electronics & gadgets": [], "Entertainment & outings": [],
+    "Sports & fitness": [], "Subscriptions & digital": [], "Utilities & telecom": [],
+    "Home & maintenance": [], "Household staff": [], "Car": [], "Transport & taxis": [],
+    "Medical & pharmacy": [], "School & education": [], "Government & documents": [],
+    "Travel": [], "Gifts & occasions": [], "Hajj & Umrah (حج وعمرة)": [],
+    "Zakat & charity (زكاة وصدقة)": [], "Insurance": [], "Bank & fees": [], "To review": [],
+}
+
+
 def tree():
-    with open(TREE_PATH, encoding="utf-8") as fh:
-        return yaml.safe_load(fh) or {}
+    try:
+        with open(TREE_PATH, encoding="utf-8") as fh:
+            return yaml.safe_load(fh) or {}
+    except FileNotFoundError:
+        try:                                  # seed once, so the first edit persists
+            os.makedirs(os.path.dirname(TREE_PATH), exist_ok=True)
+            with open(TREE_PATH, "w", encoding="utf-8") as fh:
+                yaml.safe_dump(DEFAULT_TREE, fh, allow_unicode=True, sort_keys=False)
+        except Exception:
+            pass                              # read-only disk: still serve the default
+        return dict(DEFAULT_TREE)
+    except Exception:
+        return dict(DEFAULT_TREE)
 
 
 def recents():
@@ -1100,10 +1126,10 @@ def suggestions(row):
     d = row["desc"]
     accts = _acct_by_name()
     if row["type"] == "withdrawal" and ATM_RE.search(d):
-        if "Hisham Wallet" in accts:
-            out.append({"label": "→ Hisham Wallet (cash)", "kind": "transfer",
-                        "dir": "to", "account_id": accts["Hisham Wallet"]["id"],
-                        "account": "Hisham Wallet"})
+        if "Mohamed Wallet" in accts:
+            out.append({"label": "→ Mohamed Wallet (cash)", "kind": "transfer",
+                        "dir": "to", "account_id": accts["Mohamed Wallet"]["id"],
+                        "account": "Mohamed Wallet"})
     # card/masked reference -> transfer to that account
     l4s = {m[-4:] for m in CARD16.findall(d)} | {a or b for a, b in MASKED4.findall(d)}
     for name, a in accts.items():
@@ -1355,7 +1381,7 @@ async def set_settings(req: Request):
     return {"ok": True, "settings": {**_DEFAULT_SETTINGS, **s}}
 
 
-# ---- Rail navigation preferences (Hisham's own order + hidden tabs) — display-only, never deletes ----
+# ---- Rail navigation preferences (Mohamed's own order + hidden tabs) — display-only, never deletes ----
 # The shared rail (rail.js) renders from this on every page. Hidden = removed from the rail render only;
 # the page stays reachable by URL and ⌘K search. Empty order → the rail's default order.
 @app.get("/api/nav/prefs")
@@ -1610,9 +1636,16 @@ def api_zakat():
     import json as _json
     cfg = _zakat_cfg()
     try:
+        # the trail is an append-only LIST of daily records. A fresh install has no
+        # file at all; the old fallback here built a dict and _hawl_recompute then
+        # crashed on r["date"] — an empty hawl is an empty state, not an error.
         trail = _json.load(open(os.path.join(DATA, "hawl_trail.json"), encoding="utf-8"))
+        if not isinstance(trail, list):
+            trail = trail.get("records", []) if isinstance(trail, dict) else []
+        if not all(isinstance(r, dict) and "date" in r for r in trail):
+            trail = [r for r in trail if isinstance(r, dict) and "date" in r]
     except Exception:
-        trail = {"records": {}}
+        trail = []
     state = _hawl_recompute(trail)
     total, parts = _zakatable_total()
     above = total >= cfg["nisab"]
@@ -2061,8 +2094,8 @@ def _family_impl():
         pk = pockets.get(p, [])
         pocket_total = round(sum(x["bal"] for x in pk), 2)
         owed = owed_by.get(p)
-        # skip people with no footprint at all (keep Hisham + Sarah always — the household's two adults)
-        if p not in ("Hisham", "Sarah") and not pt and not pk and not owed:
+        # skip people with no footprint at all (keep Mohamed + Sarah always — the household's two adults)
+        if p not in ("Mohamed", "Sarah") and not pt and not pk and not owed:
             continue
         people.append({"person": p, "spend": spend, "income": income, "net": round(income - spend, 2),
                        "count": len(this), "all_count": len(pt), "trend": trend,
@@ -2269,7 +2302,7 @@ async def category_target(req: Request):
             if p.get("goal") not in (None, "", 0, "0"):        # sinking-fund: due-dated goal
                 entry["goal"] = round(float(p["goal"]), 2)
                 entry["due"] = (p.get("due") or "")[:10]
-            if p.get("paused") is not None:                    # Hisham-set self-note only
+            if p.get("paused") is not None:                    # Mohamed-set self-note only
                 entry["paused"] = bool(p["paused"])
         t[name] = entry
     _yaml_save("category_targets.yaml", t)
@@ -3283,7 +3316,7 @@ def _recv_save(rows):
 
 
 def _owed_accounts():
-    """Firefly asset accounts that hold money others owe Hisham (مستحقات / receivable)."""
+    """Firefly asset accounts that hold money others owe Mohamed (مستحقات / receivable)."""
     out = []
     for a in ff_all("accounts", type="asset"):
         at = a["attributes"]
@@ -3999,7 +4032,7 @@ def _bill_occurrences(date_iso, freq, y, mo):
 
 
 def _bill_amount(a):
-    """Real amount or None. Firefly placeholder here is min==max==1.00 (Hisham's 'to fill' marker)."""
+    """Real amount or None. Firefly placeholder here is min==max==1.00 (Mohamed's 'to fill' marker)."""
     try:
         lo, hi = float(a.get("amount_min") or 0), float(a.get("amount_max") or 0)
     except Exception:
@@ -4303,7 +4336,7 @@ async def bill_update(req: Request):
     if "amount" in p:
         a = p["amount"]
         if a in (None, "", 0, "0"):
-            body["amount_min"] = body["amount_max"] = "1.00"     # placeholder marker (Hisham's 'to fill')
+            body["amount_min"] = body["amount_max"] = "1.00"     # placeholder marker (Mohamed's 'to fill')
         else:
             v = f"{float(a):.2f}"
             body["amount_min"] = body["amount_max"] = v
@@ -5189,7 +5222,7 @@ def one_txn(tid: str):
 @app.post("/api/txn/edit")
 async def txn_edit(req: Request):
     """Full edit of an existing transaction (amount/date/description/account). A deliberate
-    write surface — every change appends an honest audit note ('edited by Hisham …: amount
+    write surface — every change appends an honest audit note ('edited by Mohamed …: amount
     150→161') so corrections leave a trail, never a silent rewrite. Undoable. Provenance
     fields (bank reference, statement line) are read-only and never touched here."""
     p = await req.json()
@@ -5216,7 +5249,7 @@ async def txn_edit(req: Request):
         changes.append("account")
     if not changes:
         return {"ok": True, "changed": False}
-    stamp = f"edited by Hisham, {datetime.now().strftime('%-d %b %Y')}: {', '.join(changes)}"
+    stamp = f"edited by Mohamed, {datetime.now().strftime('%-d %b %Y')}: {', '.join(changes)}"
     fields["notes"] = ((s.get("notes") or "") + ("\n" if s.get("notes") else "") + stamp).strip()
     restore = [{"id": tid, "jid": jid, "fields": {
         "amount": s["amount"], "date": (s.get("date") or "")[:10],
@@ -5265,7 +5298,7 @@ async def txn_delete(req: Request):
             newtags = sorted(set(tags + ["excluded"]))
             act = "excluded"
         note = ((s.get("notes") or "") + ("\n" if s.get("notes") else "") +
-                f"{act} by Hisham, {datetime.now().strftime('%-d %b %Y')}"
+                f"{act} by Mohamed, {datetime.now().strftime('%-d %b %Y')}"
                 + (": flagged error, out of analytics" if act == "excluded" else "")).strip()
         ff("PUT", f"transactions/{tid}", {"transactions": [
             {"transaction_journal_id": s["transaction_journal_id"], "tags": newtags, "notes": note}]})
@@ -5424,7 +5457,7 @@ async def apply(req: Request):
             fields["notes"] = p["note"]
         if p.get("verify"):
             fields["notes"] = (p.get("note") or s.get("notes") or "") + \
-                f"\nReviewed by Hisham, {datetime.now().strftime('%-d %b %Y')}"
+                f"\nReviewed by Mohamed, {datetime.now().strftime('%-d %b %Y')}"
         ff("PUT", f"transactions/{it['id']}", {"transactions": [fields]})
         audit("apply", txn=it["id"], category=cat, tags=tags_add, note=bool(p.get("note")),
               verify=bool(p.get("verify")))
@@ -5494,7 +5527,7 @@ async def verify(req: Request):
         restore.append({"id": it["id"], "jid": s["transaction_journal_id"],
                         "fields": {"tags": s.get("tags") or [], "notes": s.get("notes") or ""}})
         tags = sorted(set((s.get("tags") or []) + ["trust:verified"]))
-        note = (s.get("notes") or "") + f"\nReviewed by Hisham, {datetime.now().strftime('%-d %b %Y')}"
+        note = (s.get("notes") or "") + f"\nReviewed by Mohamed, {datetime.now().strftime('%-d %b %Y')}"
         ff("PUT", f"transactions/{it['id']}",
            {"transactions": [{"transaction_journal_id": s["transaction_journal_id"],
                               "tags": tags, "notes": note}]})
@@ -5515,7 +5548,7 @@ async def transfer(req: Request):
     else:
         src, dst = other, s["destination_id"]
     # Does either end point at a debt account? Firefly 422s a literal transfer into a liability
-    # (the M2.0 wall) — so we translate to the shape it accepts, silently. To Hisham this is just
+    # (the M2.0 wall) — so we translate to the shape it accepts, silently. To Mohamed this is just
     # "transfer to flynas"; under the hood a paydown is withdrawal(asset → liability).
     def _is_liab(aid):
         try:
@@ -5788,7 +5821,7 @@ PURGE_THRESHOLD = 25   # accounts with more txns than this may only be CLOSED (n
 
 
 def acct_log(event, **f):
-    rec = {"ts": datetime.now(timezone.utc).isoformat(), "by": "Hisham", "event": event, **f}
+    rec = {"ts": datetime.now(timezone.utc).isoformat(), "by": "Mohamed", "event": event, **f}
     try:
         os.makedirs(os.path.dirname(ACCOUNTS_LOG), exist_ok=True)
         with _lock, open(ACCOUNTS_LOG, "a", encoding="utf-8") as fh:
@@ -5914,7 +5947,7 @@ async def card_limit(req: Request):
         limit = round(float(raw), 2)
         data[last4] = limit
     with open(os.path.join(DATA, "card_limits.yaml"), "w", encoding="utf-8") as fh:
-        fh.write("# Card credit limits — VERIFIED by Hisham (never guessed). last-4 → SAR limit.\n")
+        fh.write("# Card credit limits — VERIFIED by Mohamed (never guessed). last-4 → SAR limit.\n")
         fh.write("# Self-service editable from the card manager. Powers the utilization bar.\n")
         fh.write("limits:\n")
         for k, v in data.items():
@@ -6264,6 +6297,7 @@ def api_hawl():
     cfg = _zakat_cfg()
     try:
         trail = json.load(open(os.path.join(DATA, "hawl_trail.json"), encoding="utf-8"))
+        trail = trail if isinstance(trail, list) else []
     except Exception:
         trail = []
     state = _hawl_recompute(trail)
@@ -6502,7 +6536,7 @@ async def api_rule_apply(rid: str):
 
 
 # ── Rule proposals — the page's living heart. The system surfaces recurring merchants that
-# have NO rule yet and asks Hisham to teach it, ONE at a time, ranked by impact. His two answers
+# have NO rule yet and asks Mohamed to teach it, ONE at a time, ranked by impact. His two answers
 # become law: "Confident" builds the rule + applies it now; "Not sure yet" builds NOTHING and waits
 # until the merchant recurs N more times before asking again — never a wrong lesson from thin evidence.
 _PROPOSAL_STORE = "rule_proposals.yaml"      # {key: {status: snoozed|dismissed, count, ts}}
@@ -6531,8 +6565,8 @@ def _person_of_account(name):
     nl = (name or "").lower()
     if "sarah" in nl:
         return "Sarah"
-    if "hisham" in nl or "hesham" in nl:
-        return "Hisham"
+    if "mohamed" in nl or "hesham" in nl:
+        return "Mohamed"
     return None
 
 
@@ -7305,7 +7339,7 @@ def api_balloons():
 
 @app.post("/api/loan/settle")
 async def loan_settle(req: Request):
-    """Early settlement — Hisham enters the bank's ACTUAL settlement figure (banks rebate part of
+    """Early settlement — Mohamed enters the bank's ACTUAL settlement figure (banks rebate part of
     the remaining profit; we never compute it). Discharges the principal to zero + books the profit
     portion as financing cost. Reuses the proven paydown shape. Balance-proven."""
     p = await req.json()
@@ -7506,7 +7540,7 @@ def fund_detail(id: str):
     """Fund/ETF performance — honest price-vs-total return per global fund mechanics. Price return is
     how the unit price moved (understates a DISTRIBUTING fund, whose price drops when it pays out);
     total return adds the dividends you received — the pro's true-performance number. Read-only
-    arithmetic over the monthly prices Hisham enters + the dividends he records."""
+    arithmetic over the monthly prices Mohamed enters + the dividends he records."""
     aid = str(id)
     a = {x["id"]: x for x in accounts()}.get(aid)
     if not a or _acct_kinds_map().get(aid) not in ("fund", "etf"):
@@ -7546,7 +7580,7 @@ def fund_detail(id: str):
 
 @app.post("/api/fund/price")
 async def fund_price(req: Request):
-    """The monthly price ritual: Hisham enters the unit price he sees; the system stamps it into the
+    """The monthly price ritual: Mohamed enters the unit price he sees; the system stamps it into the
     price history (editable per date for corrections) and revalues the account to units × price via a
     non-cash 'excluded' adjustment (net worth follows; income/spend never touched)."""
     p = await req.json()
