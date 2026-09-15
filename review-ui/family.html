@@ -75,7 +75,7 @@ a{color:inherit;text-decoration:none}
 const esc=s=>(s||'').replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
 const money0=n=>Number(n||0).toLocaleString('en-US',{maximumFractionDigits:0});
 function m(n){n=Number(n||0);const neg=n<0;n=Math.abs(n);const i=Math.floor(n).toLocaleString('en-US');const d=(n-Math.floor(n)).toFixed(2).slice(1);return `<span class="cur">SAR</span>${neg?'−':''}${i}<span class="dec">${d}</span>`;}
-const COL={Hisham:'#72D5C8',Sarah:'#e879a6',Aser:'#a78bfa',Adam:'#5b8def',Family:'#7dd3fc',Maid:'#d0946b',Driver:'#e8b95a'};
+const COL={Mohamed:'#72D5C8',Sarah:'#e879a6',Heba:'#f0a5c4',Seif:'#a78bfa',Yassin:'#5b8def',Family:'#7dd3fc',Maid:'#d0946b',Driver:'#e8b95a'};
 function initials(n){return (n||'?').slice(0,2);}
 function moLabel(ym){return new Date(ym+'-01T00:00:00').toLocaleDateString('en-GB',{month:'short'});}
 function spark(trend,col){

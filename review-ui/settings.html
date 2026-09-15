@@ -167,7 +167,7 @@ async function loadMerchants(){
     <span onclick="delMerchant(${r.i})" style="cursor:pointer;color:var(--muted)" title="delete">✕</span></div>`).join('');
   document.getElementById('merchants').innerHTML=`
     <div style="font-weight:700;margin-bottom:4px">Merchant map <span style="color:var(--muted);font-weight:400;font-size:12px">· ${MERCH.length} rules</span></div>
-    <div class="kd" style="color:var(--muted);font-size:11px;font-family:var(--mono);margin-bottom:10px">How raw statement lines become clean names + categories on import. Fix a mislabel here (e.g. the “Aser STC” kind) and every future match follows.</div>
+    <div class="kd" style="color:var(--muted);font-size:11px;font-family:var(--mono);margin-bottom:10px">How raw statement lines become clean names + categories on import. Fix a mislabel here (e.g. the “Seif STC” kind) and every future match follows.</div>
     <div style="display:flex;gap:6px;margin-bottom:8px"><input id="mq" placeholder="filter…" oninput="loadMerchants()" style="flex:1;background:var(--panel2);border:1px solid var(--line);color:var(--txt);border-radius:8px;padding:7px 10px;font-size:12px;font-family:var(--mono)"><button class="seg" onclick="editMerchant(null)">+ add rule</button></div>
     <div style="max-height:320px;overflow:auto">${filterMerch(rows)}</div>`;
 }

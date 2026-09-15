@@ -275,8 +275,10 @@ const hasCat=c=>!!CAT[(c||'').split(':')[0].trim()]&&c!=='To review';
 const LI={inbox:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M4 5h16v14H4z"/><path d="M4 13h5l1.5 2.5h3L15 13h5"/></svg>',cal:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4.5" width="18" height="16" rx="2"/><path d="M3 9.5h18M8 2.5v4M16 2.5v4"/></svg>',card:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5.5" width="18" height="13" rx="2"/><path d="M3 10h18M6.5 15h4"/></svg>',wallet:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M3 7.5h14a2 2 0 012 2v7a2 2 0 01-2 2H5a2 2 0 01-2-2V6.5a2 2 0 012-2h11"/><circle cx="16.5" cy="13" r="1.2"/></svg>'};
 const initials=n=>{const w=(n||'?').replace(/[^A-Za-z؀-ۿ ]/g,'').trim().split(/\s+/);return((w[0]||'?')[0]+((w[1]||'')[0]||'')).toUpperCase();};
 const avColor=n=>['#5FB3A6','#72D5C8','#a78bfa','#5b8def','#e879a6','#f0806c','#7dd3fc'][(n||'').length%7];
-function monLabel(x){const [y,mm]=x.split('-');return new Date(y,mm-1,1).toLocaleDateString('en-GB',{month:'long',year:'numeric'});}
-function greet(){const h=new Date().getHours();return(h<12?'Good morning':h<18?'Good afternoon':'Good evening')+', Hisham';}
+function monLabel(x){ // honest empty: an empty ledger has no month — never print 'Invalid Date'
+  if(!x||!/^\d{4}-\d{2}$/.test(x)){const n=new Date();return n.toLocaleDateString('en-GB',{month:'long',year:'numeric'});}
+  const [y,mm]=x.split('-');return new Date(y,mm-1,1).toLocaleDateString('en-GB',{month:'long',year:'numeric'});}
+function greet(){const h=new Date().getHours();return(h<12?'Good morning':h<18?'Good afternoon':'Good evening')+', Mohamed';}
 let RANGE='ALL',DASH=null,RAIL=null,QN=null,CPTS=[],cardFront=0,DOWSORT=false,NWMODE='nw';
 function cycleCard(i){cardFront=i;render(DASH);}
 async function load(){const mo=document.getElementById('month').value||'';
@@ -343,13 +345,13 @@ function mshape(d){
 // Household split (charter #3): uniquely available since Sarah's import. Spending + net by person,
 // tappable to each person's filtered Desk. "Unassigned" where attribution is genuinely unknown.
 function household(d){
-  const h=d.household||{}, RQ=mrange(d.month), order=['Hisham','Sarah','joint','unassigned'];
+  const h=d.household||{}, RQ=mrange(d.month), order=['Mohamed','Sarah','joint','unassigned'];
   const rows=order.map(k=>({k,spend:(h[k]&&h[k].spend)||0,net:(h[k]&&h[k].net)||0})).filter(r=>r.spend>0||r.net!==0);
   if(!rows.length) return '';
   const tot=rows.reduce((a,r)=>a+r.spend,0)||1;
-  const COL={Hisham:'#72D5C8',Sarah:'#e879a6',joint:'#a78bfa',unassigned:'#6b7382'};
-  const LBL={Hisham:'Hisham',Sarah:'Sarah',joint:'Joint / family',unassigned:'Unassigned'};
-  const LINK={Hisham:"/?person="+encodeURIComponent('Hisham'),Sarah:"/?person="+encodeURIComponent('Sarah'),joint:"/?person="+encodeURIComponent('Family'),unassigned:''};
+  const COL={Mohamed:'#72D5C8',Sarah:'#e879a6',joint:'#a78bfa',unassigned:'#6b7382'};
+  const LBL={Mohamed:'Mohamed',Sarah:'Sarah',joint:'Joint / family',unassigned:'Unassigned'};
+  const LINK={Mohamed:"/?person="+encodeURIComponent('Mohamed'),Sarah:"/?person="+encodeURIComponent('Sarah'),joint:"/?person="+encodeURIComponent('Family'),unassigned:''};
   const bar=`<div class="hhbar">${rows.map(r=>r.spend>0?`<i style="width:${r.spend/tot*100}%;background:${COL[r.k]}" data-tip="${LBL[r.k]} · ${window.hkMoney?window.hkMoney(r.spend):('SAR '+money0(r.spend))}"></i>`:'').join('')}</div>`;
   return `<div class="card"><div class="sec">Household · this month</div><div class="secsub">who spent · tap a row to open their transactions</div>
     ${bar}
@@ -379,11 +381,11 @@ function render(d){
   main+=`<div class="quicknav" style="grid-template-columns:repeat(2,1fr);margin-bottom:var(--sp)">${quicknav(d)}</div>`;
   // the month's shape (in·out·net + last + typical + fixed/flex)
   main+=mshape(d);
-  // household split (Hisham · Sarah · joint · unassigned) — unique since Sarah's import
+  // household split (Mohamed · Sarah · joint · unassigned) — unique since Sarah's import
   main+=household(d);
   // (Forward view — "next 7 days" + long-lead "Ahead" — retired from the dashboard now that the Today
   //  tab has shipped; Today owns "what's coming" permanently, per the charter removal condition.)
-  // the ONE quiet chore line — below the money summary, only when something needs Hisham (paintAlerts)
+  // the ONE quiet chore line — below the money summary, only when something needs Mohamed (paintAlerts)
   main+=`<div id="chores"></div>`;
   // cash-flow (monthly income vs spending) — all months with data, honest about sparseness
   if(d.flow&&d.flow.length){const mx=Math.max(1,...d.flow.map(f=>Math.max(f.in,f.out)));
@@ -419,7 +421,7 @@ function render(d){
       ${fr.network?`<div class="pnet">${netLabel(fr.network)}</div>`:''}
       <div class="pchip"></div>
       <div class="pnum">•••• •••• •••• ${esc(fr.last4||'')}</div>
-      <div class="pfoot"><div class="pholder"><small>Card holder</small>Hisham A.</div><div><small>Balance</small><span class="pbal">SAR ${money0(Math.abs(fr.bal))}</span></div></div></div>
+      <div class="pfoot"><div class="pholder"><small>Card holder</small>Mohamed A.</div><div><small>Balance</small><span class="pbal">SAR ${money0(Math.abs(fr.bal))}</span></div></div></div>
       <div class="edges">${cards.map((c,i)=>i===cf?'':`<div class="edge ${c.bank||'CARD'}" onclick="event.stopPropagation();location.href='/accounts?account='+encodeURIComponent('${esc(c.name)}')" title="open on Accounts"><span>${esc(c.bank||'')} •${esc(c.last4||'')}</span><span class="ea">${money0(Math.abs(c.bal))}</span></div>`).join('')}</div>
     </div></div>`;}
   // recent activity

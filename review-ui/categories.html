@@ -326,7 +326,9 @@ function iconInner(c){
   if(ic.startsWith('li:')){const s=libSvg(ic.slice(3));if(s)return s;}
   return ic||cI(c.name);
 }
-function monLabel(x){if(x==='all')return 'All time';const [y,mm]=x.split('-');return new Date(y,mm-1,1).toLocaleDateString('en-GB',{month:'long',year:'numeric'});}
+function monLabel(x){if(x==='all')return 'All time';
+  if(!x||!/^\d{4}-\d{2}$/.test(x)){const n=new Date();return n.toLocaleDateString('en-GB',{month:'long',year:'numeric'});}
+  const [y,mm]=x.split('-');return new Date(y,mm-1,1).toLocaleDateString('en-GB',{month:'long',year:'numeric'});}
 const MONS=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
 function sparkline(arr,color){
   if(!arr||arr.filter(v=>v>0).length<3)return '';

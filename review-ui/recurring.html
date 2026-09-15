@@ -195,7 +195,7 @@ function openBillEdit(id){
   const box=document.getElementById('bmbox');
   box.innerHTML=`<h2>${id?'Edit bill':'New bill'}</h2>
     <div class="subtitle" style="font-size:11px;color:var(--muted);font-family:var(--mono)">managed in HAKIM · saved to the ledger engine</div>
-    <label>Name</label><input id="bname" value="${esc(b.name||'')}" placeholder="e.g. School fees — Aser">
+    <label>Name</label><input id="bname" value="${esc(b.name||'')}" placeholder="e.g. School fees — Seif">
     <div class="bmrow">
       <div><label>Amount (SAR · math ok: 120+35)</label><input id="bamt" class="amt" inputmode="decimal" value="${b.amount!=null?b.amount:''}" placeholder="—" onblur="const v=evalAmt(this.value);if(!isNaN(v)&&/[+\\-*/]/.test(this.value))this.value=v"></div>
       <div><label>Schedule</label><select id="bfreq">${FREQOPTS.map(f=>`<option value="${f}" ${f===(b.freq||'monthly')?'selected':''}>${f}</option>`).join('')}</select></div>

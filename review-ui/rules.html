@@ -113,7 +113,7 @@ label{font-size:10px;text-transform:uppercase;letter-spacing:1px;color:var(--mut
     </div>
     <div class="frow" style="margin-top:12px">
       <div><label>Set category</label><input id="ncat" list="catlist" placeholder="Subscriptions"><datalist id="catlist"></datalist></div>
-      <div><label>Add tags (comma-separated)</label><input id="ntags" placeholder="Hisham"></div>
+      <div><label>Add tags (comma-separated)</label><input id="ntags" placeholder="Mohamed"></div>
     </div>
     <button class="btn pri" onclick="createRule()">Create rule</button>
   </div>
@@ -137,7 +137,7 @@ async function load(){
 }
 /* ── Rule proposals — the page's living heart. Careful learning: Confident builds+applies now;
    Not-sure builds nothing and waits until the merchant recurs; Dismiss silences a one-off. ── */
-const PEOPLE=['Hisham','Sarah','Aser','Adam','Family','Maid','Driver'];
+const PEOPLE=['Mohamed','Sarah','Seif','Yassin','Family','Maid','Driver'];
 let PROPS=[];
 async function loadProposals(){
   const host=document.getElementById('proplist');
@@ -152,7 +152,7 @@ async function loadProposals(){
 }
 function propCard(p,i){
   const acctTxt=p.accounts.map(esc).join(', ');
-  const who=p.person_hint==='Both'?'<span style="color:var(--gold2)">Hisham + Sarah</span>':(p.person_hint?`<span style="color:var(--gold2)">${esc(p.person_hint)}</span>`:'—');
+  const who=p.person_hint==='Both'?'<span style="color:var(--gold2)">Mohamed + Sarah</span>':(p.person_hint?`<span style="color:var(--gold2)">${esc(p.person_hint)}</span>`:'—');
   const chips=PEOPLE.map(n=>`<span class="chip" data-p="${n}" onclick="this.classList.toggle('sel')">${n}</span>`).join('');
   return `<div class="prop" id="prop-${i}">
     <div class="phd"><span class="pname">${esc(p.label)}</span><span class="pcnt">${p.count}×</span>

@@ -81,7 +81,7 @@
       + '#hakim-rail .acc{display:flex;align-items:center;padding:7px 12px;border-radius:8px;cursor:pointer;font-size:13px}'
       + '#hakim-rail .acc:hover{background:#1a1d23}#hakim-rail .acc .an{flex:1;color:#8A90A6;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;padding-right:8px}'
       + '#hakim-rail .acc .av{font-family:var(--mono,monospace);font-weight:600}#hakim-rail .acc.crd .av{color:#c9a15f}'
-      // ── sidebar reordering (Hisham's own order) ──
+      // ── sidebar reordering (Mohamed's own order) ──
       + '#hknav .navgrip,#hknav .naveye{display:none}'
       + '#hknav.editing .nav{cursor:grab}#hknav.editing .nav.drag{opacity:.45}'
       + '#hknav.editing .navgrip{display:inline-flex;align-items:center;color:#4b5260;font-size:13px;margin-right:2px;cursor:grab}'
@@ -181,7 +181,7 @@
   if (new URL(location).searchParams.get('ask')) openAsk();  // deep-link to open Ask Finance
   loadRail(); pollStatus(); qCount(); clock();
 
-  // ── Sidebar reordering (Hisham's own nav order + hidden tabs) ──────────────
+  // ── Sidebar reordering (Mohamed's own nav order + hidden tabs) ──────────────
   // Order + hidden set persist server-side (/api/nav/prefs) so the shared rail renders them on EVERY
   // page. Hiding is DISPLAY-ONLY — the page stays reachable by URL and ⌘K search, never deleted.
   var NAVPREFS = { order: [], hidden: [] };

@@ -106,7 +106,7 @@
     'Insurance': 'shield', 'Bank & fees': 'bank', 'Other (miscellaneous)': 'dots',
     'Transport & taxis': 'car', 'Capital contribution: Factory': 'factory',
     'Salary & allowances': 'coins', 'Other income': 'coins', 'Investment income': 'coin',
-    'Sarah shopping': 'cart', 'Hisham shopping': 'cart', 'Adam shopping': 'cart', 'Aser shopping': 'cart',
+    'Sarah shopping': 'cart', 'Mohamed shopping': 'cart', 'Heba shopping': 'cart', 'Yassin shopping': 'cart', 'Seif shopping': 'cart',
     'To review': 'help',
     'Business income': 'briefcase', 'Rental income': 'home', 'Interest income': 'forecast',
     'Gifts received': 'gift', 'Reimbursements': 'undo', 'Hajj & Umrah': 'mosque',

@@ -1007,7 +1007,7 @@ function batchCategorise(){const mains=Object.keys(BOOT.tree.expense).concat(Obj
 async function batchApplyCat(cat){const ids=[...SELECTED];closeAll();let ok=0;
   for(const id of ids){const r=await postJSON('/api/apply',{id,category:cat});if(r.ok)ok++;}
   SELECTED.clear();SELECTMODE=false;burst();reloadTab();toast(ok+' of '+ids.length+' → '+cat);}
-function batchPerson(){const persons=['Hisham','Sarah','Aser','Adam','Family','Maid','Driver'];
+function batchPerson(){const persons=['Mohamed','Sarah','Seif','Yassin','Family','Maid','Driver'];
   let h=`<div class="grip"></div><div class="idhead" style="background:var(--panel2)"><div style="color:var(--dim)">Tag ${SELECTED.size} transactions · person</div></div><div class="pickgrid">`;
   h+=persons.map(p=>`<span class="chip" onclick="batchApplyField('persons',['${p}'],'${p}')">${window.ic('user')} ${esc(p)}</span>`).join('')+'</div>';
   document.getElementById('sheet').innerHTML=h;openSheet();}
@@ -1122,7 +1122,7 @@ let QA={};
 /* ===== The Add-transaction composer — one designed sheet for EVERY add door (Calendar day,
    Desk Add tab, any + button). Segmented type selector switches the form inline; amount is the
    star (keypad math). Same Desk write machinery underneath (/api/quickadd) — a face rebuild. ===== */
-const CX_PEOPLE=['Hisham','Sarah','Aser','Adam','Family','Maid','Driver'];
+const CX_PEOPLE=['Mohamed','Sarah','Seif','Yassin','Family','Maid','Driver'];
 function openComposer(date,kind){
   QADATE='';
   QA={kind:kind||'expense',amount:'',main:'',sub:'',cur:'',persons:new Set(),
@@ -1301,7 +1301,7 @@ async function acctActions(a){const st=await(await fetch('/api/account/stats?id=
     else h+=`<div class="muted">Too many transactions to purge. Close it, or move history first.</div>`;}
   document.getElementById('sheet').innerHTML=h;}
 function addAccountForm(){let h=`<div class="grip"></div><div style="color:var(--dim);margin-bottom:6px">Add account</div>
-  <label class="fld">Name</label><input id="an" placeholder="e.g. Hisham AlRajhi main">
+  <label class="fld">Name</label><input id="an" placeholder="e.g. Mohamed AlRajhi main">
   <label class="fld">Type</label><select id="at" onchange="toggleCardFields()"><option value="bank">Bank</option><option value="cash">Cash / safe</option><option value="digital">Digital wallet</option><option value="card">Credit card</option><option value="receivable">Receivable</option><option value="other_asset">Other asset (home · car · valuables)</option><option value="other_liability">Other liability (loan)</option></select>
   <div id="cardfields" style="display:none">
     <label class="fld">Last-4 (never the full number → Vaultwarden)</label><input id="al4" inputmode="numeric" maxlength="4" placeholder="4331">

@@ -196,7 +196,7 @@ const money0=n=>Number(n||0).toLocaleString('en-US',{maximumFractionDigits:0});
 const money2=n=>Number(n||0).toLocaleString('en-US',{minimumFractionDigits:2,maximumFractionDigits:2});
 function mm(n){n=Number(n||0);const neg=n<0;n=Math.abs(n);const i=Math.floor(n).toLocaleString('en-US');const d=(n-Math.floor(n)).toFixed(2).slice(1);return `<span class="cur">SAR</span>${neg?'−':''}${i}<span class="dec">${d}</span>`;}
 const PALETTE=['#72D5C8','#e8b95a','#a78bfa','#5b8def','#e879a6','#d0946b','#7dd3fc','#f0806c','#60B3A8','#9aa4bf','#b6bccb','#D98A93'];
-const PERSONS=['Hisham','Sarah','Aser','Adam','Family','Maid','Driver'];
+const PERSONS=['Mohamed','Sarah','Seif','Yassin','Family','Maid','Driver'];
 
 let STATE={type:'income_expense',from:'',to:'',group_by:'category',txn_type:'all',
   accounts:new Set(),categories:new Set(),person:'',klass:'',style:'bars',preset:'ytd'};
@@ -204,7 +204,7 @@ let ACCOUNTS=[],CATS=[],CATKIND={},CATTARGET=new Set(),LAST=null;
 // owner is not a stored field — derive it transparently from the account name (the selection is
 // always visible and hand-adjustable, so this is a convenience shortcut, never an invented fact).
 function ownerOf(name){const n=(name||'').toLowerCase();
-  if(/hisham|هشام/.test(n))return 'Hisham';
+  if(/mohamed|هشام/.test(n))return 'Mohamed';
   if(/sarah|سار/.test(n))return 'Sarah';
   return '';}
 // account group shortcuts, generated only for groups actually present in the data (no dead chips)
@@ -310,7 +310,7 @@ function renderMtools(){
   if(at){let h=`<span class="mt" onclick="mselAll('accounts')">Select all</span><span class="mt" onclick="mselClear('accounts')">Clear</span><span class="msep"></span>`;
     for(const [g,label] of ACCT_GROUPS){const names=acctNames(g);
       if(names.length)h+=`<span class="mt ${eqSet(STATE.accounts,names)?'act':''}" onclick="mselExact('accounts',acctNames('${g}'))">${esc(label)} <b>${names.length}</b></span>`;}
-    for(const own of ['Hisham','Sarah']){const names=acctNames('own:'+own);
+    for(const own of ['Mohamed','Sarah']){const names=acctNames('own:'+own);
       if(names.length)h+=`<span class="mt ${eqSet(STATE.accounts,names)?'act':''}" onclick="mselExact('accounts',acctNames('own:${own}'))">${own}'s <b>${names.length}</b></span>`;}
     at.innerHTML=h;}
   const ct=document.getElementById('cats-tools');
