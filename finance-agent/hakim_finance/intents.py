@@ -210,7 +210,7 @@ def _trading_cash_question(t: str) -> bool:
 
 
 def _personal_flow_signal(t: str) -> bool:
-    """True when a question that mentions an entity is actually about HISHAM's
+    """True when a question that mentions an entity is actually about MOHAMED's
     personal side, so Finance answers it instead of deferring:
       * MENTCO salary/drawings      -> personal income  (Business income)
       * factory capital contribution -> personal expense (Capital contribution: Factory)
