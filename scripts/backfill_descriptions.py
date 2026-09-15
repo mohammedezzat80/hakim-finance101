@@ -99,7 +99,7 @@ def is_answered(split: dict) -> bool:
         return True
     if (split.get("notes") or "").strip():
         return True
-    for t in tags:  # any non-system tag => Hisham labelled it (person/context)
+    for t in tags:  # any non-system tag => Mohamed labelled it (person/context)
         if t in _SYS_EXACT or t.startswith(_SYS_PREFIXES):
             continue
         return True

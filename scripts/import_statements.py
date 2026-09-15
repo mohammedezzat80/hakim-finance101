@@ -3,7 +3,7 @@
 imports them into Firefly III.
 
   DRY RUN (default): parse everything, print a report, WRITE NOTHING.
-  APPLY:  python scripts/import_statements.py --apply   (after Hisham approves)
+  APPLY:  python scripts/import_statements.py --apply   (after Mohamed approves)
 
 Run with the importer venv:
   ./.venv-importer/bin/python scripts/import_statements.py
@@ -43,32 +43,32 @@ BACKFILL_START = date(2026, 7, 1)
 LLM_THRESHOLD = Decimal("0.8")
 
 # --- account resolution (never invent; unknown -> flag/ask) ----------------
-SNB_ACCOUNT_MAP = {"11100067564602": "Hisham SNB main",
-                   "13388180000100": "Sarah SNB main"}   # Sarah's SNB current (PDF), confirmed by Hisham
+SNB_ACCOUNT_MAP = {"11100067564602": "Mohamed SNB main",
+                   "13388180000100": "Sarah SNB main"}   # Sarah's SNB current (PDF), confirmed by Mohamed
 CARD_LAST4_MAP = {
     "4331": "SABB Alfursan •4331",
     "5158": "SABB Mastercard •5158",   # renamed from •1437 (see report)
     "5019": "SABB Visa •5019",
 }
 SABB_ACCOUNT_DEFAULT = "SABB main"     # only one active SABB current account
-# SNB credit-card .xls carry no card number; Hisham assigned files explicitly
+# SNB credit-card .xls carry no card number; Mohamed assigned files explicitly
 # (both cards are closed at the bank — payments/fees-only files are expected).
 SNB_CARD_FILE_MAP = {
-    "transactiontable-2.xls": "Hisham SNB Mastercard •6510",
-    "transactiontable-3.xls": "Hisham SNB Alfursan •8381",
+    "transactiontable-2.xls": "Mohamed SNB Mastercard •6510",
+    "transactiontable-3.xls": "Mohamed SNB Alfursan •8381",
 }
 
 PAYMENT_TYPES = {"DIRECT DEBIT PAYMENT", "CREDIT CARD PAYMENT"}  # money INTO a card
 
-# Current card debts as of 7 Sep 2026 (Hisham). Opening(1 Jul) is back-solved:
+# Current card debts as of 7 Sep 2026 (Mohamed). Opening(1 Jul) is back-solved:
 #   opening_balance = -(current_debt) - net_effect_of_imported_txns
 # so the card shows the real current debt after import; derivation noted per account.
 CARD_CURRENT_DEBT = {
     "SABB Visa •5019": Decimal("15418.45"),
     "SABB Mastercard •5158": Decimal("30209.90"),
     "SABB Alfursan •4331": Decimal("31505.27"),
-    "Hisham SNB Mastercard •6510": Decimal("47168.38"),
-    "Hisham SNB Alfursan •8381": Decimal("6345.87"),
+    "Mohamed SNB Mastercard •6510": Decimal("47168.38"),
+    "Mohamed SNB Alfursan •8381": Decimal("6345.87"),
 }
 # Accounts with a known opening balance but no statement file: (amount, as_of_date).
 MANUAL_OPENINGS = {
@@ -493,7 +493,7 @@ def try_settle(ff, pf_list, r):
 def propose_cross_run(new_rows, ledger):
     """Pair a NEW row with an EXISTING ledger row: equal |amount|, OPPOSITE
     direction, dates within 3 days, DIFFERENT internal accounts. Proposals only —
-    Hisham approves before any fusion (agents draft, Hisham decides)."""
+    Mohamed approves before any fusion (agents draft, Mohamed decides)."""
     props, used = [], set()
     for r in new_rows:
         for lg in ledger:
@@ -543,7 +543,7 @@ def match_transfers(rows: list[Row]):
     confirmed: outflow explicitly names the destination card's 16-digit number
       (or its last-4) — high confidence, safe to auto-write as ONE transfer.
     candidates: equal/opposite within 3 days, different internal accounts, one side
-      a card payment, NOT an external transfer — reported for Hisham to confirm,
+      a card payment, NOT an external transfer — reported for Mohamed to confirm,
       NOT auto-written (we don't guess which card a generic 'Transfer to Master
       Card' means).
     """
@@ -808,7 +808,7 @@ def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--apply", action="store_true", help="write to Firefly (default: dry run)")
     ap.add_argument("--write-candidates", action="store_true",
-                    help="treat candidate transfers as confirmed (Hisham-approved)")
+                    help="treat candidate transfers as confirmed (Mohamed-approved)")
     ap.add_argument("--fuse-existing", action="store_true",
                     help="fuse cross-run proposals into transfers (Part A; needs --apply)")
     args = ap.parse_args()
@@ -914,7 +914,7 @@ def main():
     for o, i in confirmed:
         print(f"  • {o.txn_date}  SAR {abs(o.amount):,.2f}  {o.account} → {i.account}"
               f"   [{o.desc[:40]}]")
-    print(f"\nCANDIDATE TRANSFERS — need Hisham to confirm (NOT auto-written): {len(candidates)}")
+    print(f"\nCANDIDATE TRANSFERS — need Mohamed to confirm (NOT auto-written): {len(candidates)}")
     for o, i in candidates:
         print(f"  ? {o.txn_date}  SAR {abs(o.amount):,.2f}  {o.account} → {i.account}"
               f"   [{o.desc[:45]}]")
@@ -979,7 +979,7 @@ def main():
     if candidates:
         blockers.append(f"{len(candidates)} candidate transfer(s) need confirm/routing "
                         f"(which card each 'Transfer to …' targets)")
-    print(f"\n{'-'*74}\nBLOCKERS / NEEDS HISHAM ({len(blockers)}):")
+    print(f"\n{'-'*74}\nBLOCKERS / NEEDS MOHAMED ({len(blockers)}):")
     for b in blockers:
         print(f"  ⛔ {b}")
     if not blockers:

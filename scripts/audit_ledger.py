@@ -198,9 +198,9 @@ def main():
             ok(f"{acct}: opening {opening} + activity → {dclose} = statement {fclose} ✓")
         else:
             fail(3, f"{acct}: derived close {dclose} != statement {fclose}")
-    # only Hisham's own current accounts are expected to net to 0 (exact names — NOT
+    # only Mohamed's own current accounts are expected to net to 0 (exact names — NOT
     # Firefly's "Initial balance for…" mirror accounts, NOT Sarah's account which holds a real balance)
-    ZERO_BANKS = {"Hisham SNB main", "SABB main"}
+    ZERO_BANKS = {"Mohamed SNB main", "SABB main"}
     for name in ZERO_BANKS:
         a = accts.get(name)
         if not a:
@@ -255,14 +255,14 @@ def main():
         else:
             fail(5, f"{card}: ledger {bal} vs -debt {expect} (drift {drift})")
 
-    # ---- SECTION 6: integrity of Hisham's work ----
+    # ---- SECTION 6: integrity of Mohamed's work ----
     print("\n[6] INTEGRITY — verified/categorized items untouched by backfills")
     verified = [s for s in all_splits if "trust:verified" in (s.get("tags") or [])]
     lost = 0
     for s in verified:
         cat = s.get("category_name")
         note = s.get("notes") or ""
-        if not cat and "Reviewed by Hisham" not in note:
+        if not cat and "Reviewed by Mohamed" not in note:
             fail(6, f"#{s['_gid']} verified but has no category AND no review note"); lost += 1
     if lost == 0:
         ok(f"{len(verified)} verified items all retain category/notes stamps")

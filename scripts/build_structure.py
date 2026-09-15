@@ -2,7 +2,7 @@
 """BRIEF 02 — build the Firefly III personal-finance structure (v2 spec).
 
 Idempotent: check-before-create on every object (match by name). Structure only —
-NO opening balances, NO transactions, NO fake data. Hisham enters true balances
+NO opening balances, NO transactions, NO fake data. Mohamed enters true balances
 from his bank apps afterwards.
 
 Token: uses FIREFLY_ADMIN_TOKEN if set, else falls back to FIREFLY_PAT.
@@ -35,15 +35,16 @@ def flush_log():
 # (name, currency, role)
 ASSET_ACCOUNTS = [
     # cash & safes
-    ("Hisham Wallet", "SAR", "defaultAsset"), ("Sarah's wallet", "SAR", "defaultAsset"),
+    ("Mohamed Wallet", "SAR", "defaultAsset"), ("Sarah's wallet", "SAR", "defaultAsset"),
     ("Safe", "SAR", "defaultAsset"), ("Safe Dollar", "USD", "defaultAsset"),
-    ("Adam safe", "SAR", "savingAsset"), ("Aser safe", "SAR", "savingAsset"),
+    ("Seif safe", "SAR", "savingAsset"), ("Yassin safe", "SAR", "savingAsset"),
+    ("Heba safe", "SAR", "savingAsset"),
     ("Egyptian pound safe", "EGP", "defaultAsset"), ("UAE Dirham", "AED", "defaultAsset"),
     # banks — Saudi
-    ("Hisham SNB main", "SAR", "defaultAsset"), ("Hisham SNB saving", "SAR", "savingAsset"),
+    ("Mohamed SNB main", "SAR", "defaultAsset"), ("Mohamed SNB saving", "SAR", "savingAsset"),
     ("Sarah SNB main", "SAR", "defaultAsset"), ("Sarah SNB shopping", "SAR", "defaultAsset"),
     ("Sarah SNB saving", "SAR", "savingAsset"), ("SABB main", "SAR", "defaultAsset"),
-    ("SABB Hisham shopping", "SAR", "defaultAsset"), ("SABB School", "SAR", "defaultAsset"),
+    ("SABB Mohamed shopping", "SAR", "defaultAsset"), ("SABB School", "SAR", "defaultAsset"),
     ("SABB Travel", "SAR", "defaultAsset"),
     # banks — Egypt
     ("Bank Misr USD", "USD", "defaultAsset"), ("Bank Misr EGP", "EGP", "defaultAsset"),
@@ -61,7 +62,7 @@ ASSET_ACCOUNTS = [
 # as a negative balance = debt growth). "I owe" stays a real liability.
 CARD_ACCOUNTS = [
     "SABB Alfursan •4331", "SABB Mastercard •5158", "SABB Visa •5019",
-    "Hisham SNB Alfursan •8381", "Hisham SNB Mastercard •6510",
+    "Mohamed SNB Alfursan •8381", "Mohamed SNB Mastercard •6510",
     "Sarah SNB Mastercard •437x",
 ]
 LIABILITY_ACCOUNTS = ["I owe (عليّ)"]
@@ -83,16 +84,17 @@ CATEGORIES = [
 ]
 
 TAGS = [
-    "Hisham", "Sarah", "Aser", "Adam", "Family", "Maid", "Driver",
+    "Mohamed", "Sarah", "Heba", "Seif", "Yassin", "Family", "Maid", "Driver",
     "online", "luxury", "home-project", "work",
     "allowance:housing", "allowance:tickets",
 ]
 
-# (name, repeat_freq, first_date)  — placeholder amounts min=max=1, Hisham edits
+# (name, repeat_freq, first_date)  — placeholder amounts min=max=1, Mohamed edits
 BILLS_MONTHLY = ["Netflix", "Shahid", "OSN", "Prime Video", "Starzplay", "Apple TV+",
-                 "Microsoft", "VPN", "STC Hisham", "STC Sarah", "STC Aser",
+                 "Microsoft", "VPN", "STC Mohamed", "STC Sarah", "STC Heba", "STC Seif",
                  "Electricity", "Water", "Internet", "Gas", "Maid salary"]
-BILLS_YEARLY = ["School installments (Aser)", "School installments (Adam)",
+BILLS_YEARLY = ["School installments (Seif)", "School installments (Yassin)",
+               "School installments (Heba)",
                 "Car insurance", "Iqama renewal Maid"]
 
 

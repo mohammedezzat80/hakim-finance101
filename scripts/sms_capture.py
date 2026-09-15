@@ -9,7 +9,7 @@ We never write to it.
   DRY RUN (default): parse + classify, report per wallet/sender, verify the barq
     balance chain, derive openings — WRITE NOTHING.
       ./.venv-importer/bin/python scripts/sms_capture.py
-  LIVE (after Hisham approves): --apply  (writes to Firefly via the same pipeline)
+  LIVE (after Mohamed approves): --apply  (writes to Firefly via the same pipeline)
 
 Hard filters (never imported): declines / insufficient-balance, OTP codes, ads &
 offers, device-login alerts, service notices, balance-only. Counted and logged.
@@ -60,7 +60,7 @@ BACKFILL_INSTITUTIONS = {"STC", "D360", "BARQ"}
 # card/account last-4 -> Firefly account name (unknown -> ask in Review UI)
 CARD_MAP = {
     "5071": "STC Pay", "5621": "Barq", "1084": "D360",
-    "6510": "Hisham SNB Mastercard •6510", "8381": "Hisham SNB Alfursan •8381",
+    "6510": "Mohamed SNB Mastercard •6510", "8381": "Mohamed SNB Alfursan •8381",
     "5019": "SABB Visa •5019", "5158": "SABB Mastercard •5158",
     "4331": "SABB Alfursan •4331",
 }
